@@ -16,14 +16,20 @@ return new class extends Migration {
             }
         });
 
-        // Optional but handy: backfill for existing rows based on the site’s responsible
-        // Works on MySQL
-        DB::statement("
-            UPDATE material_requests mr
-            LEFT JOIN sites s ON s.id = mr.site_id
-            SET mr.assigned_user_id = s.responsible_user_id
-            WHERE mr.assigned_user_id IS NULL
-        ");
+        // Optional but handy: backfill for existing rows based on the site's responsible
+        // SQLite-compatible version
+        $materialRequests = DB::table('material_requests')
+            ->whereNull('assigned_user_id')
+            ->get();
+            
+        foreach ($materialRequests as $mr) {
+            $site = DB::table('sites')->where('id', $mr->site_id)->first();
+            if ($site && $site->responsible_user_id) {
+                DB::table('material_requests')
+                    ->where('id', $mr->id)
+                    ->update(['assigned_user_id' => $site->responsible_user_id]);
+            }
+        }
     }
 
     public function down(): void

@@ -42,10 +42,10 @@ export default function Dashboard() {
         color: 'from-blue-500 to-indigo-500',
       },
       {
-        title: 'Statistiques',
-        description: 'Visualisez vos indicateurs en temps réel',
-        icon: <img src="/images/stat.png" alt="Stats Icon" className="w-14 h-14" />,
-        href: '/stats',
+        title: 'Demande EPI',
+        description: 'Demandez et gérez vos équipements de protection individuelle',
+        icon: <img src="/images/materiel.png" alt="PPE Request Icon" className="w-14 h-14" />,
+        href: '/ppe-requests',
         color: 'from-purple-500 to-pink-500',
       },
       {

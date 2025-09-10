@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link, usePage } from '@inertiajs/react';
+import ContractorUserDropdown from '@/Components/ContractorUserDropdown';
 
-export default function ContractantLayout({ children }) {
+export default function ContractantLayout({ children, contractor }) {
   const { url } = usePage();
 
   const nav = [
     { href: '/contractant/documents',    label: 'Documents' },
-    { href: '/contractant/statistiques', label: 'Statistiques' },
+    { href: '/contractant/hse-statistics', label: 'Statistiques' },
     { href: '/contractant/vods',         label: 'VODs' },
     { href: '/contractant/parapheur',    label: 'Papiers à signer' },
 
@@ -43,10 +44,32 @@ export default function ContractantLayout({ children }) {
 
       {/* Content */}
       <main className="flex-1">
-        {/* Topbar (mobile) */}
-        <div className="md:hidden bg-white border-b px-4 py-3">
-          <div className="text-sm font-medium">Espace Contractant</div>
-          <div className="text-xs text-gray-500">Services</div>
+        {/* Top Bar */}
+        <div className="bg-white border-b px-4 py-3 flex justify-between items-center">
+          <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-3">
+              <img 
+                src="/images/logo.png" 
+                alt="ParkX Logo" 
+                className="h-8 w-auto"
+              />
+              <div className="md:hidden">
+                <div className="text-sm font-medium">Services</div>
+              </div>
+            </div>
+            <Link
+              href={route('contractant.home')}
+              className="hidden md:flex items-center px-3 py-1 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              Retour au tableau de bord
+            </Link>
+          </div>
+          <div className="flex items-center">
+            <ContractorUserDropdown contractor={contractor} />
+          </div>
         </div>
         <div className="p-4 md:p-6">{children}</div>
       </main>

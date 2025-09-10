@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { Package } from 'lucide-react'; // Fallback icon
+import ContractorUserDropdown from '@/Components/ContractorUserDropdown';
 
 function CardIcon({ img, size = 40 }) {
   const [broken, setBroken] = React.useState(false);
@@ -25,6 +26,7 @@ function CardIcon({ img, size = 40 }) {
 export default function ContractorHome() {
   const { auth } = usePage().props;
   const name = auth?.contractor?.name ?? auth?.user?.name ?? 'Bienvenue';
+  const contractor = auth?.contractor;
 
   const cards = [
     {
@@ -42,9 +44,9 @@ export default function ContractorHome() {
       accent: 'from-emerald-500/10 to-emerald-500/0',
     },
     {
-      title: 'Statistiques',
-      desc: 'Visualiser vos indicateurs clés et progrès.',
-      href: '/contractant/statistiques',
+      title: 'Statistiques HSE',
+      desc: 'Soumettre et suivre vos statistiques de santé, sécurité et environnement.',
+      href: route('contractant.hse-statistics.index'),
       img: '/images/stat.png',
       accent: 'from-amber-500/10 to-amber-500/0',
     },
@@ -66,15 +68,35 @@ export default function ContractorHome() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Top Bar */}
+      <div className="bg-white border-b px-4 py-3 flex justify-between items-center">
+        <div className="flex items-center">
+          <img 
+            src="/images/logo.png" 
+            alt="ParkX Logo" 
+            className="h-8 w-auto"
+          />
+        </div>
+        <div className="flex items-center">
+          <ContractorUserDropdown contractor={contractor} />
+        </div>
+      </div>
+
       {/* Hero */}
       <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-white">
         <div className="max-w-6xl mx-auto px-6 py-10 md:py-14">
-          <p className="text-sm/6 text-white/80">Espace Contractant</p>
-          <h1 className="mt-1 text-2xl md:text-4xl font-semibold tracking-tight">
+          <div className="flex justify-center mb-4">
+            <img 
+              src="/images/logo.png" 
+              alt="ParkX Logo" 
+              className="h-12 w-auto"
+            />
+          </div>
+          <h1 className="mt-1 text-2xl md:text-4xl font-semibold tracking-tight text-center">
             {name}, accédez à vos services ParkX
           </h1>
-          <p className="mt-3 text-white/70 max-w-2xl">
-            Outils, transparence, collaboration — tout ce qu’il faut pour avancer rapidement.
+          <p className="mt-3 text-white/70 max-w-2xl mx-auto text-center">
+            Outils, transparence, collaboration — tout ce qu'il faut pour avancer rapidement.
           </p>
         </div>
 

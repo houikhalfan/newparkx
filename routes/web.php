@@ -33,6 +33,8 @@ use App\Http\Controllers\Contractant\MaterialRequestController as ContractorMate
 use App\Http\Controllers\UserPasswordController;
 use App\Http\Controllers\ContractorPasswordController;
 use App\Http\Controllers\Contractant\ContractantVodController;
+use App\Http\Controllers\Contractant\StatisticsController as ContractantStatsController;
+use App\Http\Controllers\Admin\StatisticsController as AdminStatsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -107,6 +109,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/vods/notifications/data', [VodsController::class, 'notificationsData'])->name('vods.notifications.data');
     Route::get('/vods/{vod}/pdf',          [VodsController::class, 'pdf'])->whereNumber('vod')->name('vods.pdf');
 
+    // PPE Requests
+    Route::get('/ppe-requests',            [\App\Http\Controllers\PPERequestController::class, 'index'])->name('ppe-requests.index');
+
     // Logout (web guard)
     Route::post('/logout', function () {
         Auth::logout();
@@ -177,6 +182,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get ('/signatures/{id}/sign',   [AdminSignCtrl::class, 'signForm'])->whereNumber('id')->name('signatures.sign.form');
         Route::post('/signatures/{id}/sign',   [AdminSignCtrl::class, 'signSubmit'])->whereNumber('id')->name('signatures.sign.submit');
 
+        // HSE Statistics (Admin)
+        Route::get ('/hse-statistics',                        [AdminStatsController::class, 'index'])->name('hse-statistics.index');
+        Route::get ('/hse-statistics/{id}',                   [AdminStatsController::class, 'show'])->whereNumber('id')->name('hse-statistics.show');
+        Route::get ('/hse-statistics/{id}/download/{field}',  [AdminStatsController::class, 'download'])->whereNumber('id')->name('hse-statistics.download');
+        Route::get ('/hse-statistics/aggregated',             [AdminStatsController::class, 'aggregated'])->name('hse-statistics.aggregated');
+        Route::get ('/hse-statistics/export',                 [AdminStatsController::class, 'export'])->name('hse-statistics.export');
+        Route::get ('/hse-statistics/export-excel',           [AdminStatsController::class, 'exportExcel'])->name('hse-statistics.export-excel');
+        
+        // Notifications
+        Route::get ('/notifications',                         [App\Http\Controllers\Admin\NotificationController::class, 'index'])->name('notifications.index');
+        Route::post('/notifications/{id}/read',               [App\Http\Controllers\Admin\NotificationController::class, 'markAsRead'])->whereNumber('id')->name('notifications.read');
+        Route::post('/notifications/mark-all-read',           [App\Http\Controllers\Admin\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
+        Route::get ('/notifications/all',                     [App\Http\Controllers\Admin\NotificationController::class, 'all'])->name('notifications.all');
+
         // Admin logout
         Route::post('/logout', function () {
             session()->forget('admin_id');
@@ -194,6 +213,7 @@ Route::prefix('contractant')->name('contractant.')->group(function () {
     // Contractor auth
     Route::get('/login',  [ContractorAuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [ContractorAuthController::class, 'login'])->name('login.submit');
+    Route::post('/logout', [ContractorAuthController::class, 'logout'])->name('logout');
 
     /* 🔽 Contractor password reset routes (contractant.*) */
     Route::get('/password/reset',         [ContractorPasswordController::class, 'showLinkRequestForm'])->name('password.request');
@@ -231,6 +251,14 @@ Route::prefix('contractant')->name('contractant.')->group(function () {
         Route::get ('/parapheur/{id}/download-original', [ContractorSignCtrl::class, 'downloadOriginal'])->whereNumber('id')->name('parapheur.download.original');
         Route::get ('/parapheur/{id}/download-signed',   [ContractorSignCtrl::class, 'downloadSigned'])->whereNumber('id')->name('parapheur.download.signed');
         Route::post('/parapheur/{id}/comment',           [ContractorSignCtrl::class, 'comment'])->whereNumber('id')->name('parapheur.comment');
+
+        // HSE STATISTICS (Contractant)
+        Route::get ('/hse-statistics',               [ContractantStatsController::class, 'index'])->name('hse-statistics.index');
+        Route::post('/hse-statistics',               [ContractantStatsController::class, 'store'])->name('hse-statistics.store');
+        Route::get ('/hse-statistics/{id}/edit',     [ContractantStatsController::class, 'edit'])->whereNumber('id')->name('hse-statistics.edit');
+        Route::put ('/hse-statistics/{id}',          [ContractantStatsController::class, 'update'])->whereNumber('id')->name('hse-statistics.update');
+        Route::get ('/hse-statistics/{id}',          [ContractantStatsController::class, 'show'])->whereNumber('id')->name('hse-statistics.show');
+        Route::get ('/hse-statistics/history',       [ContractantStatsController::class, 'history'])->name('hse-statistics.history');
 
         // Contractor logout
         Route::post('/logout', [ContractorAuthController::class, 'logout'])->name('logout');

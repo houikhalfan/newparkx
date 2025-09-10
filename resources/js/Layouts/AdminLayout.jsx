@@ -11,7 +11,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Folder,
+  BarChart3,
 } from "lucide-react";
+import AdminNotifications from "@/Components/AdminNotifications";
 
 export default function AdminLayout({ children }) {
 const { csrf_token, admin } = usePage().props || {};
@@ -97,7 +99,12 @@ const adminEmail = admin?.email ?? "";
   match: "^/admin/vods",
   Icon: Folder, // par ex.
 },
-  
+{
+  label: "Statistiques HSE",
+  href: route("admin.hse-statistics.index"),
+  match: "^/admin/hse-statistics",
+  Icon: BarChart3,
+},
 
   ];
 
@@ -261,16 +268,8 @@ const adminEmail = admin?.email ?? "";
                 )}
               </button>
 
-              {/* notifications (placeholder) */}
-              <button
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-gray-100 dark:hover:bg-slate-800"
-                title="Notifications"
-              >
-                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
-                  <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2c0 .53-.21 1.04-.59 1.41L4 17h5" />
-                  <path d="M13 21a2 2 0 0 1-2 0" />
-                </svg>
-              </button>
+              {/* notifications */}
+              <AdminNotifications />
 
               {/* user menu */}
               <div className="relative" ref={menuRef}>
