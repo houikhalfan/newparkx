@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import { usePage } from '@inertiajs/react';
 
 export default function QrResult() {
-  const { conforme, site, contractor, at, autoPrint, decided_at } = usePage().props;
+  const { conforme, site, contractor, matricule, at, autoPrint, decided_at } = usePage().props;
 
   // the URL encoded inside the QR should be this page URL *without* ?print=1
   const verifyUrl = useMemo(() => {
@@ -45,6 +45,7 @@ export default function QrResult() {
         <div className="mt-3 text-sm text-gray-600 space-y-1">
           {site && <div><span className="font-semibold">Site : </span>{site}</div>}
           {contractor && <div><span className="font-semibold">Contractant : </span>{contractor}</div>}
+          {matricule && <div><span className="font-semibold">Matricule : </span>{matricule}</div>} {/* ✅ Added matricule */}
           {decided_at && <div><span className="font-semibold">Décision : </span>{new Date(decided_at).toLocaleString('fr-FR')}</div>}
           <div className="text-gray-500">Vérifié le {new Date(at).toLocaleString('fr-FR')}</div>
         </div>

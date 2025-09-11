@@ -14,7 +14,7 @@ use App\Http\Controllers\VodsController;
 use App\Http\Controllers\ContractantController;
 use App\Http\Controllers\ContractorAuthController;
 use App\Http\Controllers\Admin\AdminPasswordController;
-
+use App\Http\Controllers\Contractant\PermisExcavationController;
 use App\Http\Controllers\Admin\VodController as AdminVodController;
 
 // Signatures
@@ -29,7 +29,7 @@ use App\Http\Controllers\Admin\SiteController as AdminSiteController;
 use App\Http\Controllers\Employee\MaterialRequestInboxController as EmpMaterialCtrl;
 use App\Http\Controllers\Contractant\MaterialRequestController as ContractorMaterialCtrl;
 
-/* 🔽 ADDED: controllers for ParkX & Contractor password reset */
+// Password reset controllers
 use App\Http\Controllers\UserPasswordController;
 use App\Http\Controllers\ContractorPasswordController;
 use App\Http\Controllers\Contractant\ContractantVodController;
@@ -47,7 +47,7 @@ Route::get('/login', fn () => Inertia::render('Welcome'))->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.attempt');
 Route::post('/contractor/register', [AuthController::class, 'contractorRegister'])->name('contractor.register');
 
-/* 🔽 ParkX (web) password reset routes */
+// ParkX (web) password reset routes
 Route::get('/password/reset',         [UserPasswordController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('/password/email',        [UserPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
 Route::get('/password/reset/{token}', [UserPasswordController::class, 'showResetForm'])->name('password.reset');
@@ -78,13 +78,12 @@ Route::middleware('auth')->group(function () {
             ->where('status', 'pending')
             ->count();
 
-        /* ✅ ADDED: detect if this user is an admin by email */
         $isAdmin = \App\Models\Admin::where('email', $user->email)->exists();
 
         return Inertia::render('Dashboard', [
             'isResponsible'   => $isResponsible,
             'assignedPending' => $assignedPending,
-            'isAdmin'         => $isAdmin,  // ← passed to frontend
+            'isAdmin'         => $isAdmin,
         ]);
     })->name('dashboard');
 
@@ -110,7 +109,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/vods/{vod}/pdf',          [VodsController::class, 'pdf'])->whereNumber('vod')->name('vods.pdf');
 
     // PPE Requests
-    Route::get('/ppe-requests',            [\App\Http\Controllers\PPERequestController::class, 'index'])->name('ppe-requests.index');
+    Route::get('/ppe-requests', [\App\Http\Controllers\PPERequestController::class, 'index'])->name('ppe-requests.index');
 
     // Logout (web guard)
     Route::post('/logout', function () {
@@ -119,13 +118,8 @@ Route::middleware('auth')->group(function () {
     })->name('logout');
 });
 
-// Public QR verification (for external scanners)
+// Public QR verification
 Route::get('/verify/material/{token}', [\App\Http\Controllers\QrVerifyController::class, 'material'])->name('qr.material');
-
-/*
-|--------------------------------------------------------------------------
-|--------------------------------------------------------------------------
-*/
 
 /*
 |--------------------------------------------------------------------------
@@ -136,7 +130,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', fn () => Inertia::render('Admin/Login'))->name('login');
     Route::post('/login', [AdminController::class, 'login'])->name('login.submit');
 
-    // Admin password reset routes ✅ (unchanged)
+    // Admin password reset routes
     Route::get('/password/reset',         [AdminPasswordController::class, 'showLinkRequestForm'])->name('password.request');
     Route::post('/password/email',        [AdminPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
     Route::get('/password/reset/{token}', [AdminPasswordController::class, 'showResetForm'])->name('password.reset');
@@ -145,8 +139,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/materiel', [AdminMaterialCtrl::class, 'index'])->name('material.index');
 
     Route::middleware([AdminAuth::class])->group(function () {
-        Route::get('/home', [AdminController::class, 'home'])->name('home');            // KPIs / cards
-        Route::get('/',      [AdminController::class, 'dashboard'])->name('dashboard'); // Users/Contractors tabs
+        Route::get('/home', [AdminController::class, 'home'])->name('home');
+        Route::get('/',      [AdminController::class, 'dashboard'])->name('dashboard');
 
         Route::get('vods', [AdminVodController::class, 'index'])->name('vods.index');
         Route::get('vods/{vod}/pdf', [AdminVodController::class, 'pdf'])->name('vods.pdf');
@@ -176,11 +170,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get ('/signatures/{id}/download-signed',   [AdminSignCtrl::class, 'downloadSigned'])->whereNumber('id')->name('signatures.download.signed');
         Route::post('/signatures/{id}/approve',           [AdminSignCtrl::class, 'approve'])->whereNumber('id')->name('signatures.approve');
         Route::post('/signatures/{id}/reject',            [AdminSignCtrl::class, 'reject'])->whereNumber('id')->name('signatures.reject');
-
-        // Pure in-app flow
-        Route::post('/signatures/{id}/assign', [AdminSignCtrl::class, 'assign'])->whereNumber('id')->name('signatures.assign');
-        Route::get ('/signatures/{id}/sign',   [AdminSignCtrl::class, 'signForm'])->whereNumber('id')->name('signatures.sign.form');
-        Route::post('/signatures/{id}/sign',   [AdminSignCtrl::class, 'signSubmit'])->whereNumber('id')->name('signatures.sign.submit');
+        Route::post('/signatures/{id}/assign',            [AdminSignCtrl::class, 'assign'])->whereNumber('id')->name('signatures.assign');
+        Route::get ('/signatures/{id}/sign',              [AdminSignCtrl::class, 'signForm'])->whereNumber('id')->name('signatures.sign.form');
+        Route::post('/signatures/{id}/sign',              [AdminSignCtrl::class, 'signSubmit'])->whereNumber('id')->name('signatures.sign.submit');
 
         // HSE Statistics (Admin)
         Route::get ('/hse-statistics',                        [AdminStatsController::class, 'index'])->name('hse-statistics.index');
@@ -206,7 +198,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| CONTRACTANT (Contractor portal) – guard: contractor
+| CONTRACTANT ROUTES (Contractor Portal)
 |--------------------------------------------------------------------------
 */
 Route::prefix('contractant')->name('contractant.')->group(function () {
@@ -215,52 +207,58 @@ Route::prefix('contractant')->name('contractant.')->group(function () {
     Route::post('/login', [ContractorAuthController::class, 'login'])->name('login.submit');
     Route::post('/logout', [ContractorAuthController::class, 'logout'])->name('logout');
 
-    /* 🔽 Contractor password reset routes (contractant.*) */
+    // Contractor password reset
     Route::get('/password/reset',         [ContractorPasswordController::class, 'showLinkRequestForm'])->name('password.request');
     Route::post('/password/email',        [ContractorPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
     Route::get('/password/reset/{token}', [ContractorPasswordController::class, 'showResetForm'])->name('password.reset');
     Route::post('/password/reset',        [ContractorPasswordController::class, 'reset'])->name('password.update');
 
     Route::middleware('auth:contractor')->group(function () {
-        Route::get('/',                 [ContractantController::class, 'home'])->name('home');
-        Route::get('/documents',        [ContractantController::class, 'documents'])->name('documents');
+        Route::get('/',          [ContractantController::class, 'home'])->name('home');
+        Route::get('/documents', [ContractantController::class, 'documents'])->name('documents');
         Route::get('/depot-signatures', [ContractantController::class, 'depot'])->name('depot');
 
-        // VODS (⚠️ fix names to avoid double "contractant." prefix)
-        Route::get ('/vods',               [ContractantVodController::class, 'index'])->name('vods.index');
-        Route::post('/vods/store',         [ContractantVodController::class, 'store'])->name('vods.store');
-        Route::get ('/vods/history/data',  [ContractantVodController::class, 'historyData'])->name('vods.history.data');
-        Route::get ('/vods/{vod}/pdf',     [ContractantVodController::class, 'pdf'])->whereNumber('vod')->name('vods.pdf');
-        Route::get ('/vods/{vod}/download',[ContractantVodController::class, 'download'])->whereNumber('vod')->name('vods.download');
+        // ✅ Suivi des permis
+        Route::get('/suivi-permis', [PermisExcavationController::class, 'index'])->name('suivi-permis.index');
+        Route::get('/suivi-permis/{id}/pdf', [PermisExcavationController::class, 'downloadPdf'])->name('suivi-permis.download');
 
-        // RESSOURCES MATÉRIEL (Contractant)
-        Route::get ('/materiel',      \App\Http\Controllers\Contractant\MaterialRequestController::class.'@index')
-            ->name('materiel.index');
+        // ✅ Formulaire permis excavation
+        Route::get('/permis-excavation', [PermisExcavationController::class, 'create'])->name('permisexcavation');
+        Route::post('/permis-excavation', [PermisExcavationController::class, 'store'])->name('permisexcavation.store');
 
-        Route::post('/materiel',      \App\Http\Controllers\Contractant\MaterialRequestController::class.'@store')
-            ->name('materiel.store');
+        // ✅ Permis de travail sécuritaire (frontend only for now)
+        Route::get('/permis-de-travail-securitaire', function () {
+            return Inertia::render('Contractant/PermisDeTravailSecuritaire');
+        })->name('permis.travail.securitaire');
 
-        Route::get ('/materiel/{id}', \App\Http\Controllers\Contractant\MaterialRequestController::class.'@show')
-            ->whereNumber('id')
-            ->name('materiel.show');
+        // VODS
+        Route::get('/vods', [ContractantVodController::class, 'index'])->name('vods.index');
+        Route::post('/vods/store', [ContractantVodController::class, 'store'])->name('vods.store');
+        Route::get('/vods/history/data', [ContractantVodController::class, 'historyData'])->name('vods.history.data');
+        Route::get('/vods/{vod}/pdf', [ContractantVodController::class, 'pdf'])->whereNumber('vod')->name('vods.pdf');
+        Route::get('/vods/{vod}/download', [ContractantVodController::class, 'download'])->whereNumber('vod')->name('vods.download');
 
-        // Parapheur (contractor uploads + tracking)
-        Route::get ('/parapheur',                        [ContractorSignCtrl::class, 'index'])->name('parapheur.index');
-        Route::post('/parapheur',                        [ContractorSignCtrl::class, 'store'])->name('parapheur.store');
-        Route::get ('/parapheur/{id}',                   [ContractorSignCtrl::class, 'show'])->whereNumber('id')->name('parapheur.show');
-        Route::get ('/parapheur/{id}/download-original', [ContractorSignCtrl::class, 'downloadOriginal'])->whereNumber('id')->name('parapheur.download.original');
-        Route::get ('/parapheur/{id}/download-signed',   [ContractorSignCtrl::class, 'downloadSigned'])->whereNumber('id')->name('parapheur.download.signed');
-        Route::post('/parapheur/{id}/comment',           [ContractorSignCtrl::class, 'comment'])->whereNumber('id')->name('parapheur.comment');
+        // Materiel
+        Route::get('/materiel', [ContractorMaterialCtrl::class, 'index'])->name('materiel.index');
+        Route::post('/materiel', [ContractorMaterialCtrl::class, 'store'])->name('materiel.store');
+        Route::get('/materiel/{id}', [ContractorMaterialCtrl::class, 'show'])->whereNumber('id')->name('materiel.show');
 
-        // HSE STATISTICS (Contractant)
-        Route::get ('/hse-statistics',               [ContractantStatsController::class, 'index'])->name('hse-statistics.index');
-        Route::post('/hse-statistics',               [ContractantStatsController::class, 'store'])->name('hse-statistics.store');
-        Route::get ('/hse-statistics/{id}/edit',     [ContractantStatsController::class, 'edit'])->whereNumber('id')->name('hse-statistics.edit');
-        Route::put ('/hse-statistics/{id}',          [ContractantStatsController::class, 'update'])->whereNumber('id')->name('hse-statistics.update');
-        Route::get ('/hse-statistics/{id}',          [ContractantStatsController::class, 'show'])->whereNumber('id')->name('hse-statistics.show');
-        Route::get ('/hse-statistics/history',       [ContractantStatsController::class, 'history'])->name('hse-statistics.history');
+        // Parapheur
+        Route::get('/parapheur', [ContractorSignCtrl::class, 'index'])->name('parapheur.index');
+        Route::post('/parapheur', [ContractorSignCtrl::class, 'store'])->name('parapheur.store');
+        Route::get('/parapheur/{id}', [ContractorSignCtrl::class, 'show'])->whereNumber('id')->name('parapheur.show');
+        Route::get('/parapheur/{id}/download-original', [ContractorSignCtrl::class, 'downloadOriginal'])->whereNumber('id')->name('parapheur.download.original');
+        Route::get('/parapheur/{id}/download-signed', [ContractorSignCtrl::class, 'downloadSigned'])->whereNumber('id')->name('parapheur.download.signed');
+        Route::post('/parapheur/{id}/comment', [ContractorSignCtrl::class, 'comment'])->whereNumber('id')->name('parapheur.comment');
 
-        // Contractor logout
-        Route::post('/logout', [ContractorAuthController::class, 'logout'])->name('logout');
+        // HSE Statistics
+        Route::get('/hse-statistics', [ContractantStatsController::class, 'index'])->name('hse-statistics.index');
+        Route::post('/hse-statistics', [ContractantStatsController::class, 'store'])->name('hse-statistics.store');
+        Route::get('/hse-statistics/{id}/edit', [ContractantStatsController::class, 'edit'])->whereNumber('id')->name('hse-statistics.edit');
+        Route::put('/hse-statistics/{id}', [ContractantStatsController::class, 'update'])->whereNumber('id')->name('hse-statistics.update');
+        Route::get('/hse-statistics/{id}', [ContractantStatsController::class, 'show'])->whereNumber('id')->name('hse-statistics.show');
+        Route::get('/hse-statistics/history', [ContractantStatsController::class, 'history'])->name('hse-statistics.history');
     });
 });
+
+

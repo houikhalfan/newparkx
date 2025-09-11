@@ -1,10 +1,8 @@
-// resources/js/Pages/Admin/Material/Index.jsx
 import React from "react";
 import { usePage, Link } from "@inertiajs/react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { Download } from "lucide-react";
 
-/* --- helpers (same style as Signatures) --- */
 function Th({ children, className = "" }) {
   return (
     <th className={`px-4 py-3 text-xs font-medium uppercase tracking-wide ${className}`}>
@@ -17,9 +15,9 @@ function Td({ children, className = "" }) {
 }
 function StatusBadge({ s }) {
   const map = {
-    pending:  { bg: "bg-amber-100",  text: "text-amber-700",  label: "En attente" },
+    pending: { bg: "bg-amber-100", text: "text-amber-700", label: "En attente" },
     accepted: { bg: "bg-emerald-100", text: "text-emerald-700", label: "Acceptée" },
-    rejected: { bg: "bg-rose-100",    text: "text-rose-700",   label: "Refusée"  },
+    rejected: { bg: "bg-rose-100", text: "text-rose-700", label: "Refusée" },
   };
   const m = map[s] || { bg: "bg-gray-100", text: "text-gray-700", label: s || "—" };
   return (
@@ -33,10 +31,11 @@ function StatusBadge({ s }) {
 function fmt(d) {
   try {
     return new Date(d).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "medium" });
-  } catch { return d || "—"; }
+  } catch {
+    return d || "—";
+  }
 }
 
-/* --- friendly download link --- */
 function FileLink({ path, kind = "auto" }) {
   if (!path) return <span className="text-gray-400">—</span>;
   const url = `/storage/${String(path).replace(/^\/+/, "")}`;
@@ -69,12 +68,11 @@ function buildLabelFromExt(p) {
 }
 
 export default function AdminMaterialIndex() {
-  // Expecting: items (Laravel paginator), q & s for filters
   const { items = { data: [], links: [] }, q = "", s = "" } = usePage().props;
 
   return (
     <div className="-m-4 md:-m-8 bg-white min-h-[calc(100vh-3.5rem)] p-4 md:p-8">
-      {/* En-tête (comme Signatures) */}
+      {/* En-tête */}
       <div className="mb-6">
         <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">
           Ressources matériel — demandes
@@ -84,20 +82,21 @@ export default function AdminMaterialIndex() {
         </p>
       </div>
 
-      {/* Filtres (même barre que Signatures) */}
+      {/* Filtres */}
       <form method="GET" className="mb-5 flex flex-wrap items-center gap-2">
         <div className="relative w-full sm:w-80">
           <svg
             className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
             viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
           >
-            <circle cx="11" cy="11" r="7" /><path d="M21 21l-3.6-3.6" />
+            <circle cx="11" cy="11" r="7" />
+            <path d="M21 21l-3.6-3.6" />
           </svg>
           <input
             name="q"
             defaultValue={q}
             className="w-full rounded-lg border border-gray-300 bg-white pl-9 pr-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-gray-400"
-            placeholder="Rechercher (contractant, email, site)…"
+            placeholder="Rechercher (contractant, email, site, matricule)…" // ✅ updated placeholder
           />
         </div>
 
@@ -118,14 +117,15 @@ export default function AdminMaterialIndex() {
         </button>
       </form>
 
-      {/* Tableau (même card-frame et table styling que Signatures) */}
+      {/* Tableau */}
       <div className="card-frame overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-[1100px] w-full text-sm">
+          <table className="min-w-[1200px] w-full text-sm">
             <thead className="sticky top-0 z-10 bg-white">
               <tr className="text-left text-gray-500/90 border-b">
                 <Th>Site</Th>
                 <Th>Contractant</Th>
+                <Th>Matricule</Th> {/* ✅ Added column */}
                 <Th>Statut</Th>
                 <Th>Créé le</Th>
                 <Th className="text-center">Contrôle réglementaire</Th>
@@ -138,7 +138,9 @@ export default function AdminMaterialIndex() {
             <tbody>
               {items.data.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-gray-500">Aucune demande.</td>
+                  <td colSpan={9} className="px-4 py-8 text-center text-gray-500">
+                    Aucune demande.
+                  </td>
                 </tr>
               )}
 
@@ -148,12 +150,11 @@ export default function AdminMaterialIndex() {
                   className={`border-b last:border-0 ${idx % 2 ? "bg-gray-50/40" : ""} hover:bg-gray-50`}
                 >
                   <Td>{row.site?.name ?? "—"}</Td>
-
                   <Td>
                     <div className="font-medium">{row.contractor?.name ?? "—"}</div>
                     <div className="text-xs text-gray-500">{row.contractor?.email || ""}</div>
                   </Td>
-
+                  <Td>{row.matricule || "—"}</Td> {/* ✅ show matricule */}
                   <Td><StatusBadge s={row.status} /></Td>
                   <Td>{fmt(row.created_at)}</Td>
 
@@ -175,7 +176,7 @@ export default function AdminMaterialIndex() {
           </table>
         </div>
 
-        {/* Pagination (même style que Signatures) */}
+        {/* Pagination */}
         {items.links?.length > 0 && (
           <div className="p-4 flex flex-wrap items-center gap-2 justify-end text-sm">
             {items.links.map((l, i) => (
@@ -193,7 +194,6 @@ export default function AdminMaterialIndex() {
         )}
       </div>
 
-      {/* card look */}
       <style>{`
         .card-frame {
           background-color: #ffffff;
@@ -210,7 +210,6 @@ export default function AdminMaterialIndex() {
 
 AdminMaterialIndex.layout = (page) => <AdminLayout>{page}</AdminLayout>;
 
-/* --- extras --- */
 function localizePagination(label) {
   return String(label)
     .replace(/Previous|&laquo;\s*Previous/gi, "Précédent")

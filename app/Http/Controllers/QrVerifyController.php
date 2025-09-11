@@ -20,6 +20,7 @@ class QrVerifyController extends Controller
             'conforme'   => $conforme,
             'site'       => $req?->site?->name,
             'contractor' => $req?->contractor?->name,
+            'matricule'  => $req?->matricule,
             'decided_at' => optional($req?->decided_at)->toDateTimeString(),
             'at'         => now()->toDateTimeString(),
             // if the URL has ?print=1 we auto-open the print dialog

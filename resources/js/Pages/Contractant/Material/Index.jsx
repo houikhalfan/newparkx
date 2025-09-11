@@ -247,7 +247,7 @@ function Card({ row, kind }) {
 function UploadModal({ csrf_token, sites = [], onClose }) {
   const { post, processing, errors, setData, data, reset } = useForm({
     site_id: "",
-    // 4 files
+    matricule: "", // ✅ New field
     controle_reglementaire: null,
     assurance: null,
     habilitation_conducteur: null,
@@ -289,6 +289,7 @@ function UploadModal({ csrf_token, sites = [], onClose }) {
         <form onSubmit={handleSubmit} className="p-5 grid gap-4 md:grid-cols-2">
           <input type="hidden" name="_token" value={csrf_token} />
 
+          {/* Site */}
           <div>
             <label className="text-sm text-gray-700 font-medium">Site *</label>
             <select
@@ -309,22 +310,24 @@ function UploadModal({ csrf_token, sites = [], onClose }) {
             {errors.site_id && <div className="text-red-600 text-xs mt-1">{errors.site_id}</div>}
           </div>
 
-          <FileField
-            label="Contrôle réglementaire *"
-            onChange={(f) => setData("controle_reglementaire", f)}
-            error={errors.controle_reglementaire}
-          />
+          {/* ✅ New Matricule Field */}
+          <div>
+            <label className="text-sm text-gray-700 font-medium">Matricule *</label>
+            <input
+              type="text"
+              required
+              value={data.matricule}
+              onChange={(e) => setData("matricule", e.target.value)}
+              className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Entrez le matricule"
+            />
+            {errors.matricule && <div className="text-red-600 text-xs mt-1">{errors.matricule}</div>}
+          </div>
+
+          <FileField label="Contrôle réglementaire *" onChange={(f) => setData("controle_reglementaire", f)} error={errors.controle_reglementaire} />
           <FileField label="Assurance *" onChange={(f) => setData("assurance", f)} error={errors.assurance} />
-          <FileField
-            label="Habilitation du conducteur *"
-            onChange={(f) => setData("habilitation_conducteur", f)}
-            error={errors.habilitation_conducteur}
-          />
-          <FileField
-            label="Rapports de chantier et conformité *"
-            onChange={(f) => setData("rapports_conformite", f)}
-            error={errors.rapports_conformite}
-          />
+          <FileField label="Habilitation du conducteur *" onChange={(f) => setData("habilitation_conducteur", f)} error={errors.habilitation_conducteur} />
+          <FileField label="Rapports de chantier et conformité *" onChange={(f) => setData("rapports_conformite", f)} error={errors.rapports_conformite} />
 
           <div className="md:col-span-2 flex items-center justify-end gap-3 pt-2">
             <button
@@ -347,6 +350,7 @@ function UploadModal({ csrf_token, sites = [], onClose }) {
     </div>
   );
 }
+
 
 function FileField({ label, onChange, error }) {
   return (
