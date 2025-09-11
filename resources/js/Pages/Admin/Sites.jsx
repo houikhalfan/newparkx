@@ -6,14 +6,12 @@ import Swal from "sweetalert2";
 export default function SitesPage() {
   const { users = [], sites = [], csrf_token, flash = {} } = usePage().props || {};
 
-  // --- keep editable copy of the list
   const [rows, setRows] = useState(mapSitesToRows(sites));
-  // 🔁 auto-resync when server sends new props
+
   useEffect(() => {
     setRows(mapSitesToRows(sites));
   }, [sites]);
 
-  // SweetAlert for server flashes
   useEffect(() => {
     if (flash?.success) {
       Swal.fire({ icon: "success", title: flash.success, timer: 1600, showConfirmButton: false });
@@ -22,8 +20,7 @@ export default function SitesPage() {
     }
   }, [flash]);
 
-  // create form
-  const [createForm, setCreateForm] = useState({ name: "", responsible_user_id: "" });
+  const [createForm, setCreateForm] = useState({ name: "", responsible_user_id: "", responsible_hse_id: "" });
 
   const submitCreate = (e) => {
     e.preventDefault();
@@ -32,13 +29,13 @@ export default function SitesPage() {
       {
         name: createForm.name,
         responsible_user_id: createForm.responsible_user_id || null,
+        responsible_hse_id: createForm.responsible_hse_id || null,
       },
       {
         preserveScroll: true,
         replace: true,
         onSuccess: () => {
-          setCreateForm({ name: "", responsible_user_id: "" });
-          // 🔁 get the latest list only
+          setCreateForm({ name: "", responsible_user_id: "", responsible_hse_id: "" });
           router.reload({ only: ["sites"] });
           Swal.fire({ icon: "success", title: "Site créé", timer: 1200, showConfirmButton: false });
         },
@@ -56,12 +53,12 @@ export default function SitesPage() {
         _token: csrf_token,
         name: row.name,
         responsible_user_id: row.responsible_user_id || null,
+        responsible_hse_id: row.responsible_hse_id || null,
       },
       {
         preserveScroll: true,
         replace: true,
         onSuccess: () => {
-          // 🔁 refresh just the list
           router.reload({ only: ["sites"] });
           Swal.fire({ icon: "success", title: "Site mis à jour", timer: 1200, showConfirmButton: false });
         },
@@ -90,7 +87,6 @@ export default function SitesPage() {
           preserveScroll: true,
           replace: true,
           onSuccess: () => {
-            // 🔁 refresh just the list
             router.reload({ only: ["sites"] });
             Swal.fire({ icon: "success", title: "Site supprimé", timer: 1200, showConfirmButton: false });
           },
@@ -104,14 +100,12 @@ export default function SitesPage() {
     <div className="-m-4 md:-m-8 bg-white min-h-[calc(100vh-3.5rem)] p-4 md:p-8">
       <div className="mb-6">
         <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">Sites</h1>
-        <p className="text-sm md:text-base text-gray-600 mt-1">
-          Gérer la liste des sites et leur responsable.
-        </p>
+        <p className="text-sm md:text-base text-gray-600 mt-1">Gérer la liste des sites et leurs responsables.</p>
       </div>
 
       {/* Create */}
       <div className="rounded-2xl border p-4 mb-6">
-        <form onSubmit={submitCreate} className="grid md:grid-cols-3 gap-3 items-end">
+        <form onSubmit={submitCreate} className="grid md:grid-cols-4 gap-3 items-end">
           <div>
             <label className="block text-sm font-medium mb-1">Nom du site</label>
             <input
@@ -122,8 +116,9 @@ export default function SitesPage() {
               placeholder="Ex: Bengurir"
             />
           </div>
+
           <div>
-            <label className="block text-sm font-medium mb-1">Responsable (optionnel)</label>
+            <label className="block text-sm font-medium mb-1">Responsable de site (optionnel)</label>
             <select
               className="w-full rounded-lg border px-3 py-2"
               value={createForm.responsible_user_id}
@@ -137,6 +132,23 @@ export default function SitesPage() {
               ))}
             </select>
           </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Responsable HSE (optionnel)</label>
+            <select
+              className="w-full rounded-lg border px-3 py-2"
+              value={createForm.responsible_hse_id}
+              onChange={(e) => setCreateForm((f) => ({ ...f, responsible_hse_id: e.target.value }))}
+            >
+              <option value="">— Aucun —</option>
+              {users.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.name} ({u.email})
+                </option>
+              ))}
+            </select>
+          </div>
+
           <div>
             <button className="w-full md:w-auto inline-flex items-center rounded-lg bg-emerald-100 text-emerald-700 px-4 py-2 text-sm font-medium hover:opacity-90">
               Ajouter le site
@@ -148,11 +160,12 @@ export default function SitesPage() {
       {/* List */}
       <div className="card-frame overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-[900px] w-full text-sm">
+          <table className="min-w-[1100px] w-full text-sm">
             <thead className="sticky top-0 z-10 bg-white">
               <tr className="text-left text-gray-500/90 border-b">
                 <Th>Nom</Th>
                 <Th>Responsable</Th>
+                <Th>Responsable HSE</Th>
                 <Th>Employés</Th>
                 <Th className="text-right pr-4">Actions</Th>
               </tr>
@@ -160,38 +173,30 @@ export default function SitesPage() {
             <tbody>
               {rows.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-4 py-8 text-center text-gray-500">
+                  <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
                     Aucun site.
                   </td>
                 </tr>
               )}
 
               {rows.map((r, idx) => (
-                <tr
-                  key={r.id}
-                  className={`border-b last:border-0 ${idx % 2 ? "bg-gray-50/40" : ""}`}
-                >
+                <tr key={r.id} className={`border-b last:border-0 ${idx % 2 ? "bg-gray-50/40" : ""}`}>
                   <Td>
                     <input
                       className="w-full rounded-lg border px-3 py-1.5"
                       value={r.name}
                       onChange={(e) =>
-                        setRows((prev) =>
-                          prev.map((x) => (x.id === r.id ? { ...x, name: e.target.value } : x))
-                        )
+                        setRows((prev) => prev.map((x) => (x.id === r.id ? { ...x, name: e.target.value } : x)))
                       }
                     />
                   </Td>
+
                   <Td>
                     <select
                       className="w-full rounded-lg border px-3 py-1.5"
                       value={r.responsible_user_id}
                       onChange={(e) =>
-                        setRows((prev) =>
-                          prev.map((x) =>
-                            x.id === r.id ? { ...x, responsible_user_id: e.target.value } : x
-                          )
-                        )
+                        setRows((prev) => prev.map((x) => (x.id === r.id ? { ...x, responsible_user_id: e.target.value } : x)))
                       }
                     >
                       <option value="">— Aucun —</option>
@@ -202,6 +207,24 @@ export default function SitesPage() {
                       ))}
                     </select>
                   </Td>
+
+                  <Td>
+                    <select
+                      className="w-full rounded-lg border px-3 py-1.5"
+                      value={r.responsible_hse_id}
+                      onChange={(e) =>
+                        setRows((prev) => prev.map((x) => (x.id === r.id ? { ...x, responsible_hse_id: e.target.value } : x)))
+                      }
+                    >
+                      <option value="">— Aucun —</option>
+                      {users.map((u) => (
+                        <option key={u.id} value={u.id}>
+                          {u.name} ({u.email})
+                        </option>
+                      ))}
+                    </select>
+                  </Td>
+
                   <Td>{r.employees_count}</Td>
                   <td className="py-3 pl-4 pr-4 text-right space-x-2">
                     <button
@@ -241,6 +264,7 @@ function mapSitesToRows(sites) {
     id: s.id,
     name: s.name,
     responsible_user_id: s.manager?.id || "",
+    responsible_hse_id: s.hse_manager?.id || "",
     employees_count: s.employees_count || 0,
   }));
 }
@@ -252,6 +276,7 @@ function Th({ children, className = "" }) {
     </th>
   );
 }
+
 function Td({ children, className = "" }) {
   return <td className={`px-4 py-3 align-middle ${className}`}>{children}</td>;
 }
