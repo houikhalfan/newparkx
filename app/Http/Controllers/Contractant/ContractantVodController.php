@@ -14,7 +14,10 @@ class ContractantVodController extends Controller
     // UI shell (tabs) — renders the React page you created
     public function index(Request $request)
     {
-        return Inertia::render('Contractant/Vods/Index');
+        $contractor = auth('contractor')->user();
+        return Inertia::render('Contractant/Vods/Index', [
+            'contractor' => $contractor
+        ]);
     }
 
     // History data for the React fetcher

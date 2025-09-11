@@ -14,6 +14,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import AdminNotifications from "@/Components/AdminNotifications";
+// import PPENotifications from "@/Components/PPENotifications";
 
 export default function AdminLayout({ children }) {
 const { csrf_token, admin } = usePage().props || {};
@@ -104,6 +105,18 @@ const adminEmail = admin?.email ?? "";
   href: route("admin.hse-statistics.index"),
   match: "^/admin/hse-statistics",
   Icon: BarChart3,
+},
+{
+  label: "Documents",
+  href: route("admin.documents.index"),
+  match: "^/admin/documents",
+  Icon: Folder,
+},
+{
+  label: "Demandes EPI",
+  href: route("admin.ppe-requests.index"),
+  match: "^/admin/ppe-requests",
+  Icon: Package,
 },
 
   ];
@@ -270,6 +283,7 @@ const adminEmail = admin?.email ?? "";
 
               {/* notifications */}
               <AdminNotifications />
+              {/* <PPENotifications /> */}
 
               {/* user menu */}
               <div className="relative" ref={menuRef}>

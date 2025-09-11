@@ -42,6 +42,7 @@ class SignatureRequestController extends Controller
             ],
             'sites'       => $sites,
             'csrf_token'  => csrf_token(),
+            'contractor'  => $contractor,
         ]);
     }
 
@@ -92,6 +93,7 @@ class SignatureRequestController extends Controller
             'req'                 => $sr,
             'can_download_signed' => filled($sr->signed_path),
             'csrf_token'          => csrf_token(),
+            'contractor'          => $contractor,
         ]);
     }
 

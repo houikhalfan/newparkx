@@ -300,12 +300,12 @@ export default function HseStatisticsShow({ statistics, source }) {
                                         <div key={key} className="flex items-center justify-between p-3 bg-white rounded border">
                                             <span className="text-sm text-gray-700">{label}</span>
                                             {statistics[key] ? (
-                                                <Link
+                                                <a
                                                     href={route('admin.hse-statistics.download', [statistics.id, key])}
                                                     className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
                                                 >
                                                     Télécharger
-                                                </Link>
+                                                </a>
                                             ) : (
                                                 <span className="text-xs text-gray-400">Non fourni</span>
                                             )}

@@ -367,19 +367,22 @@ class StatisticsController extends Controller
 
     public function show($id)
     {
-        $statistic = HseStat::where('user_id', Auth::guard('contractor')->id())
+        $contractor = Auth::guard('contractor')->user();
+        $statistic = HseStat::where('user_id', $contractor->id)
             ->where('id', $id)
             ->firstOrFail();
 
         return Inertia::render('Contractant/HseStatistics/Show', [
-            'statistic' => $statistic
+            'statistic' => $statistic,
+            'contractor' => $contractor
         ]);
     }
 
     public function edit($id)
     {
+        $contractor = Auth::guard('contractor')->user();
         $sites = Site::all();
-        $hseStat = HseStat::where('user_id', Auth::guard('contractor')->id())
+        $hseStat = HseStat::where('user_id', $contractor->id)
             ->where('id', $id)
             ->firstOrFail();
             
@@ -388,7 +391,8 @@ class StatisticsController extends Controller
             
         return Inertia::render('Contractant/HseStatistics/Edit', [
             'sites' => $sites,
-            'hseStat' => $hseStat
+            'hseStat' => $hseStat,
+            'contractor' => $contractor
         ]);
     }
 
@@ -409,6 +413,54 @@ class StatisticsController extends Controller
                 ->limit(200)
                 ->get(),
             'contractor' => $contractor
+        ]);
+    }
+
+    public function download(Request $request, $id, $field)
+    {
+        $contractor = Auth::guard('contractor')->user();
+        
+        // Security check: ensure contractor can only download their own files
+        $statistics = HseStat::where('user_id', $contractor->id)->where('id', $id)->firstOrFail();
+        
+        // Define the allowed file fields
+        $allowedFields = [
+            'accident_report', 'inspection_report', 'inspection_generales_report',
+            'inspection_engins_report', 'hygiene_base_vie_report', 'outils_electroportatifs_report',
+            'inspection_electriques_report', 'extincteurs_report', 'protections_collectives_report',
+            'epi_inspections_report', 'observations_hse_report', 'actions_correctives_cloturees_report'
+        ];
+
+        // Check if the field is allowed
+        if (!in_array($field, $allowedFields)) {
+            abort(404, 'Fichier non trouvé');
+        }
+
+        // Get the file path from the statistics record
+        $filePath = $statistics->$field;
+        
+        if (!$filePath) {
+            abort(404, 'Fichier non trouvé');
+        }
+
+        // Build the full file path
+        $fullPath = storage_path('app/public/' . $filePath);
+        
+        if (!file_exists($fullPath)) {
+            abort(404, 'Fichier non trouvé');
+        }
+
+        // Get file info
+        $fileInfo = pathinfo($fullPath);
+        $mimeType = mime_content_type($fullPath);
+        
+        // Generate a user-friendly filename
+        $originalFilename = $fileInfo['basename'];
+        $downloadFilename = $statistics->site . '_' . $field . '_' . $originalFilename;
+
+        return response()->download($fullPath, $downloadFilename, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'attachment; filename="' . $downloadFilename . '"'
         ]);
     }
 }

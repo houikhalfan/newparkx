@@ -76,6 +76,8 @@ export default function AdminNotifications() {
         switch (type) {
             case 'hse_statistics':
                 return <CheckCircle className="h-4 w-4 text-green-500" />;
+            case 'ppe_request':
+                return <AlertCircle className="h-4 w-4 text-orange-500" />;
             default:
                 return <AlertCircle className="h-4 w-4 text-blue-500" />;
         }

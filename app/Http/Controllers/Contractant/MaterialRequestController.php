@@ -52,6 +52,7 @@ class MaterialRequestController extends Controller
             'sites'      => $sites,
             'csrf_token' => csrf_token(),
             'swal'       => session('swal'),
+            'contractor' => $c,
         ]);
     }
 

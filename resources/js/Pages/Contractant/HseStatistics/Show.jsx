@@ -192,6 +192,41 @@ export default function HseStatisticsShow({ statistic }) {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* File Downloads */}
+                            <div className="bg-gray-50 p-6 rounded-lg">
+                                <h3 className="text-lg font-semibold text-gray-900 mb-4">Rapports Téléchargés</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {[
+                                        { key: 'accident_report', label: 'Rapport d\'Accident' },
+                                        { key: 'inspection_report', label: 'Rapport d\'Inspection Général' },
+                                        { key: 'inspection_generales_report', label: 'Rapport Inspections Générales' },
+                                        { key: 'inspection_engins_report', label: 'Rapport Inspections Engins' },
+                                        { key: 'hygiene_base_vie_report', label: 'Rapport Hygiène Base de Vie' },
+                                        { key: 'outils_electroportatifs_report', label: 'Rapport Outils Électroportatifs' },
+                                        { key: 'inspection_electriques_report', label: 'Rapport Inspections Électriques' },
+                                        { key: 'extincteurs_report', label: 'Rapport Extincteurs' },
+                                        { key: 'protections_collectives_report', label: 'Rapport Protections Collectives' },
+                                        { key: 'epi_inspections_report', label: 'Rapport EPI Inspections' },
+                                        { key: 'observations_hse_report', label: 'Rapport Observations HSE' },
+                                        { key: 'actions_correctives_cloturees_report', label: 'Rapport Actions Correctives' },
+                                    ].map(({ key, label }) => (
+                                        <div key={key} className="flex items-center justify-between p-3 bg-white rounded border">
+                                            <span className="text-sm text-gray-700">{label}</span>
+                                            {statistic[key] ? (
+                                                <a
+                                                    href={route('contractant.hse-statistics.download', [statistic.id, key])}
+                                                    className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                                                >
+                                                    Télécharger
+                                                </a>
+                                            ) : (
+                                                <span className="text-xs text-gray-400">Non fourni</span>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

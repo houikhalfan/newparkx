@@ -111,6 +111,15 @@ Route::middleware('auth')->group(function () {
 
     // PPE Requests
     Route::get('/ppe-requests',            [\App\Http\Controllers\PPERequestController::class, 'index'])->name('ppe-requests.index');
+    Route::post('/ppe-requests',           [\App\Http\Controllers\PPERequestController::class, 'store'])->name('ppe-requests.store');
+    Route::get('/ppe-requests/history',    [\App\Http\Controllers\PPERequestController::class, 'history'])->name('ppe-requests.history');
+    Route::get('/ppe-requests/{ppeRequest}', [\App\Http\Controllers\PPERequestController::class, 'show'])->whereNumber('ppeRequest')->name('ppe-requests.show');
+    Route::get('/ppe-requests/{ppeRequest}/edit', [\App\Http\Controllers\PPERequestController::class, 'edit'])->whereNumber('ppeRequest')->name('ppe-requests.edit');
+    Route::put('/ppe-requests/{ppeRequest}', [\App\Http\Controllers\PPERequestController::class, 'update'])->whereNumber('ppeRequest')->name('ppe-requests.update');
+
+    // Documents (for regular ParkX users)
+    Route::get('/documents',               [\App\Http\Controllers\UserController::class, 'documents'])->name('documents');
+    Route::get('/documents/{document}/download', [\App\Http\Controllers\UserController::class, 'downloadDocument'])->whereNumber('document')->name('documents.download');
 
     // Logout (web guard)
     Route::post('/logout', function () {
@@ -190,6 +199,63 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get ('/hse-statistics/export',                 [AdminStatsController::class, 'export'])->name('hse-statistics.export');
         Route::get ('/hse-statistics/export-excel',           [AdminStatsController::class, 'exportExcel'])->name('hse-statistics.export-excel');
         
+        // Documents (Admin)
+        Route::get ('/documents',                         [\App\Http\Controllers\Admin\DocumentController::class, 'index'])->name('documents.index');
+        Route::get ('/documents/create',                      [\App\Http\Controllers\Admin\DocumentController::class, 'create'])->name('documents.create');
+        Route::post('/documents',                             [\App\Http\Controllers\Admin\DocumentController::class, 'store'])->name('documents.store');
+        Route::get ('/documents/{document}',                  [\App\Http\Controllers\Admin\DocumentController::class, 'show'])->whereNumber('document')->name('documents.show');
+        Route::get ('/documents/{document}/edit',             [\App\Http\Controllers\Admin\DocumentController::class, 'edit'])->whereNumber('document')->name('documents.edit');
+        Route::put ('/documents/{document}',                  [\App\Http\Controllers\Admin\DocumentController::class, 'update'])->whereNumber('document')->name('documents.update');
+        Route::delete('/documents/{document}',                [\App\Http\Controllers\Admin\DocumentController::class, 'destroy'])->whereNumber('document')->name('documents.destroy');
+        Route::get ('/documents/{document}/download',         [\App\Http\Controllers\Admin\DocumentController::class, 'download'])->whereNumber('document')->name('documents.download');
+        Route::post('/documents/bulk-delete',                 [\App\Http\Controllers\Admin\DocumentController::class, 'bulkDelete'])->name('documents.bulk-delete');
+
+        // PPE Requests Management
+        Route::get ('/ppe-requests',                         [\App\Http\Controllers\Admin\PPERequestController::class, 'index'])->name('ppe-requests.index');
+        Route::get ('/ppe-requests/{ppeRequest}',            [\App\Http\Controllers\Admin\PPERequestController::class, 'show'])->whereNumber('ppeRequest')->name('ppe-requests.show');
+        Route::put ('/ppe-requests/{ppeRequest}',            [\App\Http\Controllers\Admin\PPERequestController::class, 'update'])->whereNumber('ppeRequest')->name('ppe-requests.update');
+        Route::get ('/ppe-requests/{ppeRequest}/stats',      [\App\Http\Controllers\Admin\PPERequestController::class, 'stats'])->whereNumber('ppeRequest')->name('ppe-requests.stats');
+        Route::get ('/ppe-requests/recent',                  [\App\Http\Controllers\Admin\PPERequestController::class, 'recent'])->name('ppe-requests.recent');
+        
+        // Debug route to check admin session
+        Route::get('/debug-admin', function() {
+            return response()->json([
+                'admin_id' => session('admin_id'),
+                'admin' => \App\Models\Admin::find(session('admin_id')),
+                'session_all' => session()->all(),
+                'is_authenticated' => session()->has('admin_id'),
+            ]);
+        });
+        
+        // Simple test route to create a document manually
+        Route::get('/test-create-doc', function() {
+            $admin = \App\Models\Admin::first();
+            if (!$admin) {
+                return response()->json(['error' => 'No admin found']);
+            }
+            
+            try {
+                $doc = \App\Models\Document::create([
+                    'title' => 'Test Document',
+                    'description' => 'Test description',
+                    'filename' => 'test.txt',
+                    'original_filename' => 'test.txt',
+                    'file_path' => 'documents/test.txt',
+                    'file_type' => 'text/plain',
+                    'file_size' => 100,
+                    'visibility' => ['public'],
+                    'admin_id' => $admin->id,
+                    'full_name' => $admin->email,
+                    'category' => 'Test',
+                    'meta' => ['test' => true],
+                ]);
+                
+                return response()->json(['success' => true, 'document_id' => $doc->id]);
+            } catch (\Exception $e) {
+                return response()->json(['error' => $e->getMessage()]);
+            }
+        });
+        
         // Notifications
         Route::get ('/notifications',                         [App\Http\Controllers\Admin\NotificationController::class, 'index'])->name('notifications.index');
         Route::post('/notifications/{id}/read',               [App\Http\Controllers\Admin\NotificationController::class, 'markAsRead'])->whereNumber('id')->name('notifications.read');
@@ -224,6 +290,7 @@ Route::prefix('contractant')->name('contractant.')->group(function () {
     Route::middleware('auth:contractor')->group(function () {
         Route::get('/',                 [ContractantController::class, 'home'])->name('home');
         Route::get('/documents',        [ContractantController::class, 'documents'])->name('documents');
+        Route::get('/documents/{document}/download', [ContractantController::class, 'downloadDocument'])->whereNumber('document')->name('documents.download');
         Route::get('/depot-signatures', [ContractantController::class, 'depot'])->name('depot');
 
         // VODS (⚠️ fix names to avoid double "contractant." prefix)
@@ -264,3 +331,4 @@ Route::prefix('contractant')->name('contractant.')->group(function () {
         Route::post('/logout', [ContractorAuthController::class, 'logout'])->name('logout');
     });
 });
+
