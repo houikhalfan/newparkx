@@ -77,12 +77,15 @@ Route::middleware(['auth'])->prefix('responsible-site')->group(function () {
         ->name('responsibleSite.permis.index');
     Route::get('/permis/{permisExcavation}', [\App\Http\Controllers\ResponsibleSite\PermisController::class, 'show'])
         ->name('responsibleSite.permis.show');
-Route::post('/responsible-site/permis/{permis}/sign', 
-    [App\Http\Controllers\ResponsibleSite\PermisController::class, 'sign']
-)->name('responsibleSite.permis.sign');
+
+
+// POST route to save the form
+Route::post('responsible-site/permis/{permis}/sign', [PermisController::class, 'storeSignature'])
+    ->name('responsibleSite.permis.storeSignature');
 
 });
-
+Route::post('/responsible-site/permis/{permis}/sign', [PermisController::class, 'sign'])
+    ->name('responsibleSite.permis.sign');
 Route::get('/responsible-site/suivi-permis', [ResponsibleSiteController::class, 'index'])
     ->name('responsible.suivi-permis.index');
     // Dashboard

@@ -27,27 +27,70 @@ public function show(PermisExcavation $permisExcavation)
 {
     return Inertia::render('ResponsibleSite/PermisSign', [
         'permis' => $permisExcavation->load('site'),
-        'sites'  => \App\Models\Site::all(['id','name']), // 👈 add this
     ]);
 }
 
-   public function sign(Request $request, PermisExcavation $permis)
+
+public function sign(Request $request, PermisExcavation $permis)
 {
-    $data = $request->validate([
-        'cm_parkx_nom' => 'required|string|max:255',
-        'cm_parkx_date' => 'required|date',
-        'cm_parkx_file' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+    $request->validate([
+        'cm_parkx_nom'  => 'nullable|string',
+        'cm_parkx_date' => 'nullable|date',
+        'cm_parkx_file' => 'nullable|file|mimes:jpg,png',
     ]);
 
-    // upload si fichier
-    if ($request->hasFile('cm_parkx_file')) {
-        $data['cm_parkx_file'] = $request->file('cm_parkx_file')->store('signatures', 'public');
+    $data = [];
+
+    if ($request->filled('cm_parkx_nom')) {
+        $data['cm_parkx_nom'] = $request->cm_parkx_nom;
     }
+
+    if ($request->filled('cm_parkx_date')) {
+        $data['cm_parkx_date'] = $request->cm_parkx_date;
+    }
+
+    if ($request->hasFile('cm_parkx_file')) {
+        $data['cm_parkx_file'] = $request->file('cm_parkx_file')
+            ->store('signatures', 'public');
+    }
+
+    // ⚡ On met à jour seulement ces champs
+    $data['status'] = 'en_cours';
 
     $permis->update($data);
 
     return redirect()->route('responsibleSite.permis.index')
-        ->with('success', 'Le permis a été signé avec succès.');
+        ->with('success', 'Signature enregistrée avec succès.');
+}
+public function storeSignature(Request $request, PermisExcavation $permis)
+{
+    $request->validate([
+        'cm_parkx_nom'  => 'nullable|string',
+        'cm_parkx_date' => 'nullable|date',
+        'cm_parkx_file' => 'nullable|file|mimes:jpg,png',
+    ]);
+
+    $data = [];
+
+    if ($request->filled('cm_parkx_nom')) {
+        $data['cm_parkx_nom'] = $request->cm_parkx_nom;
+    }
+
+    if ($request->filled('cm_parkx_date')) {
+        $data['cm_parkx_date'] = $request->cm_parkx_date;
+    }
+
+    if ($request->hasFile('cm_parkx_file')) {
+        $data['cm_parkx_file'] = $request->file('cm_parkx_file')
+            ->store('signatures', 'public');
+    }
+
+    // ⚡ N’update QUE ces champs + statut
+$data['status'] = 'en_cours';
+    $permis->update($data);
+
+    return redirect()->route('responsibleSite.permis.index')
+        ->with('success', 'Signature enregistrée avec succès.');
 }
 
 
