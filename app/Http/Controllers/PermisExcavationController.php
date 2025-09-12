@@ -23,8 +23,15 @@ class PermisExcavationController extends Controller
         }
 
         // Add unique permit numbers
-        $data['numero_permis_general'] = now()->format('Y');
-        $data['numero_permis'] = strtoupper(Str::random(8));
+      // Numéros uniques
+if (empty($validated['numero_permis_general'])) {
+    // fallback: if user did not fill it, use current year
+    $validated['numero_permis_general'] = now()->format('Y');
+}
+
+// always generate unique numero_permis
+$validated['numero_permis'] = 'PX-' . strtoupper(Str::slug($validated['contractant'], '-')) . '-' . now()->format('Ymd') . '-' . rand(1000, 9999);
+
 
         // Create record
         $permis = PermisExcavation::create($data);

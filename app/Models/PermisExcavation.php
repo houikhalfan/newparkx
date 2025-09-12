@@ -42,11 +42,11 @@ class PermisExcavation extends Model
         'sig_resp_hse_nom',
         'sig_resp_hse_date',
         'sig_resp_hse_file',
-
-        // newly added
+'cm_parkx_nom',
+        'cm_parkx_date',
+        'cm_parkx_file',
+        // useful tracking
         'status',
-        'pdf_original',
-        'pdf_signed',
         'commentaire',
     ];
 
@@ -61,6 +61,7 @@ class PermisExcavation extends Model
         'equip_non_requis' => 'boolean',
         'aucun_commentaire' => 'boolean',
     ];
+
     public function site()
     {
         return $this->belongsTo(Site::class, 'site_id');

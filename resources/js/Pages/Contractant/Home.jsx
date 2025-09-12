@@ -99,7 +99,6 @@ export default function ContractorHome() {
 
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-white overflow-hidden">
-        {/* Background shape */}
         <div className="absolute top-0 left-1/3 w-72 h-72 bg-blue-500/30 blur-[120px] rounded-full" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/20 blur-[150px] rounded-full" />
 
@@ -189,20 +188,22 @@ export default function ContractorHome() {
                     Demandes de Permis
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* ✅ Create excavation permit */}
                     <Link
-                      href={route("contractant.permisexcavation")}
+                      href={route("contractant.permisexcavation.create")}
                       className="flex flex-col items-center justify-center rounded-xl border bg-white hover:shadow-lg p-6 transition"
                       onClick={() => setShowSignatureOptions(false)}
                     >
                       <ClipboardList className="w-10 h-10 text-green-600 mb-3" />
                       <h3 className="text-md font-semibold text-gray-900 text-center">
-                        Permis d'excavation
+                        Nouveau Permis d'excavation
                       </h3>
                       <p className="text-xs text-gray-500 mt-1 text-center">
-                        Déposez vos demandes de permis.
+                        Déposez vos nouvelles demandes de permis.
                       </p>
                     </Link>
 
+                    {/* Secure Work Permit (frontend only for now) */}
                     <Link
                       href="/contractant/permis-de-travail-securitaire"
                       className="flex flex-col items-center justify-center rounded-xl border bg-white hover:shadow-lg p-6 transition"
@@ -235,7 +236,7 @@ export default function ContractorHome() {
             <h3 className="font-semibold text-lg">Contacts</h3>
             <p className="mt-2 text-sm text-gray-600">
               Administration ParkX —{" "}
-              <a href="mailto:admin@parkx." className="text-blue-600">
+              <a href="mailto:admin@parkx.test" className="text-blue-600">
                 admin@parkx.test
               </a>
             </p>

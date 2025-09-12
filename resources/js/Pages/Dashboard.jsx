@@ -100,50 +100,47 @@ export default function Dashboard() {
         category: 'Formation',
         badge: 'Hot'
       },
-      {
-        title: 'Papiers à signer',
-        description: 'Signez et gérez vos documents officiels',
-        icon: PenTool,
-        href: '/signatures',
-        gradient: 'from-orange-500 to-red-500',
-        lightGradient: 'from-orange-50 to-red-50',
-        stats: 'Documents en attente',
-        trend: 'Urgent',
-        category: 'Administration',
-        badge: 'Important'
-      },
-      {
-        title: 'Matériel',
-        description: 'Gérez et suivez vos demandes de matériel',
-        icon: Truck,
-        href: '/materiel',
-        gradient: 'from-indigo-500 to-purple-500',
-        lightGradient: 'from-indigo-50 to-purple-50',
-        stats: 'Demandes de matériel',
-        trend: '+3%',
-        category: 'Équipements',
-        badge: 'Essentiel'
-      },
+     
     ],
     []
   );
 
+  /** HSE Responsable cards */
+const hseResponsableCards = useMemo(
+  () => [
+    {
+      title: 'Signatures HSE',
+      description: 'Validez les permis et documents en attente de signature HSE',
+      icon: Shield, // or FileSignature if you prefer
+      href: '/hse-signatures',
+      badge: assignedPending,
+      gradient: 'from-green-500 to-emerald-500',
+      lightGradient: 'from-green-50 to-emerald-50',
+      stats: 'Documents à signer',
+      trend: assignedPending > 0 ? 'Urgent' : 'À jour',
+      category: 'HSE',
+      priority: assignedPending > 0 ? 'high' : 'normal'
+    }
+  ],
+  [assignedPending]
+);
+
   /** Responsable cards */
   const responsableCards = useMemo(
     () => [
-      {
-        title: 'Papiers assignés',
-        description: 'Suivez les documents à signer',
-        icon: FileSignature,
-        href: '/signatures',
-        badge: assignedPending,
-        gradient: 'from-orange-500 to-red-500',
-        lightGradient: 'from-orange-50 to-red-50',
-        stats: 'En attente de signature',
-        trend: assignedPending > 0 ? 'Urgent' : 'À jour',
-        category: 'Administration',
-        priority: assignedPending > 0 ? 'high' : 'normal'
-      },
+     {
+  title: 'Papiers assignés',
+  description: 'Suivez les documents à signer',
+  icon: FileSignature,
+  href: '/responsible-site/suivi-permis',   // 👈 new route
+  badge: assignedPending,
+  gradient: 'from-orange-500 to-red-500',
+  lightGradient: 'from-orange-50 to-red-50',
+  stats: 'En attente de signature',
+  trend: assignedPending > 0 ? 'Urgent' : 'À jour',
+  category: 'Administration',
+  priority: assignedPending > 0 ? 'high' : 'normal'
+},
       {
         title: 'Ressources Matérielles',
         description: 'Gérez et suivez vos ressources matérielles',
@@ -161,10 +158,22 @@ export default function Dashboard() {
     [assignedPending, materialPending]
   );
 
-  const cards = useMemo(
-    () => (isResponsible ? [...baseCards, ...responsableCards] : baseCards),
-    [baseCards, responsableCards, isResponsible]
-  );
+ const { isHseResponsible = false } = usePage().props || {};
+
+const cards = useMemo(() => {
+  let all = [...baseCards];
+
+  if (isResponsible) {
+    all = [...all, ...responsableCards];
+  }
+
+  if (isHseResponsible) {
+    all = [...all, ...hseResponsableCards];
+  }
+
+  return all;
+}, [baseCards, responsableCards, hseResponsableCards, isResponsible, isHseResponsible]);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50">

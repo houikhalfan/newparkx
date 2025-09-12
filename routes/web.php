@@ -16,11 +16,14 @@ use App\Http\Controllers\ContractorAuthController;
 use App\Http\Controllers\Admin\AdminPasswordController;
 use App\Http\Controllers\Contractant\PermisExcavationController;
 use App\Http\Controllers\Admin\VodController as AdminVodController;
+use App\Http\Controllers\ResponsibleSite\PermisController;
 
 // Signatures
 use App\Http\Controllers\Contractant\SignatureRequestController as ContractorSignCtrl;
 use App\Http\Controllers\Admin\SignatureRequestController as AdminSignCtrl;
 use App\Http\Controllers\Employee\SignatureInboxController;
+use App\Http\Controllers\Employee\ResponsibleSiteController;
+
 
 // Sites
 use App\Http\Controllers\Admin\SiteController as AdminSiteController;
@@ -68,10 +71,24 @@ Route::middleware('auth')->group(function () {
         Route::post('/{id}/reject',           [EmpMaterialCtrl::class, 'reject'])->whereNumber('id')->name('reject');
         Route::get ('/{id}/download/{field}', [EmpMaterialCtrl::class, 'download'])->whereNumber('id')->name('download');
     });
+// routes/web.php
+Route::middleware(['auth'])->prefix('responsible-site')->group(function () {
+    Route::get('/permis', [\App\Http\Controllers\ResponsibleSite\PermisController::class, 'index'])
+        ->name('responsibleSite.permis.index');
+    Route::get('/permis/{permisExcavation}', [\App\Http\Controllers\ResponsibleSite\PermisController::class, 'show'])
+        ->name('responsibleSite.permis.show');
+Route::post('/responsible-site/permis/{permis}/sign', 
+    [App\Http\Controllers\ResponsibleSite\PermisController::class, 'sign']
+)->name('responsibleSite.permis.sign');
 
+});
+
+Route::get('/responsible-site/suivi-permis', [ResponsibleSiteController::class, 'index'])
+    ->name('responsible.suivi-permis.index');
     // Dashboard
     Route::get('/dashboard', function () {
         $user = auth()->user();
+$isHseResponsible = \App\Models\Site::where('responsible_hse_id', $user->id)->exists();
 
         $isResponsible = \App\Models\Site::where('responsible_user_id', $user->id)->exists();
         $assignedPending = \App\Models\SignatureRequest::where('assigned_user_id', $user->id)
@@ -82,6 +99,7 @@ Route::middleware('auth')->group(function () {
 
         return Inertia::render('Dashboard', [
             'isResponsible'   => $isResponsible,
+            'isHseResponsible' => $isHseResponsible,
             'assignedPending' => $assignedPending,
             'isAdmin'         => $isAdmin,
         ]);
@@ -289,13 +307,22 @@ Route::prefix('contractant')->name('contractant.')->group(function () {
         Route::get('/documents/{document}/download', [ContractantController::class, 'downloadDocument'])->whereNumber('document')->name('documents.download');
         Route::get('/depot-signatures', [ContractantController::class, 'depot'])->name('depot');
 
-        // ✅ Suivi des permis
-        Route::get('/suivi-permis', [PermisExcavationController::class, 'index'])->name('suivi-permis.index');
-        Route::get('/suivi-permis/{id}/pdf', [PermisExcavationController::class, 'downloadPdf'])->name('suivi-permis.download');
+// ✅ Suivi des permis
+Route::get('/suivi-permis', [PermisExcavationController::class, 'index'])
+    ->name('suivi-permis.index');
 
-        // ✅ Formulaire permis excavation
-        Route::get('/permis-excavation', [PermisExcavationController::class, 'create'])->name('permisexcavation');
-        Route::post('/permis-excavation', [PermisExcavationController::class, 'store'])->name('permisexcavation.store');
+// ✅ Création d’un nouveau permis
+Route::get('/permis-excavation/create', [PermisExcavationController::class, 'create'])
+    ->name('permisexcavation.create');
+
+// ✅ Soumission (store)
+Route::post('/permis-excavation', [PermisExcavationController::class, 'store'])
+    ->name('permisexcavation.store');
+
+// ✅ Consultation (lecture seule)
+Route::get('/permis-excavation/{permisExcavation}', [PermisExcavationController::class, 'show'])
+    ->name('permisexcavation.show');
+
 
         // ✅ Permis de travail sécuritaire (frontend only for now)
         Route::get('/permis-de-travail-securitaire', function () {

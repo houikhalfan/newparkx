@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { usePage, useForm } from "@inertiajs/react";
 import { motion, AnimatePresence } from "framer-motion";
-import ContractantLayout from "@/Pages/ContractantLayout";
+import DashboardLayout from '@/Pages/DashboardLayout';
 
 /* --------------------------- UI building blocks --------------------------- */
 const BRAND = "#0E8A5D"; // ParkX green
@@ -146,18 +146,15 @@ function SignaturePicker({ id, label, value, onChange, disabled, error }) {
 }
 
 /* ================================= PAGE ================================== */
-export default function PermisExcavation() {
-  const {
-    auth,
-    sites = [],
-    flash,
-    permis = null,
-    readonly = false,
-    showFermeture = false,
-        showSignatureResponsableSite = false 
+export default function PermisSign() {
+  const { permis = null, flash, contractor = null, sites = [] } = usePage().props || {};
 
-  } = usePage().props || {};
-  const contractor = auth?.contractor;
+  const readonly = false;  // 👈 allow form submission
+  const showSignatureResponsableSite = true; // 👈 site responsible can sign
+  const contractorName = contractor && contractor.name ? contractor.name : "GENERIC";
+  const showFermeture = false;
+
+
 
   /* ------------------------------ Options ------------------------------ */
   const optExcavationEst = useMemo(
@@ -238,7 +235,6 @@ export default function PermisExcavation() {
   );
 
   /* ------------------------------ Helpers ------------------------------ */
-  const contractorName = contractor && contractor.name ? contractor.name : "GENERIC";
 
   function generatePermitNumber(contractorName = "GENERIC") {
     const date = new Date();
@@ -430,29 +426,25 @@ export default function PermisExcavation() {
     return true;
   };
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    if (readonly) return;
-    if (!validateForm()) return;
+const onSubmit = (e) => {
+  e.preventDefault();
+  if (!validateForm()) return;
 
-    const filtered = Object.fromEntries(
-      Object.entries(data).filter(([k]) => !k.startsWith("ferm_"))
-    );
+  post(route("responsibleSite.permis.sign", permis.id), {
+    data,
+    forceFormData: true,
+    onSuccess: () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    },
+  });
+};
 
-    post(route("contractant.permisexcavation.store"), {
-      data: filtered,
-      forceFormData: true,
-      onSuccess: () => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      },
-    });
-  };
 
   const logoSrc = "/images/logo.png";
 
   /* ----------------------------------- UI ---------------------------------- */
-  return (
-    <ContractantLayout contractor={contractor}>
+return (
+  <DashboardLayout>
       <div className="mx-auto max-w-6xl">
         {/* Header */}
         <div className="mb-6 rounded-2xl border border-gray-200 bg-white shadow-lg overflow-hidden">
@@ -509,6 +501,7 @@ export default function PermisExcavation() {
         </AnimatePresence>
 
         <form onSubmit={onSubmit} className="space-y-6">
+              <fieldset disabled>
           {/* IDENTIFICATION */}
           <FormCard title="Identification">
             <Row label="Endroit / Plan">
@@ -797,7 +790,7 @@ export default function PermisExcavation() {
                   />
                   <FieldError>{errors.proprietaire_nom}</FieldError>
                 </div>
-
+  
                 <SignaturePicker
                   id="prop_sig"
                   label="Signature (JPG/PNG)"
@@ -925,7 +918,7 @@ export default function PermisExcavation() {
                 <FieldError>{errors.sig_resp_hse_date}</FieldError>
               </div>
             </Row>
-
+  </fieldset>
             {/* ParkX placeholders (disabled) */}
           <Row label="Construction manager ParkX">
   <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
@@ -1136,20 +1129,19 @@ export default function PermisExcavation() {
           )}
 
           {/* ACTIONS */}
-          {!readonly && (
-            <div className="flex items-center justify-end gap-3 pb-2">
-              <button
-                type="submit"
-                disabled={processing}
-                className="rounded-md px-5 py-2 text-sm font-semibold text-white shadow transition disabled:opacity-60"
-                style={{ backgroundColor: BRAND }}
-              >
-                {processing ? "Envoi…" : "Soumettre"}
-              </button>
-            </div>
-          )}
+<div className="flex items-center justify-end gap-3 pb-2">
+  <button
+    type="submit"
+    disabled={processing}
+    className="rounded-md px-5 py-2 text-sm font-semibold text-white shadow transition disabled:opacity-60"
+    style={{ backgroundColor: BRAND }}
+  >
+    {processing ? "Envoi…" : "Soumettre"}
+  </button>
+</div>
+
         </form>
       </div>
-    </ContractantLayout>
+    </DashboardLayout>
   );
 }
