@@ -1,6 +1,27 @@
 import React, { useState } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+    FileText, 
+    Upload, 
+    X, 
+    Save, 
+    ArrowLeft, 
+    Eye, 
+    EyeOff, 
+    Users, 
+    Shield, 
+    Building2, 
+    CheckCircle, 
+    AlertCircle,
+    Sparkles,
+    Zap,
+    File,
+    Image,
+    FileSpreadsheet,
+    FileImage
+} from 'lucide-react';
 
 export default function Create() {
     const [dragActive, setDragActive] = useState(false);
@@ -55,43 +76,155 @@ export default function Create() {
         }
     };
 
+    const getFileIcon = (fileName) => {
+        const extension = fileName.split('.').pop()?.toLowerCase();
+        switch (extension) {
+            case 'pdf':
+                return <FileText className="w-8 h-8 text-red-500" />;
+            case 'doc':
+            case 'docx':
+                return <FileText className="w-8 h-8 text-blue-500" />;
+            case 'xls':
+            case 'xlsx':
+                return <FileSpreadsheet className="w-8 h-8 text-green-500" />;
+            case 'png':
+            case 'jpg':
+            case 'jpeg':
+                return <FileImage className="w-8 h-8 text-purple-500" />;
+            default:
+                return <File className="w-8 h-8 text-slate-500" />;
+        }
+    };
+
+    const getVisibilityIcon = (type) => {
+        switch (type) {
+            case 'public':
+                return <Eye className="w-5 h-5" />;
+            case 'private':
+                return <Shield className="w-5 h-5" />;
+            case 'contractant':
+                return <Building2 className="w-5 h-5" />;
+            default:
+                return <Users className="w-5 h-5" />;
+        }
+    };
+
+    const getVisibilityColor = (type) => {
+        switch (type) {
+            case 'public':
+                return 'text-green-600 bg-green-50 dark:bg-green-900/20 dark:text-green-400';
+            case 'private':
+                return 'text-red-600 bg-red-50 dark:bg-red-900/20 dark:text-red-400';
+            case 'contractant':
+                return 'text-blue-600 bg-blue-50 dark:bg-blue-900/20 dark:text-blue-400';
+            default:
+                return 'text-slate-600 bg-slate-50 dark:bg-slate-900/20 dark:text-slate-400';
+        }
+    };
+
     return (
-        <AdminLayout>
-            <Head title="Ajouter un document" />
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 relative overflow-hidden">
+            {/* Enhanced Animated Background Elements */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/30 to-purple-400/30 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-indigo-400/30 to-pink-400/30 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400/20 to-blue-400/20 rounded-full blur-2xl animate-pulse" />
+                <div className="absolute top-1/4 right-1/4 w-48 h-48 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-2xl animate-pulse" />
+            </div>
 
-            <div className="py-12">
-                <div className="max-w-3xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
-                            {/* Header */}
-                            <div className="mb-6">
-                                <h1 className="text-2xl font-bold text-gray-900">Ajouter un document</h1>
-                                <p className="text-gray-600">Téléchargez un nouveau document</p>
+            <div className="relative z-10 p-6 md:p-8">
+                {/* Enhanced Header */}
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="mb-8"
+                >
+                    <div className="flex items-center justify-between mb-6">
+                        <div className="flex items-center gap-4">
+                            <motion.div
+                                initial={{ scale: 0, rotate: -180 }}
+                                animate={{ scale: 1, rotate: 0 }}
+                                transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 20 }}
+                                className="p-3 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-2xl shadow-2xl"
+                            >
+                                <FileText className="w-8 h-8 text-white" />
+                            </motion.div>
+                            <div>
+                                <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-slate-900 via-blue-900 via-purple-900 to-indigo-900 dark:from-white dark:via-blue-100 dark:via-purple-100 dark:to-indigo-100 bg-clip-text text-transparent">
+                                    Ajouter un document
+                                </h1>
+                                <p className="text-lg text-slate-600 dark:text-slate-300 mt-2 font-medium">
+                                    Téléchargez un nouveau document avec style
+                                </p>
                             </div>
+                        </div>
+                        <motion.div
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <Link
+                                href={route('admin.documents.index')}
+                                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-slate-600 to-slate-700 text-white rounded-2xl hover:from-slate-700 hover:to-slate-800 transition-all font-medium shadow-lg"
+                            >
+                                <ArrowLeft className="w-5 h-5" />
+                                Retour à la liste
+                            </Link>
+                        </motion.div>
+                    </div>
+                </motion.div>
 
-                            {/* Form */}
-                            <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Enhanced Form */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3, duration: 0.6 }}
+                    className="relative overflow-hidden rounded-2xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 shadow-2xl"
+                >
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-purple-50/30 to-indigo-50/50 dark:from-blue-900/20 dark:via-purple-900/10 dark:to-indigo-900/20" />
+                    <div className="relative p-8 md:p-10">
+                        <form onSubmit={handleSubmit} className="space-y-8">
                                 {/* Title */}
-                                <div>
-                                    <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                            <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.4, duration: 0.5 }}
+                            >
+                                <label htmlFor="title" className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">
                                         Titre du document *
                                     </label>
+                                <div className="relative group">
+                                    <FileText className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
                                     <input
                                         type="text"
                                         id="title"
                                         value={data.title}
                                         onChange={(e) => setData('title', e.target.value)}
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                        className={`w-full pl-12 pr-4 py-4 rounded-2xl border-2 bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 ${
+                                            errors.title ? "border-red-500 focus:ring-red-500/20" : "border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500"
+                                        }`}
                                         placeholder="Entrez le titre du document"
                                     />
-                                    {errors.title && (
-                                        <p className="mt-1 text-sm text-red-600">{errors.title}</p>
-                                    )}
                                 </div>
+                                {errors.title && (
+                                    <motion.p
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center gap-2"
+                                    >
+                                        <AlertCircle className="w-4 h-4" />
+                                        {errors.title}
+                                    </motion.p>
+                                )}
+                            </motion.div>
 
                                 {/* Description */}
-                                <div>
-                                    <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                            <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.5, duration: 0.5 }}
+                            >
+                                <label htmlFor="description" className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">
                                         Description
                                     </label>
                                     <textarea
@@ -99,109 +232,177 @@ export default function Create() {
                                         value={data.description}
                                         onChange={(e) => setData('description', e.target.value)}
                                         rows={4}
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                    className="w-full px-4 py-4 rounded-2xl border-2 bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500 resize-none"
                                         placeholder="Décrivez le contenu du document"
                                     />
                                     {errors.description && (
-                                        <p className="mt-1 text-sm text-red-600">{errors.description}</p>
-                                    )}
-                                </div>
+                                    <motion.p
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center gap-2"
+                                    >
+                                        <AlertCircle className="w-4 h-4" />
+                                        {errors.description}
+                                    </motion.p>
+                                )}
+                            </motion.div>
 
                                 {/* Visibility */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                            <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.6, duration: 0.5 }}
+                            >
+                                <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">
                                         Visibilité *
                                     </label>
-                                    <div className="space-y-2">
-                                        <label className="flex items-center">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    {[
+                                        { value: 'public', label: 'Public', description: 'Visible par tous les utilisateurs ParkX' },
+                                        { value: 'private', label: 'Privé', description: 'Visible uniquement par les administrateurs' },
+                                        { value: 'contractant', label: 'Contractant', description: 'Visible uniquement par les contractants' }
+                                    ].map((option) => (
+                                        <motion.label
+                                            key={option.value}
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            className={`relative flex items-start p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${
+                                                data.visibility.includes(option.value)
+                                                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                                                    : 'border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500'
+                                            }`}
+                                        >
                                             <input
                                                 type="checkbox"
-                                                checked={data.visibility.includes('public')}
-                                                onChange={() => handleVisibilityChange('public')}
-                                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                checked={data.visibility.includes(option.value)}
+                                                onChange={() => handleVisibilityChange(option.value)}
+                                                className="sr-only"
                                             />
-                                            <span className="ml-2 text-sm text-gray-700">
-                                                Public - Visible par tous les utilisateurs ParkX
-                                            </span>
-                                        </label>
-                                        <label className="flex items-center">
-                                            <input
-                                                type="checkbox"
-                                                checked={data.visibility.includes('private')}
-                                                onChange={() => handleVisibilityChange('private')}
-                                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                            />
-                                            <span className="ml-2 text-sm text-gray-700">
-                                                Privé - Visible uniquement par les administrateurs
-                                            </span>
-                                        </label>
-                                        <label className="flex items-center">
-                                            <input
-                                                type="checkbox"
-                                                checked={data.visibility.includes('contractant')}
-                                                onChange={() => handleVisibilityChange('contractant')}
-                                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                                            />
-                                            <span className="ml-2 text-sm text-gray-700">
-                                                Contractant - Visible uniquement par les contractants
-                                            </span>
-                                        </label>
+                                            <div className="flex items-center gap-3">
+                                                <div className={`p-2 rounded-lg ${getVisibilityColor(option.value)}`}>
+                                                    {getVisibilityIcon(option.value)}
+                                                </div>
+                                                <div>
+                                                    <div className="font-semibold text-slate-900 dark:text-white">
+                                                        {option.label}
+                                                    </div>
+                                                    <div className="text-sm text-slate-600 dark:text-slate-400">
+                                                        {option.description}
+                                                    </div>
+                                                </div>
                                     </div>
-                                    {errors.visibility && (
-                                        <p className="mt-1 text-sm text-red-600">{errors.visibility}</p>
-                                    )}
+                                            {data.visibility.includes(option.value) && (
+                                                <motion.div
+                                                    initial={{ scale: 0 }}
+                                                    animate={{ scale: 1 }}
+                                                    className="absolute top-2 right-2"
+                                                >
+                                                    <CheckCircle className="w-5 h-5 text-blue-500" />
+                                                </motion.div>
+                                            )}
+                                        </motion.label>
+                                    ))}
                                 </div>
+                                {errors.visibility && (
+                                    <motion.p
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center gap-2"
+                                    >
+                                        <AlertCircle className="w-4 h-4" />
+                                        {errors.visibility}
+                                    </motion.p>
+                                )}
+                            </motion.div>
 
                                 {/* File Upload */}
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                            <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: 0.7, duration: 0.5 }}
+                            >
+                                <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">
                                         Fichier *
                                     </label>
                                     
-                                    {/* Drag and Drop Area */}
-                                    <div
-                                        className={`border-2 border-dashed rounded-lg p-6 text-center ${
+                                {/* Enhanced Drag and Drop Area */}
+                                <motion.div
+                                    whileHover={{ scale: 1.01 }}
+                                    className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-300 ${
                                             dragActive 
-                                                ? 'border-blue-400 bg-blue-50' 
-                                                : 'border-gray-300'
+                                            ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/20 scale-105' 
+                                            : 'border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500'
                                         }`}
                                         onDragEnter={handleDrag}
                                         onDragLeave={handleDrag}
                                         onDragOver={handleDrag}
                                         onDrop={handleDrop}
                                     >
+                                    <AnimatePresence mode="wait">
                                         {data.file ? (
-                                            <div className="space-y-2">
-                                                <div className="flex items-center justify-center">
-                                                    <span className="text-lg mr-2">📄</span>
-                                                    <span className="text-sm font-medium text-gray-900">
+                                            <motion.div
+                                                key="file-selected"
+                                                initial={{ opacity: 0, scale: 0.8 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                exit={{ opacity: 0, scale: 0.8 }}
+                                                className="space-y-4"
+                                            >
+                                                <motion.div
+                                                    initial={{ scale: 0 }}
+                                                    animate={{ scale: 1 }}
+                                                    transition={{ delay: 0.2, type: "spring" }}
+                                                    className="flex items-center justify-center"
+                                                >
+                                                    {getFileIcon(data.file.name)}
+                                                </motion.div>
+                                                <div>
+                                                    <div className="text-lg font-semibold text-slate-900 dark:text-white">
                                                         {data.file.name}
-                                                    </span>
+                                                    </div>
+                                                    <div className="text-sm text-slate-500 dark:text-slate-400">
+                                                        {(data.file.size / 1024 / 1024).toFixed(2)} MB
+                                                    </div>
                                                 </div>
-                                                <p className="text-xs text-gray-500">
-                                                    {(data.file.size / 1024 / 1024).toFixed(2)} MB
-                                                </p>
-                                                <button
+                                                <motion.button
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
                                                     type="button"
                                                     onClick={() => setData('file', null)}
-                                                    className="text-sm text-red-600 hover:text-red-800"
+                                                    className="inline-flex items-center gap-2 px-4 py-2 text-sm text-red-600 bg-red-50 dark:bg-red-900/20 dark:text-red-400 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/30 transition-all"
                                                 >
+                                                    <X className="w-4 h-4" />
                                                     Supprimer le fichier
-                                                </button>
-                                            </div>
+                                                </motion.button>
+                                            </motion.div>
                                         ) : (
-                                            <div className="space-y-2">
-                                                <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-                                                </svg>
+                                            <motion.div
+                                                key="file-empty"
+                                                initial={{ opacity: 0, scale: 0.8 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                exit={{ opacity: 0, scale: 0.8 }}
+                                                className="space-y-4"
+                                            >
+                                                <motion.div
+                                                    initial={{ scale: 0, rotate: -180 }}
+                                                    animate={{ scale: 1, rotate: 0 }}
+                                                    transition={{ delay: 0.2, type: "spring" }}
+                                                    className="flex justify-center"
+                                                >
+                                                    <div className="p-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl">
+                                                        <Upload className="w-12 h-12 text-white" />
+                                                    </div>
+                                                </motion.div>
                                                 <div>
-                                                    <p className="text-sm text-gray-600">
-                                                        Glissez-déposez votre fichier ici, ou
-                                                        <label htmlFor="file-upload" className="text-blue-600 hover:text-blue-500 cursor-pointer">
-                                                            {' '}cliquez pour sélectionner
+                                                    <p className="text-lg font-semibold text-slate-700 dark:text-slate-300">
+                                                        Glissez-déposez votre fichier ici
+                                                    </p>
+                                                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                                                        ou{' '}
+                                                        <label htmlFor="file-upload" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 cursor-pointer font-semibold">
+                                                            cliquez pour sélectionner
                                                         </label>
                                                     </p>
-                                                    <p className="text-xs text-gray-500 mt-1">
+                                                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-2">
                                                         PDF, DOC, DOCX, XLS, XLSX, PNG, JPG jusqu'à 100MB
                                                     </p>
                                                 </div>
@@ -212,43 +413,86 @@ export default function Create() {
                                                     className="hidden"
                                                     accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.txt"
                                                 />
-                                            </div>
+                                            </motion.div>
                                         )}
-                                    </div>
+                                    </AnimatePresence>
+                                </motion.div>
                                     
                                     {errors.file && (
-                                        <p className="mt-1 text-sm text-red-600">{errors.file}</p>
-                                    )}
-                                </div>
+                                    <motion.p
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="mt-2 text-sm text-red-600 dark:text-red-400 flex items-center gap-2"
+                                    >
+                                        <AlertCircle className="w-4 h-4" />
+                                        {errors.file}
+                                    </motion.p>
+                                )}
+                            </motion.div>
 
                                 {/* Error Messages */}
+                            <AnimatePresence>
                                 {errors.error && (
-                                    <div className="bg-red-50 border border-red-200 rounded-md p-4">
-                                        <p className="text-sm text-red-600">{errors.error}</p>
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: -20 }}
+                                        className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-2xl p-4"
+                                    >
+                                        <div className="flex items-center gap-2">
+                                            <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                                            <p className="text-sm text-red-600 dark:text-red-400">{errors.error}</p>
                                     </div>
+                                    </motion.div>
                                 )}
+                            </AnimatePresence>
 
                                 {/* Actions */}
-                                <div className="flex items-center justify-end space-x-3">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: 0.8, duration: 0.5 }}
+                                className="flex items-center justify-end gap-4 pt-6"
+                            >
+                                <motion.div
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                >
                                     <Link
                                         href={route('admin.documents.index')}
-                                        className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                                        className="inline-flex items-center gap-2 px-6 py-3 border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all font-medium"
                                     >
+                                        <X className="w-5 h-5" />
                                         Annuler
                                     </Link>
-                                    <button
+                                </motion.div>
+                                <motion.button
+                                    whileHover={{ scale: 1.05, y: -2 }}
+                                    whileTap={{ scale: 0.95 }}
                                         type="submit"
                                         disabled={processing || !data.file || !data.title || data.visibility.length === 0}
-                                        className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="group relative inline-flex items-center gap-3 px-8 py-3 bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 text-white rounded-2xl hover:from-blue-600 hover:via-purple-600 hover:to-indigo-600 transition-all duration-300 font-bold shadow-2xl overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                    <motion.div
+                                        whileHover={{ rotate: 360 }}
+                                        transition={{ duration: 0.6 }}
+                                        className="relative z-10"
                                     >
+                                        {processing ? <Zap className="w-5 h-5" /> : <Save className="w-5 h-5" />}
+                                    </motion.div>
+                                    <span className="relative z-10">
                                         {processing ? 'Téléchargement...' : 'Ajouter le document'}
-                                    </button>
-                                </div>
+                                    </span>
+                                </motion.button>
+                            </motion.div>
                             </form>
-                        </div>
                     </div>
-                </div>
+                </motion.div>
             </div>
-        </AdminLayout>
+        </div>
     );
 }
+
+// Set the layout
+Create.layout = (page) => <AdminLayout>{page}</AdminLayout>;

@@ -1,44 +1,111 @@
-// resources/js/Pages/Admin/Dashboard.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import { usePage } from "@inertiajs/react";
+import { usePage, Head } from "@inertiajs/react";
 import AdminLayout from "@/Layouts/AdminLayout";
+import { motion, AnimatePresence } from "framer-motion";
 import Swal from "sweetalert2";
+import { 
+    Users, 
+    Search, 
+    Filter, 
+    User, 
+    Calendar, 
+    Clock, 
+    CheckCircle, 
+    XCircle, 
+    AlertCircle, 
+    Eye, 
+    FileText, 
+    Building2, 
+    Package,
+    Edit3,
+    Trash2,
+    UserCheck,
+    Hash,
+    Plus,
+    Save,
+    Shield,
+    Mail,
+    MapPin,
+    Settings,
+    UserPlus,
+    Building,
+    CheckCircle2,
+    X,
+    ChevronRight,
+    Sparkles
+} from "lucide-react";
 
-/* --- small table helpers for consistent look --- */
+/* --- Enhanced table helpers with animations --- */
 function Th({ children, className = "" }) {
   return (
-    <th className={`px-4 py-3 text-xs font-medium uppercase tracking-wide ${className}`}>
+        <th className={`px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider ${className}`}>
       {children}
     </th>
   );
 }
+
 function Td({ children, className = "" }) {
-  return <td className={`px-4 py-3 align-middle ${className}`}>{children}</td>;
+    return (
+        <td className={`px-6 py-4 whitespace-nowrap ${className}`}>
+            {children}
+        </td>
+    );
 }
+
 function FieldError({ id, children }) {
   if (!children) return null;
   return (
-    <p id={id} className="mt-1 text-xs text-rose-600">
+        <motion.p
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            id={id}
+            className="mt-1 text-xs text-red-600 dark:text-red-400"
+        >
       {children}
-    </p>
+        </motion.p>
   );
 }
+
 function HelperText({ children }) {
-  return <p className="mt-1 text-xs text-gray-500">{children}</p>;
+    return (
+        <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+            {children}
+        </p>
+    );
 }
+
 function StatusPill({ kind }) {
-  const map = {
-    pending: "bg-amber-100 text-amber-700",
-    approved: "bg-emerald-100 text-emerald-700",
-    default: "bg-gray-100 text-gray-700",
-  };
-  const cls = map[kind] || map.default;
-  const label = kind === "pending" ? "En attente" : kind === "approved" ? "Approuvé" : "—";
+    const badges = {
+        pending: {
+            label: "En attente",
+            className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400",
+            icon: Clock
+        },
+        approved: {
+            label: "Approuvé",
+            className: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400",
+            icon: CheckCircle
+        },
+        default: {
+            label: "—",
+            className: "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300",
+            icon: AlertCircle
+        }
+    };
+
+    const badge = badges[kind] || badges.default;
+    const Icon = badge.icon;
+
   return (
-    <span className={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-medium ${cls}`}>
-      <span className="h-1.5 w-1.5 rounded-full bg-current opacity-80" />
-      {label}
-    </span>
+        <motion.span
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 200 }}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium ${badge.className}`}
+        >
+            <Icon className="w-3 h-3" />
+            {badge.label}
+        </motion.span>
   );
 }
 
@@ -52,43 +119,37 @@ function SegmentedTabs({ value, onChange, items }) {
       window.history.replaceState({}, "", `${base}?${qs.toString()}`);
     }
   };
+
   return (
-    <div className="inline-flex rounded-full bg-gray-100 p-1">
+        <div className="inline-flex rounded-2xl bg-slate-100 dark:bg-slate-700 p-1">
       {items.map((it) => (
-        <button
+                <motion.button
           key={it.value}
           onClick={() => setTab(it.value)}
-          className={[
-            "px-4 py-2 text-sm rounded-full transition",
-            value === it.value ? "bg-white shadow text-gray-900" : "text-gray-600 hover:text-gray-900",
-          ].join(" ")}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className={`px-6 py-3 text-sm rounded-xl font-medium transition-all ${
+                        value === it.value 
+                            ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-lg" 
+                            : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                    }`}
         >
           {it.label}
-        </button>
+                </motion.button>
       ))}
     </div>
   );
 }
 
-/** Controlled search input (now accepts value & onChange) */
 function SearchBar({ name, value, onChange, placeholder }) {
   return (
     <div className="relative w-full sm:w-80">
-      <svg
-        className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <circle cx="11" cy="11" r="7" />
-        <path d="M21 21l-3.6-3.6" />
-      </svg>
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
       <input
         name={name}
         value={value}
         onChange={onChange}
-        className="w-full rounded-lg border border-gray-300 bg-white pl-9 pr-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-gray-400"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
         placeholder={placeholder}
       />
     </div>
@@ -108,7 +169,7 @@ function AdminDashboard() {
   } = usePage().props;
   const flash = _flash || {};
 
-  // SweetAlert centered modal
+    // Enhanced SweetAlert with better styling
   const fireSuccess = (message) =>
     Swal.fire({
       icon: "success",
@@ -119,7 +180,12 @@ function AdminDashboard() {
       width: 520,
       iconColor: "#22c55e",
       backdrop: true,
+            customClass: {
+                popup: 'rounded-2xl',
+                title: 'text-slate-900 dark:text-white'
+            }
     });
+
   const fireError = (message) =>
     Swal.fire({
       icon: "error",
@@ -129,6 +195,10 @@ function AdminDashboard() {
       timer: 2200,
       width: 520,
       backdrop: true,
+            customClass: {
+                popup: 'rounded-2xl',
+                title: 'text-slate-900 dark:text-white'
+            }
     });
 
   useEffect(() => {
@@ -136,7 +206,7 @@ function AdminDashboard() {
     if (flash?.error) fireError(flash.error);
   }, [flash?.success, flash?.error]);
 
-  // tab from URL
+    // Tab management
   const getTabFromUrl = () => {
     if (typeof window === "undefined") return "parkx";
     const qs = new URLSearchParams(window.location.search);
@@ -145,7 +215,7 @@ function AdminDashboard() {
   const [activeTab, setActiveTab] = useState(getTabFromUrl());
   useEffect(() => setActiveTab(getTabFromUrl()), [url]);
 
-  // filters
+    // Filters
   const [q, setQ] = useState("");
   const [siteFilter, setSiteFilter] = useState("");
   const [contractorFilter, setContractorFilter] = useState("all");
@@ -177,43 +247,165 @@ function AdminDashboard() {
   }, [pendingContractors, approvedContractors, contractorFilter, q]);
 
   return (
-    <div className="-m-4 md:-m-8 bg-white min-h-[calc(100vh-3.5rem)] p-4 md:p-8">
-      {/* --------------------- PARKX TAB --------------------- */}
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 relative overflow-hidden">
+            {/* Enhanced Animated Background Elements */}
+            <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/30 to-purple-400/30 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-indigo-400/30 to-pink-400/30 rounded-full blur-3xl animate-pulse" />
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400/20 to-blue-400/20 rounded-full blur-2xl animate-pulse" />
+                <div className="absolute top-1/4 right-1/4 w-48 h-48 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-2xl animate-pulse" />
+            </div>
+
+            <div className="relative z-10 p-6 md:p-8">
+                {/* Enhanced Header */}
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="mb-12"
+                >
+                    <div className="text-center mb-8">
+                        <motion.div
+                            initial={{ scale: 0, rotate: -180 }}
+                            animate={{ scale: 1, rotate: 0 }}
+                            transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 20 }}
+                            className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-3xl shadow-2xl mb-6"
+                        >
+                            <Users className="w-10 h-10 text-white" />
+                        </motion.div>
+                        <motion.h1
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4, duration: 0.6 }}
+                            className="text-5xl md:text-6xl font-black bg-gradient-to-r from-slate-900 via-blue-900 via-purple-900 to-indigo-900 dark:from-white dark:via-blue-100 dark:via-purple-100 dark:to-indigo-100 bg-clip-text text-transparent mb-4"
+                        >
+                            Gestion des Comptes
+                        </motion.h1>
+                        <motion.p
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.6, duration: 0.6 }}
+                            className="text-xl text-slate-600 dark:text-slate-300 font-medium"
+                        >
+                            Gérer les comptes ParkX et contractants avec style
+                        </motion.p>
+                    </div>
+
+                    {/* Enhanced Tab Navigation */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.8, duration: 0.6 }}
+                        className="flex justify-center"
+                    >
+                        <div className="inline-flex rounded-3xl bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 p-2 shadow-2xl">
+                            {[
+                                { value: "parkx", label: "Comptes ParkX", icon: Users },
+                                { value: "contractors", label: "Comptes Contractants", icon: Building }
+                            ].map((item) => {
+                                const Icon = item.icon;
+                                return (
+                                    <motion.button
+                                        key={item.value}
+                                        onClick={() => setActiveTab(item.value)}
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
+                                        className={`relative px-8 py-4 text-sm rounded-2xl font-semibold transition-all duration-300 flex items-center gap-3 ${
+                                            activeTab === item.value
+                                                ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg"
+                                                : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                                        }`}
+                                    >
+                                        <Icon className="w-5 h-5" />
+                                        {item.label}
+                                        {activeTab === item.value && (
+                                            <motion.div
+                                                layoutId="activeTab"
+                                                className="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl -z-10"
+                                                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                            />
+                                        )}
+                                    </motion.button>
+                                );
+                            })}
+                        </div>
+                    </motion.div>
+                </motion.div>
+
+                    <AnimatePresence mode="wait">
+                        {/* PARKX TAB */}
       {activeTab === "parkx" && (
-        <>
-          {/* Create user – FULL WIDTH & HORIZONTAL */}
-          <div className="card-frame overflow-hidden mb-5">
-            <div className="p-4 md:p-6">
-              <h2 className="text-lg font-semibold mb-4">Créer un compte ParkX</h2>
-              <form method="POST" action={route("admin.users.store")} className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                            <motion.div
+                                key="parkx"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.4 }}
+                                className="space-y-8"
+                            >
+                                {/* Enhanced Create User Form */}
+                                <motion.div
+                                    initial={{ opacity: 0, y: 30 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.2, duration: 0.6 }}
+                                    className="relative overflow-hidden rounded-3xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 shadow-2xl"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-purple-50/30 to-indigo-50/50 dark:from-blue-900/20 dark:via-purple-900/10 dark:to-indigo-900/20" />
+                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-purple-500/5" />
+                                    <div className="relative p-8 md:p-10">
+                                        <div className="text-center mb-8">
+                                            <motion.div
+                                                whileHover={{ scale: 1.1, rotate: 5 }}
+                                                className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-2xl shadow-2xl mb-4"
+                                            >
+                                                <UserPlus className="w-8 h-8 text-white" />
+                                            </motion.div>
+                                            <h2 className="text-3xl font-black bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 dark:from-white dark:via-blue-100 dark:to-indigo-100 bg-clip-text text-transparent mb-2">
+                                                Créer un compte ParkX
+                                            </h2>
+                                            <p className="text-slate-600 dark:text-slate-400 font-medium">
+                                                Ajoutez un nouvel utilisateur au système
+                                            </p>
+                                        </div>
+
+                                        <form method="POST" action={route("admin.users.store")} className="grid grid-cols-1 md:grid-cols-12 gap-6">
                 <input type="hidden" name="_token" value={csrf_token} />
 
                 {/* Nom */}
                 <div className="md:col-span-3">
-                  <label className="block text-sm font-medium mb-1" htmlFor="name">Nom</label>
+                                                <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-3" htmlFor="name">
+                                                    Nom complet
+                                                </label>
+                                                <div className="relative group">
+                                                    <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
                   <input
                     id="name"
                     type="text"
                     name="name"
                     placeholder="Nom complet"
-                    className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/10 ${
-                      errors.name ? "border-rose-400" : "border-gray-300"
+                                                        className={`w-full pl-12 pr-4 py-4 rounded-2xl border-2 bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 ${
+                                                            errors.name ? "border-red-500 focus:ring-red-500/20" : "border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500"
                     }`}
                     required
                     aria-invalid={!!errors.name}
                     aria-describedby={errors.name ? "err-name" : undefined}
                   />
+                                                </div>
                   <FieldError id="err-name">{errors.name}</FieldError>
                 </div>
 
                 {/* Site */}
                 <div className="md:col-span-3">
-                  <label className="block text-sm font-medium mb-1" htmlFor="site_id">Site</label>
+                                                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2" htmlFor="site_id">
+                                                    Site
+                                                </label>
+                                                <div className="relative">
+                                                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <select
                     id="site_id"
                     name="site_id"
-                    className={`w-full rounded-lg border px-3 py-2 text-sm ${
-                      errors.site_id ? "border-rose-400" : "border-gray-300"
+                                                        className={`w-full pl-10 pr-4 py-3 rounded-xl border bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                                                            errors.site_id ? "border-red-500" : "border-slate-300 dark:border-slate-600"
                     }`}
                     defaultValue=""
                     aria-invalid={!!errors.site_id}
@@ -226,30 +418,40 @@ function AdminDashboard() {
                       </option>
                     ))}
                   </select>
+                                                </div>
                   <FieldError id="err-site">{errors.site_id}</FieldError>
                 </div>
 
                 {/* Email */}
                 <div className="md:col-span-3">
-                  <label className="block text-sm font-medium mb-1" htmlFor="email">Email</label>
+                                                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2" htmlFor="email">
+                                                    Email
+                                                </label>
+                                                <div className="relative">
+                                                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <input
                     id="email"
                     type="email"
                     name="email"
                     placeholder="email@example.com"
-                    className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/10 ${
-                      errors.email ? "border-rose-400" : "border-gray-300"
+                                                        className={`w-full pl-10 pr-4 py-3 rounded-xl border bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                                                            errors.email ? "border-red-500" : "border-slate-300 dark:border-slate-600"
                     }`}
                     required
                     aria-invalid={!!errors.email}
                     aria-describedby={errors.email ? "err-email" : undefined}
                   />
+                                                </div>
                   <FieldError id="err-email">{errors.email}</FieldError>
                 </div>
 
                 {/* Mot de passe */}
                 <div className="md:col-span-3">
-                  <label className="block text-sm font-medium mb-1" htmlFor="password">Mot de passe</label>
+                                                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2" htmlFor="password">
+                                                    Mot de passe
+                                                </label>
+                                                <div className="relative">
+                                                    <Shield className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <input
                     id="password"
                     type="password"
@@ -257,22 +459,25 @@ function AdminDashboard() {
                     placeholder="Mot de passe"
                     minLength={8}
                     title="Au moins 8 caractères"
-                    className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/10 ${
-                      errors.password ? "border-rose-400" : "border-gray-300"
+                                                        className={`w-full pl-10 pr-4 py-3 rounded-xl border bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                                                            errors.password ? "border-red-500" : "border-slate-300 dark:border-slate-600"
                     }`}
                     required
                     aria-invalid={!!errors.password}
                     aria-describedby={errors.password ? "err-password" : "help-password"}
                   />
+                                                </div>
                   {!errors.password && <HelperText>Au moins 8 caractères.</HelperText>}
                   <FieldError id="err-password">{errors.password}</FieldError>
                 </div>
 
                 {/* Confirmation */}
                 <div className="md:col-span-6">
-                  <label className="block text-sm font-medium mb-1" htmlFor="password_confirmation">
+                                                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2" htmlFor="password_confirmation">
                     Confirmer le mot de passe
                   </label>
+                                                <div className="relative">
+                                                    <Shield className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
                   <input
                     id="password_confirmation"
                     type="password"
@@ -280,60 +485,95 @@ function AdminDashboard() {
                     placeholder="Confirmer"
                     minLength={8}
                     title="Répétez le mot de passe (au moins 8 caractères)"
-                    className={`w-full rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/10 ${
-                      errors.password_confirmation ? "border-rose-400" : "border-gray-300"
+                                                        className={`w-full pl-10 pr-4 py-3 rounded-xl border bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all ${
+                                                            errors.password_confirmation ? "border-red-500" : "border-slate-300 dark:border-slate-600"
                     }`}
                     required
                     aria-invalid={!!errors.password_confirmation}
                     aria-describedby={errors.password_confirmation ? "err-password_confirmation" : undefined}
                   />
+                                                </div>
                   <FieldError id="err-password_confirmation">{errors.password_confirmation}</FieldError>
                 </div>
 
-                {/* ⬇️ NEW: Toggle Accès Admin (same row width as confirmation) */}
+                                            {/* Admin Access Toggle */}
                 <div className="md:col-span-6 flex flex-col justify-end">
-                  <label className="inline-flex items-center gap-2 text-sm">
+                                                <label className="inline-flex items-center gap-3 text-sm font-medium text-slate-700 dark:text-slate-200">
                     <input
                       type="checkbox"
                       name="as_admin"
                       value="1"
-                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                                        className="h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span>Donner l’accès au tableau de bord Admin</span>
+                                                    <span>Donner l'accès au tableau de bord Admin</span>
                   </label>
                   <HelperText>
                     Crée / met à jour un compte <strong>Admin</strong> avec le même email et mot de passe.
                   </HelperText>
                 </div>
 
-                <div className="md:col-span-6 flex items-end justify-end">
-                  <button
+                                            {/* Enhanced Submit Button */}
+                                            <div className="md:col-span-12 flex justify-center">
+                                                <motion.button
+                                                    whileHover={{ scale: 1.05, y: -2 }}
+                                                    whileTap={{ scale: 0.95 }}
                     type="submit"
-                    className="inline-flex items-center rounded-lg bg-indigo-600 text-white px-4 py-2 text-sm font-medium hover:bg-indigo-700"
-                  >
-                    Créer l’utilisateur
-                  </button>
+                                                    className="group relative inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 text-white rounded-2xl hover:from-blue-600 hover:via-purple-600 hover:to-indigo-600 transition-all duration-300 font-bold text-lg shadow-2xl overflow-hidden"
+                                                >
+                                                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                                    <motion.div
+                                                        whileHover={{ rotate: 360 }}
+                                                        transition={{ duration: 0.6 }}
+                                                        className="relative z-10"
+                                                    >
+                                                        <UserPlus className="w-6 h-6" />
+                                                    </motion.div>
+                                                    <span className="relative z-10">Créer l'utilisateur</span>
+                                                    <motion.div
+                                                        className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                                        initial={false}
+                                                    />
+                                                </motion.button>
                 </div>
               </form>
             </div>
+                                </motion.div>
+
+                                {/* Enhanced Search & Filters */}
+                                <motion.div
+                                    initial={{ opacity: 0, y: 30 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.3, duration: 0.6 }}
+                                    className="relative overflow-hidden rounded-3xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 shadow-2xl"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 via-teal-50/30 to-cyan-50/50 dark:from-emerald-900/20 dark:via-teal-900/10 dark:to-cyan-900/20" />
+                                    <div className="relative p-8">
+                                        <div className="text-center mb-8">
+                                            <motion.div
+                                                whileHover={{ scale: 1.1, rotate: 5 }}
+                                                className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-2xl shadow-2xl mb-4"
+                                            >
+                                                <Search className="w-7 h-7 text-white" />
+                                            </motion.div>
+                                            <h2 className="text-2xl font-black bg-gradient-to-r from-slate-900 via-emerald-900 to-teal-900 dark:from-white dark:via-emerald-100 dark:to-teal-100 bg-clip-text text-transparent mb-2">
+                                                Recherche et filtres
+                                            </h2>
+                                            <p className="text-slate-600 dark:text-slate-400 font-medium">
+                                                Trouvez rapidement les utilisateurs
+                                            </p>
           </div>
 
-          {/* Search & filters ABOVE THE LIST */}
-          <div className="mb-5 flex flex-wrap items-center gap-2">
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              className="flex flex-wrap items-center gap-2 w-full"
-            >
-              <input
+                                        <form onSubmit={(e) => e.preventDefault()} className="flex flex-wrap items-center gap-4">
+                                            <SearchBar
+                                                name="q"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Rechercher (nom, email, site)…"
-                className="w-full sm:w-80 rounded-lg border border-gray-300 bg-white pl-9 pr-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-gray-400"
               />
               <select
                 value={siteFilter}
                 onChange={(e) => setSiteFilter(e.target.value)}
-                className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm"
+                                                className="px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 title="Filtrer par site"
               >
                 <option value="">Tous les sites</option>
@@ -343,70 +583,139 @@ function AdminDashboard() {
                   </option>
                 ))}
               </select>
-              <button className="inline-flex items-center gap-2 rounded-lg bg-black text-white px-4 py-2 text-sm font-medium hover:opacity-90">
+                                            <motion.button
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                                className="inline-flex items-center gap-2 px-4 py-3 bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 transition-all font-medium"
+                                            >
+                                                <Filter className="w-4 h-4" />
                 Filtrer
-              </button>
+                                            </motion.button>
             </form>
           </div>
+                                </motion.div>
 
-          {/* USERS TABLE */}
-          <div className="card-frame overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-[900px] w-full text-sm">
-                <thead className="sticky top-0 z-10 bg-white">
-                  <tr className="text-left text-gray-500/90 border-b">
+                                {/* Users Table */}
+                                <motion.div
+                                    initial={{ opacity: 0, y: 30 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.4, duration: 0.6 }}
+                                    className="relative overflow-hidden rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10" />
+                                    <div className="relative overflow-x-auto">
+                                        <table className="min-w-full">
+                                            <thead>
+                                                <tr className="border-b border-slate-200 dark:border-slate-700">
                     <Th>Nom</Th>
                     <Th>Email</Th>
                     <Th>Site</Th>
                     <Th>VODs à rendre</Th>
                     <Th>Créé le</Th>
-                    <Th className="text-right pr-4">Action</Th>
+                                                    <Th className="text-right">Actions</Th>
                   </tr>
                 </thead>
-                <tbody>
-                  {filteredUsers.length === 0 && (
-                    <tr>
-                      <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
-                        Aucun utilisateur.
+                                            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                                                {filteredUsers.length === 0 ? (
+                                                    <motion.tr
+                                                        initial={{ opacity: 0 }}
+                                                        animate={{ opacity: 1 }}
+                                                        className="text-center"
+                                                    >
+                                                        <td colSpan={6} className="px-6 py-12 text-slate-500 dark:text-slate-400">
+                                                            <motion.div
+                                                                initial={{ scale: 0 }}
+                                                                animate={{ scale: 1 }}
+                                                                transition={{ delay: 0.2, type: "spring" }}
+                                                                className="flex flex-col items-center gap-4"
+                                                            >
+                                                                <div className="p-4 bg-slate-100 dark:bg-slate-700 rounded-full">
+                                                                    <Users className="w-8 h-8 text-slate-400" />
+                                                                </div>
+                                                                <div>
+                                                                    <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300">
+                                                                        Aucun utilisateur trouvé
+                                                                    </h3>
+                                                                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                                                                        Les nouveaux utilisateurs apparaîtront ici
+                                                                    </p>
+                                                                </div>
+                                                            </motion.div>
                       </td>
-                    </tr>
-                  )}
-
-                  {filteredUsers.map((u, idx) => (
-                    <tr
+                                                    </motion.tr>
+                                                ) : (
+                                                    filteredUsers.map((u, idx) => (
+                                                        <motion.tr
                       key={u.id}
-                      className={`border-b last:border-0 ${idx % 2 ? "bg-gray-50/40" : ""} hover:bg-gray-50`}
-                    >
-                      <Td>{u.name}</Td>
-                      <Td>{u.email}</Td>
-                      <Td>{siteNameFor(u)}</Td>
-                      <Td>
-                        <form
-                          method="POST"
-                          action={route("admin.users.update-quota", u.id)}
-                          className="flex items-center gap-2"
-                        >
+                                                            initial={{ opacity: 0, y: 20 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                            transition={{ delay: idx * 0.1, duration: 0.4 }}
+                                                            whileHover={{ scale: 1.01 }}
+                                                            className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all duration-200"
+                                                        >
+                                                            <Td>
+                                                                <div className="flex items-center gap-3">
+                                                                    <motion.div
+                                                                        whileHover={{ scale: 1.1 }}
+                                                                        className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center shadow-lg"
+                                                                    >
+                                                                        <span className="text-white font-bold text-sm">
+                                                                            {u.name.charAt(0)}
+                                                                        </span>
+                                                                    </motion.div>
+                                                                    <div>
+                                                                        <div className="font-semibold text-slate-900 dark:text-white">
+                                                                            {u.name}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </Td>
+                                                            <Td>
+                                                                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+                                                                    <Mail className="w-4 h-4" />
+                                                                    <span className="text-sm">{u.email}</span>
+                                                                </div>
+                                                            </Td>
+                                                            <Td>
+                                                                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+                                                                    <Building2 className="w-4 h-4" />
+                                                                    <span className="text-sm">{siteNameFor(u)}</span>
+                                                                </div>
+                                                            </Td>
+                                                            <Td>
+                                                                <form method="POST" action={route("admin.users.update-quota", u.id)} className="flex items-center gap-2">
                           <input type="hidden" name="_token" value={csrf_token} />
                           <input
                             type="number"
                             name="vods_quota"
                             min="0"
                             defaultValue={u.vods_quota ?? 0}
-                            className="w-24 rounded-lg border border-gray-300 px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-black/10"
+                                                                        className="w-24 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-2 text-sm text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                           />
-                          <button
+                                                                    <motion.button
+                                                                        whileHover={{ scale: 1.05 }}
+                                                                        whileTap={{ scale: 0.95 }}
                             type="submit"
-                            className="rounded-md bg-gray-900 text-white px-3 py-1.5 text-xs hover:bg-black/90"
+                                                                        className="inline-flex items-center gap-1 px-3 py-2 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-lg text-xs font-medium transition-all"
                             title="Mettre à jour les VODs à rendre"
                           >
+                                                                        <Save className="w-3 h-3" />
                             Sauver
-                          </button>
+                                                                    </motion.button>
                         </form>
                       </Td>
-                      <Td>{new Date(u.created_at).toLocaleDateString("fr-FR")}</Td>
-                      <Td className="text-right pr-4">
-                        {/* SweetAlert confirm + form caché */}
-                        <button
+                                                            <Td>
+                                                                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+                                                                    <Calendar className="w-4 h-4" />
+                                                                    <span className="text-sm">
+                                                                        {new Date(u.created_at).toLocaleDateString("fr-FR")}
+                                                                    </span>
+                                                                </div>
+                                                            </Td>
+                                                            <Td className="text-right">
+                                                                <motion.button
+                                                                    whileHover={{ scale: 1.05 }}
+                                                                    whileTap={{ scale: 0.95 }}
                           type="button"
                           onClick={async () => {
                             const res = await Swal.fire({
@@ -417,15 +726,20 @@ function AdminDashboard() {
                               confirmButtonText: "Oui, supprimer",
                               cancelButtonText: "Annuler",
                               confirmButtonColor: "#dc2626",
+                                                                            customClass: {
+                                                                                popup: 'rounded-2xl',
+                                                                                title: 'text-slate-900 dark:text-white'
+                                                                            }
                             });
                             if (res.isConfirmed) {
                               document.getElementById(`delete-user-${u.id}`).submit();
                             }
                           }}
-                          className="rounded-full bg-rose-100 px-3 py-1.5 text-xs text-rose-700 hover:bg-rose-200"
+                                                                    className="inline-flex items-center gap-1 px-3 py-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-lg text-xs font-medium transition-all"
                         >
+                                                                    <Trash2 className="w-3 h-3" />
                           Supprimer
-                        </button>
+                                                                </motion.button>
 
                         <form
                           id={`delete-user-${u.id}`}
@@ -436,21 +750,46 @@ function AdminDashboard() {
                           <input type="hidden" name="_token" value={csrf_token} />
                         </form>
                       </Td>
-                    </tr>
-                  ))}
+                                                        </motion.tr>
+                                                    ))
+                                                )}
                 </tbody>
               </table>
             </div>
-          </div>
-        </>
+                                </motion.div>
+                            </motion.div>
       )}
 
-      {/* ------------------ CONTRACTORS TAB ------------------ */}
+                        {/* CONTRACTORS TAB */}
       {activeTab === "contractors" && (
-        <>
-          {/* Search/filters ABOVE list */}
-          <div className="mb-5 flex flex-wrap items-center gap-2">
-            <form onSubmit={(e) => e.preventDefault()} className="flex flex-wrap items-center gap-2 w-full">
+                            <motion.div
+                                key="contractors"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.4 }}
+                                className="space-y-8"
+                            >
+                                {/* Search & Filters */}
+                                <motion.div
+                                    initial={{ opacity: 0, y: 30 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.2, duration: 0.6 }}
+                                    className="relative overflow-hidden rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10" />
+                                    <div className="relative p-6">
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <motion.div
+                                                whileHover={{ rotate: 5 }}
+                                                className="p-2 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl shadow-lg"
+                                            >
+                                                <Search className="w-5 h-5 text-white" />
+                                            </motion.div>
+                                            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Recherche et filtres</h2>
+                                        </div>
+                                        
+                                        <form onSubmit={(e) => e.preventDefault()} className="flex flex-wrap items-center gap-4">
               <SearchBar
                 name="q"
                 value={q}
@@ -460,77 +799,155 @@ function AdminDashboard() {
               <select
                 value={contractorFilter}
                 onChange={(e) => setContractorFilter(e.target.value)}
-                className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm"
+                                                className="px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 title="Filtrer par statut"
               >
                 <option value="all">Tous les statuts</option>
                 <option value="pending">En attente</option>
                 <option value="approved">Approuvé</option>
               </select>
-              <button className="inline-flex items-center gap-2 rounded-lg bg-black text-white px-4 py-2 text-sm font-medium hover:opacity-90">
+                                            <motion.button
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                                className="inline-flex items-center gap-2 px-4 py-3 bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 transition-all font-medium"
+                                            >
+                                                <Filter className="w-4 h-4" />
                 Filtrer
-              </button>
+                                            </motion.button>
             </form>
           </div>
+                                </motion.div>
 
-          <div className="card-frame overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-[900px] w-full text-sm">
-                <thead className="sticky top-0 z-10 bg-white">
-                  <tr className="text-left text-gray-500/90 border-b">
+                                {/* Contractors Table */}
+                                <motion.div
+                                    initial={{ opacity: 0, y: 30 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.3, duration: 0.6 }}
+                                    className="relative overflow-hidden rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10" />
+                                    <div className="relative overflow-x-auto">
+                                        <table className="min-w-full">
+                                            <thead>
+                                                <tr className="border-b border-slate-200 dark:border-slate-700">
                     <Th>Nom</Th>
                     <Th>Email</Th>
                     <Th>Entreprise</Th>
                     <Th>Statut</Th>
                     <Th>Créé le</Th>
-                    <Th className="text-right pr-4">Action</Th>
+                                                    <Th className="text-right">Actions</Th>
                   </tr>
                 </thead>
-                <tbody>
-                  {rowsContractors.length === 0 && (
-                    <tr>
-                      <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
-                        Aucun résultat.
+                                            <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                                                {rowsContractors.length === 0 ? (
+                                                    <motion.tr
+                                                        initial={{ opacity: 0 }}
+                                                        animate={{ opacity: 1 }}
+                                                        className="text-center"
+                                                    >
+                                                        <td colSpan={6} className="px-6 py-12 text-slate-500 dark:text-slate-400">
+                                                            <motion.div
+                                                                initial={{ scale: 0 }}
+                                                                animate={{ scale: 1 }}
+                                                                transition={{ delay: 0.2, type: "spring" }}
+                                                                className="flex flex-col items-center gap-4"
+                                                            >
+                                                                <div className="p-4 bg-slate-100 dark:bg-slate-700 rounded-full">
+                                                                    <Building className="w-8 h-8 text-slate-400" />
+                                                                </div>
+                                                                <div>
+                                                                    <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300">
+                                                                        Aucun contractant trouvé
+                                                                    </h3>
+                                                                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                                                                        Les nouveaux contractants apparaîtront ici
+                                                                    </p>
+                                                                </div>
+                                                            </motion.div>
                       </td>
-                    </tr>
-                  )}
-
-                  {rowsContractors.map((r, idx) => (
-                    <tr
+                                                    </motion.tr>
+                                                ) : (
+                                                    rowsContractors.map((r, idx) => (
+                                                        <motion.tr
                       key={`${r.kind}-${r.id}`}
-                      className={`border-b last:border-0 ${idx % 2 ? "bg-gray-50/40" : ""} hover:bg-gray-50`}
-                    >
-                      <Td>{r.name}</Td>
-                      <Td>{r.email}</Td>
-                      <Td>{r.company_name || "—"}</Td>
-                      <Td><StatusPill kind={r.kind} /></Td>
-                      <Td>{r.created_at ? new Date(r.created_at).toLocaleDateString("fr-FR") : "—"}</Td>
-                      <Td className="text-right pr-4">
+                                                            initial={{ opacity: 0, y: 20 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                            transition={{ delay: idx * 0.1, duration: 0.4 }}
+                                                            whileHover={{ scale: 1.01 }}
+                                                            className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all duration-200"
+                                                        >
+                                                            <Td>
+                                                                <div className="flex items-center gap-3">
+                                                                    <motion.div
+                                                                        whileHover={{ scale: 1.1 }}
+                                                                        className="h-10 w-10 rounded-full bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center shadow-lg"
+                                                                    >
+                                                                        <span className="text-white font-bold text-sm">
+                                                                            {r.name.charAt(0)}
+                                                                        </span>
+                                                                    </motion.div>
+                                                                    <div>
+                                                                        <div className="font-semibold text-slate-900 dark:text-white">
+                                                                            {r.name}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </Td>
+                                                            <Td>
+                                                                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+                                                                    <Mail className="w-4 h-4" />
+                                                                    <span className="text-sm">{r.email}</span>
+                                                                </div>
+                                                            </Td>
+                                                            <Td>
+                                                                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+                                                                    <Building className="w-4 h-4" />
+                                                                    <span className="text-sm">{r.company_name || "—"}</span>
+                                                                </div>
+                                                            </Td>
+                                                            <Td>
+                                                                <StatusPill kind={r.kind} />
+                                                            </Td>
+                                                            <Td>
+                                                                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
+                                                                    <Calendar className="w-4 h-4" />
+                                                                    <span className="text-sm">
+                                                                        {r.created_at ? new Date(r.created_at).toLocaleDateString("fr-FR") : "—"}
+                                                                    </span>
+                                                                </div>
+                                                            </Td>
+                                                            <Td className="text-right">
                         {r.kind === "pending" ? (
                           <div className="inline-flex gap-2">
                             <form method="POST" action={route("admin.contractors.approve", r.id)}>
                               <input type="hidden" name="_token" value={csrf_token} />
-                              <button
+                                                                            <motion.button
+                                                                                whileHover={{ scale: 1.05 }}
+                                                                                whileTap={{ scale: 0.95 }}
                                 type="submit"
-                                className="rounded-full bg-emerald-100 px-3 py-1.5 text-xs text-emerald-700 hover:bg-emerald-200"
+                                                                                className="inline-flex items-center gap-1 px-3 py-2 bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-green-900/50 text-green-600 dark:text-green-400 rounded-lg text-xs font-medium transition-all"
                               >
+                                                                                <CheckCircle2 className="w-3 h-3" />
                                 Approuver
-                              </button>
+                                                                            </motion.button>
                             </form>
                             <form method="POST" action={route("admin.contractors.reject", r.id)}>
                               <input type="hidden" name="_token" value={csrf_token} />
-                              <button
+                                                                            <motion.button
+                                                                                whileHover={{ scale: 1.05 }}
+                                                                                whileTap={{ scale: 0.95 }}
                                 type="submit"
-                                className="rounded-full bg-rose-100 px-3 py-1.5 text-xs text-rose-700 hover:bg-rose-200"
+                                                                                className="inline-flex items-center gap-1 px-3 py-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-lg text-xs font-medium transition-all"
                               >
+                                                                                <X className="w-3 h-3" />
                                 Rejeter
-                              </button>
+                                                                            </motion.button>
                             </form>
                           </div>
                         ) : (
-                          <>
-                            {/* SweetAlert confirm + hidden form */}
-                            <button
+                                                                    <motion.button
+                                                                        whileHover={{ scale: 1.05 }}
+                                                                        whileTap={{ scale: 0.95 }}
                               type="button"
                               onClick={async () => {
                                 const res = await Swal.fire({
@@ -541,15 +958,21 @@ function AdminDashboard() {
                                   confirmButtonText: "Oui, supprimer",
                                   cancelButtonText: "Annuler",
                                   confirmButtonColor: "#dc2626",
+                                                                                customClass: {
+                                                                                    popup: 'rounded-2xl',
+                                                                                    title: 'text-slate-900 dark:text-white'
+                                                                                }
                                 });
                                 if (res.isConfirmed) {
                                   document.getElementById(`delete-contractor-${r.id}`).submit();
                                 }
                               }}
-                              className="rounded-full bg-rose-100 px-3 py-1.5 text-xs text-rose-700 hover:bg-rose-200"
+                                                                        className="inline-flex items-center gap-1 px-3 py-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-lg text-xs font-medium transition-all"
                             >
+                                                                        <Trash2 className="w-3 h-3" />
                               Supprimer
-                            </button>
+                                                                    </motion.button>
+                                                                )}
 
                             <form
                               id={`delete-contractor-${r.id}`}
@@ -559,32 +982,22 @@ function AdminDashboard() {
                             >
                               <input type="hidden" name="_token" value={csrf_token} />
                             </form>
-                          </>
+                                                            </Td>
+                                                        </motion.tr>
+                                                    ))
                         )}
-                      </Td>
-                    </tr>
-                  ))}
                 </tbody>
               </table>
             </div>
+                                </motion.div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
           </div>
-        </>
-      )}
-
-      {/* same card look as your Signatures page */}
-      <style>{`
-        .card-frame {
-          background-color: #ffffff;
-          border: 1px solid rgba(0,0,0,0.08);
-          border-radius: 20px;
-          box-shadow:
-            0 1px 0 rgba(0,0,0,0.04),
-            0 8px 24px -12px rgba(0,0,0,0.18);
-        }
-      `}</style>
     </div>
   );
 }
 
 AdminDashboard.layout = (page) => <AdminLayout>{page}</AdminLayout>;
+
 export default AdminDashboard;

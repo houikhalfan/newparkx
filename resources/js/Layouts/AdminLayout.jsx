@@ -1,6 +1,7 @@
 // resources/js/Layouts/AdminLayout.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { Link, usePage } from "@inertiajs/react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   Users,
@@ -12,13 +13,26 @@ import {
   ChevronRight,
   Folder,
   BarChart3,
+  Menu,
+  X,
+  Moon,
+  Sun,
+  Bell,
+  Crown,
+  Settings,
+  User,
+  MapPin,
+  FileText,
+  Shield,
+  TrendingUp,
+  Archive,
+  AlertTriangle
 } from "lucide-react";
 import AdminNotifications from "@/Components/AdminNotifications";
-// import PPENotifications from "@/Components/PPENotifications";
 
 export default function AdminLayout({ children }) {
-const { csrf_token, admin } = usePage().props || {};
-  const { url: currentUrl = "" } = usePage(); // ✅ reactive URL from Inertia
+  const { csrf_token, admin } = usePage().props || {};
+  const { url: currentUrl = "" } = usePage();
 
   // --------- helpers ----------
   const active = (pattern) => new RegExp(pattern).test(currentUrl || "");
@@ -27,7 +41,10 @@ const { csrf_token, admin } = usePage().props || {};
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // DESKTOP collapse (full → icons-only)
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem("sidebar-collapsed") === "true";
+  });
 
   // theme persists for main/topbar (sidebar stays black)
   const [theme, setTheme] = useState(() => {
@@ -41,6 +58,13 @@ const { csrf_token, admin } = usePage().props || {};
     if (typeof window !== "undefined") localStorage.setItem("theme", theme);
   }, [theme]);
 
+  // Persist collapsed state
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("sidebar-collapsed", collapsed.toString());
+    }
+  }, [collapsed]);
+
   // user dropdown
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -53,8 +77,8 @@ const { csrf_token, admin } = usePage().props || {};
     return () => document.removeEventListener("click", close);
   }, []);
 
-  const adminName  = admin?.name  ?? "Admin";
-const adminEmail = admin?.email ?? "";
+  const adminName = admin?.name ?? "Admin";
+  const adminEmail = admin?.email ?? "";
 
   // ----- nav items -----
   const items = [
@@ -65,22 +89,16 @@ const adminEmail = admin?.email ?? "";
       Icon: LayoutDashboard,
     },
     {
-  label: "Sites",
-  href: route("admin.sites.index"),
-  match: "^/admin/sites",
-  Icon: Folder, // or any icon you prefer
-},
-    {
-      label: "Comptes ParkX",
-      href: route("admin.dashboard"),
-      match: "^/admin\\?$|^/admin$|^/admin\\?tab=parkx",
-      Icon: Users,
+      label: "Sites",
+      href: route("admin.sites.index"),
+      match: "^/admin/sites",
+      Icon: MapPin,
     },
     {
-      label: "Comptes contractants",
-      href: `${route("admin.dashboard")}?tab=contractors`,
-      match: "^/admin\\?tab=contractors",
-      Icon: Package,
+      label: "Gestion des Comptes",
+      href: route("admin.dashboard"),
+      match: "^/admin\\?$|^/admin$|^/admin\\?tab=parkx|^/admin\\?tab=contractors",
+      Icon: Users,
     },
     {
       label: "Signatures",
@@ -89,68 +107,81 @@ const adminEmail = admin?.email ?? "";
       Icon: Mail,
     },
     {
-  label: "Matériel (demandes)",
-  href: route("admin.material.index"),
-  match: "^/admin/materiel",
-  Icon: Folder, // par ex.
-},
-{
-  label: "Vods",
-  href: route("admin.vods.index"),
-  match: "^/admin/vods",
-  Icon: Folder, // par ex.
-},
-{
-  label: "Statistiques HSE",
-  href: route("admin.hse-statistics.index"),
-  match: "^/admin/hse-statistics",
-  Icon: BarChart3,
-},
-{
-  label: "Documents",
-  href: route("admin.documents.index"),
-  match: "^/admin/documents",
-  Icon: Folder,
-},
-{
-  label: "Demandes EPI",
-  href: route("admin.ppe-requests.index"),
-  match: "^/admin/ppe-requests",
-  Icon: Package,
-},
-
+      label: "Matériel (demandes)",
+      href: route("admin.material.index"),
+      match: "^/admin/materiel",
+      Icon: Archive,
+    },
+    {
+      label: "Vods",
+      href: route("admin.vods.index"),
+      match: "^/admin/vods",
+      Icon: FileText,
+    },
+    {
+      label: "Statistiques HSE",
+      href: route("admin.hse-statistics.index"),
+      match: "^/admin/hse-statistics",
+      Icon: BarChart3,
+    },
+    {
+      label: "Documents",
+      href: route("admin.documents.index"),
+      match: "^/admin/documents",
+      Icon: Folder,
+    },
+    {
+      label: "Demandes EPI",
+      href: route("admin.ppe-requests.index"),
+      match: "^/admin/ppe-requests",
+      Icon: Package,
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 dark:bg-slate-900 dark:text-slate-100">
+    <div className="min-h-screen bg-gray-50 text-gray-900 dark:bg-slate-900 dark:text-slate-100">
       {/* ===== Sidebar ===== */}
       <aside
         aria-label="Sidebar"
         className={[
-          "fixed inset-y-0 left-0 z-40 border-r bg-black text-white",
-          "transform transition-transform duration-200 ease-out",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full",      // mobile slide
-          "lg:!translate-x-0 lg:transition-none",                   // ✅ fixed open on lg
+          "fixed inset-y-0 left-0 z-40 border-r bg-white dark:bg-slate-800 text-gray-900 dark:text-white",
+          "transform transition-all duration-300 ease-in-out",
+          sidebarOpen ? "translate-x-0" : "-translate-x-full",
+          "lg:translate-x-0 lg:transition-all",
           collapsed ? "lg:w-16" : "lg:w-64",
           "w-64",
-          "border-neutral-800",
-          "transition-all duration-200 ease-in-out",
+          "border-gray-200 dark:border-slate-700",
+          "shadow-xl",
         ].join(" ")}
       >
         {/* Top row: logo + collapse toggle */}
-        <div className="flex items-center justify-between gap-2 px-3 h-14 border-b border-white/10">
-          <div className="flex items-center gap-2">
-            <img
-              src="/images/white.jpg"
-              className={`h-16 w-auto ${collapsed ? "opacity-0 pointer-events-none" : ""}`}
-              alt="Logo"
-            />
-          </div>
+        <div className={`flex items-center h-16 border-b border-gray-200 dark:border-slate-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700 ${
+          collapsed ? "justify-center px-2" : "justify-between px-4 gap-2"
+        }`}>
+          {/* Logo section - hidden when collapsed */}
+          {!collapsed && (
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <div className="p-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg shadow-lg">
+                <img src="/images/wh.png" className="w-6 h-6" alt="PARKX Logo" />
+              </div>
+              <div className="opacity-100">
+                <div className="text-lg font-bold text-slate-900 dark:text-white">PARKX</div>
+                <div className="text-xs text-slate-600 dark:text-slate-300">Administration</div>
+              </div>
+            </div>
+          )}
 
           {/* Collapse (desktop) */}
           <button
-            onClick={() => setCollapsed((v) => !v)}
-            className="hidden lg:inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-white/10"
+            onClick={() => {
+              console.log('Collapse button clicked, current state:', collapsed);
+              setCollapsed((v) => !v);
+            }}
+            className={`hidden lg:inline-flex items-center justify-center rounded-lg transition-all duration-200 ${
+              collapsed 
+                ? "h-8 w-8 bg-blue-500 hover:bg-blue-600 text-white shadow-lg" 
+                : "h-8 w-8 hover:bg-gray-100 dark:hover:bg-slate-600"
+            }`}
             aria-label="Toggle sidebar"
             aria-expanded={!collapsed}
           >
@@ -160,29 +191,16 @@ const adminEmail = admin?.email ?? "";
           {/* Mobile close */}
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-white/10"
+            className="lg:hidden inline-flex h-8 w-8 items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-slate-600 transition-colors"
             aria-label="Fermer"
           >
-            <ChevronLeft size={18} />
+            <X size={18} />
           </button>
         </div>
 
-        {/* Search (expanded only) */}
-        {!collapsed && (
-          <div className="px-3 pt-3">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 opacity-60" size={16} />
-              <input
-                type="text"
-                placeholder="Rechercher…"
-                className="w-full rounded-lg bg-white/5 border border-white/10 py-2 pl-9 pr-3 text-sm placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-white/20 dark:placeholder-white/60"
-              />
-            </div>
-          </div>
-        )}
 
         {/* Nav */}
-        <nav className="px-2 py-3 space-y-1.5">
+        <nav className={`py-4 space-y-1 flex-1 overflow-y-auto ${collapsed ? "px-2" : "px-3"}`}>
           {items.map(({ label, href, match, Icon }) => {
             const isActive = active(match);
             return (
@@ -200,132 +218,129 @@ const adminEmail = admin?.email ?? "";
         </nav>
 
         {/* Bottom section */}
-        <div className="mt-auto border-t border-white/10">
+        <div className={`mt-auto border-t border-gray-200 dark:border-slate-700 ${collapsed ? "p-2" : "p-3"}`}>
           {/* Profile preview (expanded) */}
-          <div className={`px-3 py-3 ${collapsed ? "hidden" : "flex items-center gap-3"}`}>
-            <span className="grid h-9 w-9 place-items-center rounded-full bg-white/10 text-sm font-semibold">
-              {adminName?.charAt(0)?.toUpperCase() || "A"}
-            </span>
-            <div className="min-w-0">
-              <div className="truncate text-sm font-medium">{adminName}</div>
-              {adminEmail && <div className="truncate text-xs text-white/60">{adminEmail}</div>}
+          {!collapsed && (
+            <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-slate-700 mb-3">
+              <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">
+                {adminName?.charAt(0)?.toUpperCase() || "A"}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-sm font-semibold text-gray-900 dark:text-white">{adminName}</div>
+                {adminEmail && <div className="truncate text-xs text-gray-500 dark:text-slate-400">{adminEmail}</div>}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Logout */}
-          <div className="px-2 py-3">
-            <form method="POST" action={route("admin.logout")}>
-              <input type="hidden" name="_token" value={csrf_token} />
-              <button
-                type="submit"
-                className={`${
-                  collapsed
-                    ? "w-10 h-10 grid place-items-center rounded-md hover:bg-white/10 mx-auto"
-                    : "w-full flex items-center gap-3 rounded-md px-3 py-2 hover:bg-white/10"
-                } text-red-400`}
-                title="Se déconnecter"
-              >
-                <LogOut size={18} />
-                {!collapsed && <span>Se déconnecter</span>}
-              </button>
-            </form>
-          </div>
+          <form method="POST" action={route("admin.logout")}>
+            <input type="hidden" name="_token" value={csrf_token} />
+            <button
+              type="submit"
+              className={`${
+                collapsed
+                  ? "w-10 h-10 grid place-items-center rounded-lg hover:bg-red-500 hover:text-white mx-auto text-red-600 dark:text-red-400 transition-all duration-200"
+                  : "w-full flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400"
+              } transition-colors`}
+              title="Se déconnecter"
+            >
+              <LogOut size={18} />
+              {!collapsed && <span className="font-medium">Se déconnecter</span>}
+            </button>
+          </form>
         </div>
       </aside>
 
       {/* Backdrop for mobile only */}
       {sidebarOpen && (
         <button
-          className="fixed inset-0 z-30 bg-black/30 lg:hidden"
+          className="fixed inset-0 z-30 bg-black/50 backdrop-blur-sm lg:hidden"
           onClick={() => setSidebarOpen(false)}
           aria-label="Fermer le menu"
         />
       )}
 
       {/* ===== Main column ===== */}
-      <div className={`${collapsed ? "lg:ml-16" : "lg:ml-64"} flex min-h-screen flex-col transition-all duration-200`}>
+      <div className={`${collapsed ? "lg:ml-16" : "lg:ml-64"} flex min-h-screen flex-col transition-all duration-300 ease-in-out`}>
         {/* Top bar */}
-        <header className="sticky top-0 z-20 h-14 border-b bg-white/90 backdrop-blur dark:bg-slate-900/90 dark:border-slate-700">
-          <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-3 px-4">
+        <header className="sticky top-0 z-20 h-16 border-b border-gray-200 dark:border-slate-700 bg-white/95 backdrop-blur-sm dark:bg-slate-900/95 shadow-sm">
+          <div className="mx-auto flex h-full max-w-7xl items-center justify-between gap-3 px-6">
             {/* Left: hamburger (mobile) + small logo */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <button
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-gray-100 lg:hidden dark:hover:bg-slate-800"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 lg:hidden transition-colors"
                 onClick={() => setSidebarOpen((v) => !v)}
                 aria-label="Ouvrir le menu"
               >
-                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
-                  <path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
+                <Menu size={18} />
               </button>
-              <img src="/images/logo.png" className="h-6 w-auto lg:hidden" alt="Logo" />
+              <div className="flex items-center gap-2">
+                <img src="/images/wh.png" className="h-8 w-auto" alt="PARKX Logo" />
+              </div>
             </div>
 
             {/* Right: theme, notifications, user */}
-            <div className="flex items-center gap-1">
-              {/* theme */}
+            <div className="flex items-center gap-2">
+              {/* Theme Toggle */}
               <button
                 onClick={() => setTheme((t) => (t === "dark" ? "light" : "dark"))}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-gray-100 dark:hover:bg-slate-800"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
                 title={theme === "dark" ? "Mode clair" : "Mode sombre"}
               >
                 {theme === "dark" ? (
-                  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
-                    <circle cx="12" cy="12" r="4" />
-                    <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-                  </svg>
+                  <Sun className="h-5 w-5 text-amber-500" />
                 ) : (
-                  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-                  </svg>
+                  <Moon className="h-5 w-5 text-slate-600" />
                 )}
               </button>
 
-              {/* notifications */}
+              {/* Notifications */}
               <AdminNotifications />
-              {/* <PPENotifications /> */}
 
-              {/* user menu */}
+              {/* User Menu */}
               <div className="relative" ref={menuRef}>
                 <button
                   onClick={() => setMenuOpen((v) => !v)}
-                  className="flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-slate-800"
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
                 >
-                  <div className="max-w-[8rem] truncate text-sm text-gray-700 dark:text-slate-200">
+                  <div className="max-w-[8rem] truncate text-sm font-medium text-gray-700 dark:text-slate-200">
                     {adminName}
                   </div>
-                  <span className="grid h-8 w-8 place-items-center rounded-full bg-gray-200 text-xs font-semibold text-gray-700 dark:bg-slate-700 dark:text-slate-200">
+                  <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 flex items-center justify-center text-white text-xs font-bold">
                     {adminName?.charAt(0)?.toUpperCase() || "A"}
-                  </span>
+                  </div>
                 </button>
 
                 {menuOpen && (
-                  <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-lg border bg-white shadow-lg dark:border-slate-700 dark:bg-slate-800">
-                    <div className="border-b px-4 py-3 dark:border-slate-700">
-                      <div className="text-sm font-medium">{adminName}</div>
+                  <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-lg">
+                    <div className="border-b border-gray-200 dark:border-slate-700 px-4 py-3">
+                      <div className="text-sm font-medium text-gray-900 dark:text-white">{adminName}</div>
                       {adminEmail && (
                         <div className="truncate text-xs text-gray-500 dark:text-slate-400">{adminEmail}</div>
                       )}
                     </div>
                     <ul className="py-1 text-sm">
                       <li>
-                        <Link href="#" className="block px-4 py-2 hover:bg-gray-50 dark:hover:bg-slate-700/60">
+                        <Link href="#" className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
+                          <User className="w-4 h-4" />
                           Profil
                         </Link>
                       </li>
                       <li>
-                        <Link href="#" className="block px-4 py-2 hover:bg-gray-50 dark:hover:bg-slate-700/60">
+                        <Link href="#" className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
+                          <Settings className="w-4 h-4" />
                           Paramètres
                         </Link>
                       </li>
                     </ul>
-                    <div className="border-t dark:border-slate-700">
+                    <div className="border-t border-gray-200 dark:border-slate-700">
                       <form method="POST" action={route("admin.logout")}>
                         <input type="hidden" name="_token" value={csrf_token} />
                         <button
                           type="submit"
-                          className="block w-full px-4 py-2 text-left text-red-600 hover:bg-gray-50 dark:text-red-400 dark:hover:bg-slate-700/60"
+                          className="flex items-center gap-3 w-full px-4 py-2 text-left text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
                         >
+                          <LogOut className="w-4 h-4" />
                           Se déconnecter
                         </button>
                       </form>
@@ -338,7 +353,7 @@ const adminEmail = admin?.email ?? "";
         </header>
 
         {/* Page content */}
-        <main className="flex-1 p-4 md:p-8">{children}</main>
+        <main className="flex-1 p-6 md:p-8">{children}</main>
       </div>
     </div>
   );
@@ -351,19 +366,29 @@ function NavItem({ href, Icon, label, active, collapsed, onClick }) {
       href={href}
       onClick={onClick}
       className={[
-        "group relative flex items-center rounded-md",
-        collapsed ? "justify-center px-0 py-2 h-10" : "px-3 py-2 gap-3",
-        active ? "bg-white text-gray-900 shadow-sm" : "text-white/80 hover:bg-white/10 hover:text-white",
+        "group relative flex items-center rounded-lg transition-all duration-200",
+        collapsed ? "justify-center px-0 py-3 h-12 mx-1" : "px-3 py-3 gap-3",
+        active 
+          ? collapsed 
+            ? "bg-blue-500 text-white shadow-lg" 
+            : "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 border-r-2 border-blue-600"
+          : "text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-gray-900 dark:hover:text-white"
       ].join(" ")}
     >
-      <Icon size={18} className={active ? "" : "opacity-90"} />
-      {!collapsed && <span className="text-sm">{label}</span>}
+      <Icon 
+        size={20} 
+        className={active ? (collapsed ? "text-white" : "text-blue-600 dark:text-blue-400") : ""} 
+      />
+      
+      {!collapsed && (
+        <span className="text-sm font-medium">{label}</span>
+      )}
 
       {/* Tooltip when collapsed */}
       {collapsed && (
-        <span className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 whitespace-nowrap rounded-md bg-white px-2 py-1 text-xs font-medium text-gray-900 shadow opacity-0 group-hover:opacity-100">
+        <div className="pointer-events-none absolute left-full top-1/2 -translate-y-1/2 ml-3 whitespace-nowrap rounded-md bg-gray-900 dark:bg-slate-800 px-2 py-1 text-xs font-medium text-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity z-50">
           {label}
-        </span>
+        </div>
       )}
     </Link>
   );

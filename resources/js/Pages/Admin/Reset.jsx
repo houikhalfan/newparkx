@@ -1,4 +1,16 @@
+import { useState } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
+import { motion } from 'framer-motion';
+import { 
+  Shield, 
+  Mail, 
+  Lock, 
+  ArrowLeft, 
+  CheckCircle,
+  Eye,
+  EyeOff,
+  Crown
+} from 'lucide-react';
 import Swal from 'sweetalert2';
 
 export default function AdminReset() {
@@ -10,6 +22,9 @@ export default function AdminReset() {
     password: '',
     password_confirmation: '',
   });
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -39,96 +54,288 @@ export default function AdminReset() {
     });
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const iconVariants = {
+    hidden: { scale: 0, rotate: -180 },
+    visible: {
+      scale: 1,
+      rotate: 0,
+      transition: {
+        duration: 0.8,
+        ease: "backOut"
+      }
+    }
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden">
-      {/* Background */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+      {/* Enhanced Background with Admin Background Image */}
+      <div className="absolute inset-0 -z-10">
+        {/* Background Image */}
         <div
-          className="absolute inset-0 bg-center bg-cover animate-pan"
-          style={{ backgroundImage: "url('/images/INNO.jpg')", willChange: 'transform' }}
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat animate-pan"
+          style={{ 
+            backgroundImage: "url('/images/background_admin.jpeg')",
+            willChange: 'transform'
+          }}
         />
-        <div className="absolute inset-0 bg-black/35" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/30" />
-      </div>
-
-      <div className="relative flex min-h-screen items-center justify-center px-4">
-        <div className="w-full max-w-xl">
-          <div className="rounded-2xl bg-white/60 backdrop-blur-xl border border-white/20 shadow-2xl ring-1 ring-black/5 p-8 sm:p-10">
-            <div className="flex justify-center">
-              <img src="/images/logo.png" alt="Company logo" className="h-18 w-auto mb-4" draggable="false" />
-            </div>
-
-            <h1 className="text-center text-xl font-semibold text-gray-900">
-              Nouveau mot de passe (Admin)
-            </h1>
-            <p className="mt-2 text-center text-gray-700">
-              Choisissez un nouveau mot de passe pour votre compte administrateur.
-            </p>
-
-            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-              <input type="hidden" value={data.token} />
-
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-800">Adresse e-mail</label>
-                <input
-                  type="email"
-                  value={data.email}
-                  onChange={(e) => setData('email', e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 bg-white/90 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
-                  required
-                />
-                {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
-              </div>
-
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-800">Mot de passe</label>
-                <input
-                  type="password"
-                  value={data.password}
-                  onChange={(e) => setData('password', e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 bg-white/90 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
-                  required
-                />
-                {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
-              </div>
-
-              <div>
-                <label className="mb-1 block text-sm font-medium text-gray-800">Confirmer le mot de passe</label>
-                <input
-                  type="password"
-                  value={data.password_confirmation}
-                  onChange={(e) => setData('password_confirmation', e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 bg-white/90 px-4 py-3 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
-                  required
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={processing}
-                className="w-full rounded-lg bg-black text-white py-3 font-medium transition hover:opacity-90 disabled:opacity-70"
-              >
-                {processing ? 'Mise à jour…' : 'Mettre à jour'}
-              </button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <a href={route('admin.login')} className="text-sm text-gray-700 underline-offset-2 hover:text-gray-900">
-                Retour à la connexion
-              </a>
-            </div>
+        
+        {/* Dark overlay for text readability */}
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/60 via-purple-900/40 to-indigo-900/60" />
+        
+        {/* Subtle Animated Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Floating Orbs - More subtle */}
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-indigo-400/20 to-blue-400/20 rounded-full blur-3xl animate-pulse" />
+          
+          {/* Moving Particles - More subtle */}
+          <div className="absolute inset-0">
+            {[...Array(15)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute w-1 h-1 bg-white/10 rounded-full"
+                style={{
+                  left: `${Math.random() * 100}%`,
+                  top: `${Math.random() * 100}%`,
+                }}
+                animate={{
+                  y: [0, -20, 0],
+                  opacity: [0.1, 0.4, 0.1],
+                }}
+                transition={{
+                  duration: 4 + Math.random() * 3,
+                  repeat: Infinity,
+                  delay: Math.random() * 3,
+                }}
+              />
+            ))}
           </div>
         </div>
       </div>
 
+      {/* Content */}
+      <div className="relative flex min-h-screen items-center justify-center px-4">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="w-full max-w-lg"
+        >
+          <motion.div
+            variants={cardVariants}
+            className="relative"
+          >
+            <div className="w-full rounded-3xl bg-white/15 backdrop-blur-2xl border-2 border-white/30 shadow-2xl ring-2 ring-white/20 p-8 sm:p-10 min-w-[400px] max-w-[500px]">
+              {/* Logo Section */}
+              <motion.div
+                variants={iconVariants}
+                className="flex flex-col items-center mb-8"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <img src="/images/logo.png" alt="Company logo" className="h-12 w-auto" />
+                  <div className="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl">
+                    <Crown className="w-8 h-8 text-white" />
+                  </div>
+                </div>
+                <h1 className="text-3xl font-bold text-white mb-2">Nouveau mot de passe</h1>
+                <p className="text-blue-200 text-center">
+                  Admin - Choisissez un nouveau mot de passe pour votre compte administrateur
+                </p>
+              </motion.div>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <input type="hidden" value={data.token} />
+                
+                {/* Email Field */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <label className="mb-2 block text-sm font-medium text-white">Adresse e-mail</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Mail className="h-5 w-5 text-blue-300" />
+                    </div>
+                    <input
+                      type="email"
+                      value={data.email}
+                      onChange={(e) => setData('email', e.target.value)}
+                      className="w-full pl-10 pr-4 py-4 rounded-2xl border-2 border-white/30 bg-white/15 backdrop-blur-sm text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all font-medium"
+                      placeholder="admin@entreprise.com"
+                      required
+                    />
+                  </div>
+                  {errors.email && (
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="mt-2 text-sm text-red-300"
+                    >
+                      {errors.email}
+                    </motion.p>
+                  )}
+                </motion.div>
+
+                {/* Password Field */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <label className="mb-2 block text-sm font-medium text-white">Mot de passe</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Lock className="h-5 w-5 text-blue-300" />
+                    </div>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={data.password}
+                      onChange={(e) => setData('password', e.target.value)}
+                      className="w-full pl-10 pr-12 py-4 rounded-2xl border-2 border-white/30 bg-white/15 backdrop-blur-sm text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all font-medium"
+                      placeholder="••••••••"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-blue-300 hover:text-white transition-colors"
+                    >
+                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="mt-2 text-sm text-red-300"
+                    >
+                      {errors.password}
+                    </motion.p>
+                  )}
+                </motion.div>
+
+                {/* Confirm Password Field */}
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  <label className="mb-2 block text-sm font-medium text-white">Confirmer le mot de passe</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Lock className="h-5 w-5 text-blue-300" />
+                    </div>
+                    <input
+                      type={showConfirmPassword ? 'text' : 'password'}
+                      value={data.password_confirmation}
+                      onChange={(e) => setData('password_confirmation', e.target.value)}
+                      className="w-full pl-10 pr-12 py-4 rounded-2xl border-2 border-white/30 bg-white/15 backdrop-blur-sm text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-transparent transition-all font-medium"
+                      placeholder="••••••••"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center text-blue-300 hover:text-white transition-colors"
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  </div>
+                  {errors.password_confirmation && (
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="mt-2 text-sm text-red-300"
+                    >
+                      {errors.password_confirmation}
+                    </motion.p>
+                  )}
+                </motion.div>
+
+                {/* Submit Button */}
+                <motion.button
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  disabled={processing}
+                  className="w-full rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-600 text-white py-4 font-semibold transition-all hover:from-purple-600 hover:to-indigo-700 disabled:opacity-70 shadow-xl hover:shadow-2xl flex items-center justify-center gap-2 text-lg"
+                >
+                  {processing ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Mise à jour…
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle className="w-5 h-5" />
+                      Mettre à jour
+                    </>
+                  )}
+                </motion.button>
+              </form>
+
+              {/* Back to Login */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="mt-6 text-center"
+              >
+                <a
+                  href={route('admin.login')}
+                  className="inline-flex items-center gap-2 text-sm text-blue-200 hover:text-white transition-colors underline-offset-2 hover:underline"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Retour à la connexion
+                </a>
+              </motion.div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* Styles */}
       <style>{`
         @keyframes pan {
-          0%   { transform: scale(1.08) translate(0%, 0%); }
-          50%  { transform: scale(1.12) translate(-2%, -1%); }
-          100% { transform: scale(1.08) translate(-4%, -3%); }
+          0%   { transform: scale(1.02) translate(0%, 0%); }
+          50%  { transform: scale(1.05) translate(-1%, -0.5%); }
+          100% { transform: scale(1.02) translate(-2%, -1%); }
         }
-        .animate-pan { animation: pan 36s ease-in-out infinite alternate; transform-origin: center; }
-        @media (prefers-reduced-motion: reduce) { .animate-pan { animation: none !important; } }
+        .animate-pan { 
+          animation: pan 30s ease-in-out infinite alternate; 
+          transform-origin: center; 
+        }
+        @media (prefers-reduced-motion: reduce) { 
+          .animate-pan { animation: none !important; } 
+        }
       `}</style>
     </div>
   );

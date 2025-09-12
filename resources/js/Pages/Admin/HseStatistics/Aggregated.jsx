@@ -1,6 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+    BarChart3, 
+    Search, 
+    Filter, 
+    Download, 
+    Calendar, 
+    Building2, 
+    Users, 
+    Clock, 
+    TrendingUp, 
+    AlertTriangle, 
+    CheckCircle, 
+    XCircle, 
+    Eye, 
+    FileText, 
+    ArrowLeft,
+    Sparkles,
+    Target,
+    Award,
+    Activity,
+    Shield,
+    Zap
+} from 'lucide-react';
 
 export default function HseStatisticsAggregated({ aggregatedData, filters: initialFilters = {} }) {
     const [filters, setFilters] = useState({
@@ -51,286 +75,544 @@ export default function HseStatisticsAggregated({ aggregatedData, filters: initi
         return value ? Number(value).toLocaleString() : '0';
     };
 
+    // Helper component for table headers
+    const Th = ({ children, className = "" }) => (
+        <th className={`px-6 py-4 text-left text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider ${className}`}>
+            {children}
+        </th>
+    );
+
+    // Helper component for table cells
+    const Td = ({ children, className = "" }) => (
+        <td className={`px-6 py-4 whitespace-nowrap ${className}`}>
+            {children}
+        </td>
+    );
+
     return (
         <AdminLayout>
             <Head title="Statistiques HSE Agrégées - Administration" />
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 relative overflow-hidden">
+                {/* Enhanced Animated Background Elements */}
+                <div className="fixed inset-0 overflow-hidden pointer-events-none">
+                    <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/30 to-purple-400/30 rounded-full blur-3xl animate-pulse" />
+                    <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-indigo-400/30 to-pink-400/30 rounded-full blur-3xl animate-pulse" />
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400/20 to-blue-400/20 rounded-full blur-2xl animate-pulse" />
+                    <div className="absolute top-1/4 right-1/4 w-48 h-48 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-2xl animate-pulse" />
+                </div>
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
-                            {/* Header */}
-                            <div className="mb-8">
-                                <div className="flex justify-between items-center">
+                <div className="relative z-10 p-6 md:p-8">
+                    {/* Enhanced Header */}
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
+                        className="mb-8"
+                    >
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-4">
+                                <motion.div
+                                    initial={{ scale: 0, rotate: -180 }}
+                                    animate={{ scale: 1, rotate: 0 }}
+                                    transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 20 }}
+                                    className="p-3 bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-2xl shadow-2xl"
+                                >
+                                    <BarChart3 className="w-8 h-8 text-white" />
+                                </motion.div>
                                     <div>
-                                        <h1 className="text-3xl font-bold text-gray-900">Statistiques HSE Agrégées</h1>
-                                        <p className="text-gray-600 mt-2">
+                                    <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-slate-900 via-blue-900 via-purple-900 to-indigo-900 dark:from-white dark:via-blue-100 dark:via-purple-100 dark:to-indigo-100 bg-clip-text text-transparent">
+                                        Statistiques HSE Agrégées
+                                    </h1>
+                                    <p className="text-lg text-slate-600 dark:text-slate-300 mt-2 font-medium">
                                             Période: {aggregatedData.period_start && aggregatedData.period_end 
                                                 ? `${aggregatedData.period_start} au ${aggregatedData.period_end}`
                                                 : 'Toutes les périodes'
                                             }
                                         </p>
                                     </div>
+                            </div>
+                            <motion.div
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                            >
                                     <Link
                                         href={route('admin.hse-statistics.index')}
-                                        className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-slate-600 to-slate-700 text-white rounded-2xl hover:from-slate-700 hover:to-slate-800 transition-all font-medium shadow-lg"
                                     >
+                                    <ArrowLeft className="w-5 h-5" />
                                         Retour à la liste
                                     </Link>
-                                </div>
-                            </div>
+                            </motion.div>
+                        </div>
+                    </motion.div>
 
-                            {/* Summary Cards */}
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                                <div className="bg-blue-50 p-6 rounded-lg">
-                                    <div className="text-2xl font-bold text-blue-600">{formatInteger(aggregatedData.total_submissions)}</div>
-                                    <div className="text-sm text-gray-600">Total Soumissions</div>
-                                </div>
-                                <div className="bg-green-50 p-6 rounded-lg">
-                                    <div className="text-2xl font-bold text-green-600">{formatInteger(aggregatedData.effectif_total)}</div>
-                                    <div className="text-sm text-gray-600">Effectif Total</div>
-                                </div>
-                                <div className="bg-yellow-50 p-6 rounded-lg">
-                                    <div className="text-2xl font-bold text-yellow-600">{formatInteger(aggregatedData.volume_horaire_total)}</div>
-                                    <div className="text-sm text-gray-600">Volume Horaire Total</div>
-                                </div>
-                            </div>
-
-                            {/* Filters */}
-                            <div className="mb-6 bg-gray-50 p-4 rounded-lg">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">Filtres</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {/* Enhanced Summary Cards */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.3, duration: 0.6 }}
+                        className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
+                    >
+                        <motion.div
+                            whileHover={{ scale: 1.05, y: -5 }}
+                            className="relative overflow-hidden rounded-2xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 shadow-2xl"
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 dark:from-blue-900/20 dark:to-indigo-900/20" />
+                            <div className="relative p-6">
+                                <div className="flex items-center gap-4">
+                                    <div className="p-3 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl shadow-lg">
+                                        <FileText className="w-6 h-6 text-white" />
+                                    </div>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        <div className="text-3xl font-black text-blue-600 dark:text-blue-400">
+                                            {formatInteger(aggregatedData.total_submissions)}
+                                        </div>
+                                        <div className="text-sm font-semibold text-slate-600 dark:text-slate-400">Total Soumissions</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            whileHover={{ scale: 1.05, y: -5 }}
+                            className="relative overflow-hidden rounded-2xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 shadow-2xl"
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 to-emerald-50/50 dark:from-green-900/20 dark:to-emerald-900/20" />
+                            <div className="relative p-6">
+                                <div className="flex items-center gap-4">
+                                    <div className="p-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl shadow-lg">
+                                        <Users className="w-6 h-6 text-white" />
+                                    </div>
+                                    <div>
+                                        <div className="text-3xl font-black text-green-600 dark:text-green-400">
+                                            {formatInteger(aggregatedData.effectif_total)}
+                                        </div>
+                                        <div className="text-sm font-semibold text-slate-600 dark:text-slate-400">Effectif Total</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        <motion.div
+                            whileHover={{ scale: 1.05, y: -5 }}
+                            className="relative overflow-hidden rounded-2xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 shadow-2xl"
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-br from-yellow-50/50 to-orange-50/50 dark:from-yellow-900/20 dark:to-orange-900/20" />
+                            <div className="relative p-6">
+                                <div className="flex items-center gap-4">
+                                    <div className="p-3 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl shadow-lg">
+                                        <Clock className="w-6 h-6 text-white" />
+                                    </div>
+                                    <div>
+                                        <div className="text-3xl font-black text-yellow-600 dark:text-yellow-400">
+                                            {formatInteger(aggregatedData.volume_horaire_total)}
+                                </div>
+                                        <div className="text-sm font-semibold text-slate-600 dark:text-slate-400">Volume Horaire Total</div>
+                                </div>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+
+                    {/* Enhanced Filters */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4, duration: 0.6 }}
+                        className="relative overflow-hidden rounded-2xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 shadow-2xl mb-8"
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 via-teal-50/30 to-cyan-50/50 dark:from-emerald-900/20 dark:via-teal-900/10 dark:to-cyan-900/20" />
+                        <div className="relative p-8">
+                            <div className="text-center mb-8">
+                                <motion.div
+                                    whileHover={{ scale: 1.1, rotate: 5 }}
+                                    className="inline-flex items-center justify-center w-14 h-14 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-2xl shadow-2xl mb-4"
+                                >
+                                    <Filter className="w-7 h-7 text-white" />
+                                </motion.div>
+                                <h2 className="text-2xl font-black bg-gradient-to-r from-slate-900 via-emerald-900 to-teal-900 dark:from-white dark:via-emerald-100 dark:to-teal-100 bg-clip-text text-transparent mb-2">
+                                    Filtres de recherche
+                                </h2>
+                                <p className="text-slate-600 dark:text-slate-400 font-medium">
+                                    Affinez vos statistiques HSE
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                    <div>
+                                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">
                                             Date de début
                                         </label>
+                                    <div className="relative group">
+                                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
                                         <input
                                             type="date"
                                             value={filters.start_date}
                                             onChange={(e) => handleFilterChange('start_date', e.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500"
                                         />
                                     </div>
+                                </div>
+
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">
                                             Date de fin
                                         </label>
+                                    <div className="relative group">
+                                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
                                         <input
                                             type="date"
                                             value={filters.end_date}
                                             onChange={(e) => handleFilterChange('end_date', e.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm text-slate-900 dark:text-white focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500"
                                         />
                                     </div>
+                                </div>
+
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">
                                             Site
                                         </label>
+                                    <div className="relative group">
+                                        <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
                                         <input
                                             type="text"
                                             value={filters.site}
                                             onChange={(e) => handleFilterChange('site', e.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500"
                                             placeholder="Rechercher par site..."
                                         />
                                     </div>
+                                </div>
+
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    <label className="block text-sm font-bold text-slate-700 dark:text-slate-200 mb-3">
                                             Entreprise
                                         </label>
+                                    <div className="relative group">
+                                        <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-blue-500 transition-colors" />
                                         <input
                                             type="text"
                                             value={filters.entreprise}
                                             onChange={(e) => handleFilterChange('entreprise', e.target.value)}
-                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 bg-white/80 dark:bg-slate-700/80 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500"
                                             placeholder="Rechercher par entreprise..."
                                         />
                                     </div>
                                 </div>
-                                <div className="flex items-end gap-3 mt-4">
-                                    <button
-                                        onClick={exportExcel}
-                                        className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center gap-2"
-                                    >
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        </svg>
-                                        Exporter Excel
-                                    </button>
-                                    <button
-                                        onClick={clearFilters}
-                                        className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
-                                    >
-                                        Effacer
-                                    </button>
-                                </div>
                             </div>
 
-                            {/* Horizontal Statistics Table */}
+                            <div className="flex items-center justify-center gap-4 mt-8">
+                                <motion.button
+                                    whileHover={{ scale: 1.05, y: -2 }}
+                                    whileTap={{ scale: 0.95 }}
+                                        onClick={exportExcel}
+                                    className="group relative inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 text-white rounded-2xl hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 transition-all duration-300 font-bold shadow-2xl overflow-hidden"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                    <motion.div
+                                        whileHover={{ rotate: 360 }}
+                                        transition={{ duration: 0.6 }}
+                                        className="relative z-10"
+                                    >
+                                        <Download className="w-5 h-5" />
+                                    </motion.div>
+                                    <span className="relative z-10">Exporter Excel</span>
+                                </motion.button>
+
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                        onClick={clearFilters}
+                                    className="inline-flex items-center gap-2 px-6 py-3 bg-slate-200 text-slate-700 rounded-2xl hover:bg-slate-300 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600 transition-all font-medium"
+                                    >
+                                    <XCircle className="w-5 h-5" />
+                                        Effacer
+                                </motion.button>
+                                </div>
+                            </div>
+                    </motion.div>
+
+                    {/* Enhanced Statistics Table */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5, duration: 0.6 }}
+                        className="relative overflow-hidden rounded-2xl bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 shadow-2xl"
+                    >
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10" />
+                        <div className="relative overflow-x-auto">
                             {aggregatedData.statistics && aggregatedData.statistics.length > 0 ? (
-                                <div className="overflow-x-auto">
-                                    <table className="min-w-full divide-y divide-gray-200">
-                                        <thead className="bg-gray-50">
-                                            <tr>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contractant</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Entreprise</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Site</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Effectif</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Volume Horaire</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">TRIR</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">LTIR</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DART</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acc. Mortel</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acc. Arrêt</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acc. Soins</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acc. Restriction</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Premier Soin</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Presque Accident</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Dommage Matériel</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Incident Env.</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sensibilisations</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Personnes Sens.</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Inductions</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">H. Formation</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">H. Induction</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">H. Formation Spéc.</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PTSR Total</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PTSR Contrôlés</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Permis Général</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Permis Excavation</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Permis Point Chaud</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Permis Espace Confiné</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Permis Travail Hauteur</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Permis Levage</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Permis Consignation</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Permis Électrique</th>
-                                                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observations HSE</th>
+                                <table className="min-w-full">
+                                    <thead>
+                                        <tr className="border-b border-slate-200 dark:border-slate-700">
+                                            <Th>Contractant</Th>
+                                            <Th>Entreprise</Th>
+                                            <Th>Site</Th>
+                                            <Th>Date</Th>
+                                            <Th>Effectif</Th>
+                                            <Th>Volume Horaire</Th>
+                                            <Th>TRIR</Th>
+                                            <Th>LTIR</Th>
+                                            <Th>DART</Th>
+                                            <Th>Acc. Mortel</Th>
+                                            <Th>Acc. Arrêt</Th>
+                                            <Th>Acc. Soins</Th>
+                                            <Th>Acc. Restriction</Th>
+                                            <Th>Premier Soin</Th>
+                                            <Th>Presque Accident</Th>
+                                            <Th>Dommage Matériel</Th>
+                                            <Th>Incident Env.</Th>
+                                            <Th>Sensibilisations</Th>
+                                            <Th>Personnes Sens.</Th>
+                                            <Th>Inductions</Th>
+                                            <Th>H. Formation</Th>
+                                            <Th>H. Induction</Th>
+                                            <Th>H. Formation Spéc.</Th>
+                                            <Th>PTSR Total</Th>
+                                            <Th>PTSR Contrôlés</Th>
+                                            <Th>Permis Général</Th>
+                                            <Th>Permis Excavation</Th>
+                                            <Th>Permis Point Chaud</Th>
+                                            <Th>Permis Espace Confiné</Th>
+                                            <Th>Permis Travail Hauteur</Th>
+                                            <Th>Permis Levage</Th>
+                                            <Th>Permis Consignation</Th>
+                                            <Th>Permis Électrique</Th>
+                                            <Th>Observations HSE</Th>
+                                            <Th>Actions</Th>
                                             </tr>
                                         </thead>
-                                        <tbody className="bg-white divide-y divide-gray-200">
-                                            {aggregatedData.statistics.map((stat) => (
-                                                <tr key={stat.id} className="hover:bg-gray-50">
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                                        {aggregatedData.statistics.map((stat, index) => (
+                                            <motion.tr
+                                                key={stat.id}
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: index * 0.05, duration: 0.4 }}
+                                                whileHover={{ scale: 1.01 }}
+                                                className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all duration-200"
+                                            >
+                                                <Td>
+                                                    <div className="font-semibold text-slate-900 dark:text-white">
                                                         {stat.contractor_name}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="text-slate-600 dark:text-slate-400">
                                                         {stat.entreprise}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="text-slate-600 dark:text-slate-400">
                                                         {stat.site}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="text-slate-600 dark:text-slate-400">
                                                         {stat.date}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-slate-900 dark:text-white">
                                                         {formatInteger(stat.effectif_personnel)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-slate-900 dark:text-white">
                                                         {formatInteger(stat.total_heures)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-slate-900 dark:text-white">
                                                         {formatNumber(stat.trir)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-slate-900 dark:text-white">
                                                         {formatNumber(stat.ltir)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-slate-900 dark:text-white">
                                                         {formatNumber(stat.dart)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-red-600 font-bold">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-bold text-red-600 dark:text-red-400">
                                                         {formatInteger(stat.acc_mortel)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-orange-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-orange-600 dark:text-orange-400">
                                                         {formatInteger(stat.acc_arret)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-orange-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-orange-600 dark:text-orange-400">
                                                         {formatInteger(stat.acc_soins_medicaux)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-orange-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-orange-600 dark:text-orange-400">
                                                         {formatInteger(stat.acc_restriction_temporaire)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-yellow-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-yellow-600 dark:text-yellow-400">
                                                         {formatInteger(stat.premier_soin)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-yellow-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-yellow-600 dark:text-yellow-400">
                                                         {formatInteger(stat.presque_accident)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-yellow-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-yellow-600 dark:text-yellow-400">
                                                         {formatInteger(stat.dommage_materiel)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-yellow-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-yellow-600 dark:text-yellow-400">
                                                         {formatInteger(stat.incident_environnemental)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-green-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-green-600 dark:text-green-400">
                                                         {formatInteger(stat.nb_sensibilisations)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-green-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-green-600 dark:text-green-400">
                                                         {formatInteger(stat.personnes_sensibilisees)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-purple-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-purple-600 dark:text-purple-400">
                                                         {formatInteger(stat.inductions_total_personnes)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-purple-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-purple-600 dark:text-purple-400">
                                                         {formatInteger(stat.total_heures_formation)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-purple-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-purple-600 dark:text-purple-400">
                                                         {formatInteger(stat.total_heures_induction)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-purple-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-purple-600 dark:text-purple-400">
                                                         {formatInteger(stat.total_heures_formation_specifique)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-indigo-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-indigo-600 dark:text-indigo-400">
                                                         {formatInteger(stat.ptsr_total)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-indigo-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-indigo-600 dark:text-indigo-400">
                                                         {formatInteger(stat.ptsr_controles)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-teal-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-teal-600 dark:text-teal-400">
                                                         {formatInteger(stat.permis_general)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-teal-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-teal-600 dark:text-teal-400">
                                                         {formatInteger(stat.permis_excavation)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-teal-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-teal-600 dark:text-teal-400">
                                                         {formatInteger(stat.permis_point_chaud)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-teal-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-teal-600 dark:text-teal-400">
                                                         {formatInteger(stat.permis_espace_confine)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-teal-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-teal-600 dark:text-teal-400">
                                                         {formatInteger(stat.permis_travail_hauteur)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-teal-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-teal-600 dark:text-teal-400">
                                                         {formatInteger(stat.permis_levage)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-teal-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-teal-600 dark:text-teal-400">
                                                         {formatInteger(stat.permis_consignation)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-teal-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-teal-600 dark:text-teal-400">
                                                         {formatInteger(stat.permis_electrique_tension)}
-                                                    </td>
-                                                    <td className="px-3 py-4 whitespace-nowrap text-sm text-pink-600">
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <div className="font-semibold text-pink-600 dark:text-pink-400">
                                                         {formatInteger(stat.observations_hse)}
-                                                    </td>
-                                                </tr>
+                                                    </div>
+                                                </Td>
+                                                <Td>
+                                                    <motion.div
+                                                        whileHover={{ scale: 1.05 }}
+                                                        whileTap={{ scale: 0.95 }}
+                                                    >
+                                                        <Link
+                                                            href={route('admin.hse-statistics.show', stat.id)}
+                                                            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl hover:from-blue-600 hover:to-indigo-600 transition-all font-medium shadow-lg"
+                                                        >
+                                                            <Eye className="w-4 h-4" />
+                                                            Voir détails
+                                                        </Link>
+                                                    </motion.div>
+                                                </Td>
+                                            </motion.tr>
                                             ))}
                                         </tbody>
                                     </table>
-                                </div>
                             ) : (
-                                <div className="text-center py-12">
-                                    <div className="text-gray-500 text-lg">Aucune statistique trouvée</div>
-                                    <p className="text-gray-400 mt-2">
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ delay: 0.2, type: "spring" }}
+                                    className="text-center py-16"
+                                >
+                                    <motion.div
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        transition={{ delay: 0.4, type: "spring" }}
+                                        className="flex flex-col items-center gap-6"
+                                    >
+                                        <div className="p-6 bg-slate-100 dark:bg-slate-700 rounded-full">
+                                            <BarChart3 className="w-12 h-12 text-slate-400" />
+                                </div>
+                                        <div>
+                                            <h3 className="text-2xl font-bold text-slate-700 dark:text-slate-300 mb-2">
+                                                Aucune statistique trouvée
+                                            </h3>
+                                            <p className="text-slate-500 dark:text-slate-400">
                                         {filters.start_date || filters.end_date || filters.site || filters.entreprise
                                             ? 'Aucune donnée pour les filtres sélectionnés'
                                             : 'Aucune statistique HSE soumise'
                                         }
                                     </p>
                                 </div>
+                                    </motion.div>
+                                </motion.div>
                             )}
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
             </div>
         </AdminLayout>
