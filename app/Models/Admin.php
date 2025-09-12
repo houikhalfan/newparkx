@@ -13,8 +13,15 @@ class Admin extends Authenticatable implements CanResetPasswordContract
     use Notifiable, CanResetPassword;
 
     protected $table = 'admins';
-    protected $fillable = ['name', 'email', 'password'];
+    protected $fillable = ['email', 'password'];
     protected $hidden   = ['password', 'remember_token'];
+
+    protected function casts(): array
+    {
+        return [
+            'password' => 'hashed',
+        ];
+    }
 
 public function sendPasswordResetNotification($token): void
 {

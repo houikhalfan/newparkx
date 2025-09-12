@@ -23,4 +23,4 @@
         <?php if (!isset($__inertiaSsrDispatched)) { $__inertiaSsrDispatched = true; $__inertiaSsrResponse = app(\Inertia\Ssr\Gateway::class)->dispatch($page); }  if ($__inertiaSsrResponse) { echo $__inertiaSsrResponse->body; } else { ?><div id="app" data-page="<?php echo e(json_encode($page)); ?>"></div><?php } ?>
     </body>
 </html>
-<?php /**PATH C:\Users\ADMIN\Pictures\newparkx\resources\views/app.blade.php ENDPATH**/ ?>
+<?php /**PATH C:\Users\pc\OneDrive\Bureau\Stage PFA 2025\parkx\resources\views/app.blade.php ENDPATH**/ ?>
