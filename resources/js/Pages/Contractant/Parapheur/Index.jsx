@@ -249,9 +249,20 @@ function DocCard({ row, kind }) {
       )}
 
       <div className="mt-auto pt-4 flex flex-wrap gap-2">
-        <ActionLink href={route("contractant.parapheur.download.original", row.id)} label="Original" />
-        {kind === "signed" && row.signed_path && (
-          <ActionLink href={route("contractant.parapheur.download.signed", row.id)} label="Signé" />
+        {/* Only show download links for records with numeric IDs (not temporary ones) */}
+        {!isNaN(Number(row.id)) && (
+          <>
+            <ActionLink href={route("contractant.parapheur.download.original", row.id)} label="Original" />
+            {kind === "signed" && row.signed_path && (
+              <ActionLink href={route("contractant.parapheur.download.signed", row.id)} label="Signé" />
+            )}
+          </>
+        )}
+        {/* Show loading state for temporary records */}
+        {isNaN(Number(row.id)) && (
+          <span className="text-sm px-2.5 py-1.5 rounded-lg border border-gray-200 text-gray-400">
+            En cours de traitement...
+          </span>
         )}
       </div>
     </div>
