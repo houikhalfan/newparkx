@@ -3,83 +3,194 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\Vod;
+use App\Models\ContractantVod;
 use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class VodController extends Controller
 {
     public function index(Request $request)
     {
-        $q = trim((string) $request->get('q', ''));
+        $q = $request->get('q');
 
-        $query = Vod::with('user')->latest();
-
-        if ($q !== '') {
-            $query->where(function ($x) use ($q) {
-                $x->where('projet', 'like', "%{$q}%")
-                  ->orWhere('activite', 'like', "%{$q}%")
-                  ->orWhere('entreprise_observee', 'like', "%{$q}%"); // JSON stored as text -> LIKE works
-            })->orWhereHas('user', function ($u) use ($q) {
-                $u->where('name', 'like', "%{$q}%")
-                  ->orWhere('email', 'like', "%{$q}%");
-            });
-        }
-
-        $vods = $query
-            ->paginate(15)
-            ->withQueryString()
-            ->through(function (Vod $vod) {
+        // --- ParkX VODs (done by employees)
+        $parkx = Vod::with('user')
+            ->when($q, function ($query, $q) {
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('projet', 'like', "%{$q}%")
+                        ->orWhere('activite', 'like', "%{$q}%")
+                        ->orWhere('observateur', 'like', "%{$q}%")
+                        ->orWhereJsonContains('entreprise_observee', $q);
+                });
+            })
+            ->get()
+            ->map(function ($vod) {
                 return [
-                    'id'           => $vod->id,
-                    'user'         => [
-                        'name'  => $vod->user->name  ?? '—',
-                        'email' => $vod->user->email ?? '—',
+                    'id'          => "parkx-{$vod->id}",
+                    'type'        => 'parkx',
+                    'user'        => [
+                        'name'  => $vod->user?->name,
+                        'email' => $vod->user?->email,
                     ],
-                    // send ISO strings so the frontend formats consistently
-                    'emitted_at'   => optional($vod->created_at)->toIso8601String(),
-                    'visit_date'   => optional($vod->date)->toDateString(),
-                    'projet'       => $vod->projet,
-                    'entreprises'  => $vod->entreprise_observee ?? [],
-
-                    // actions
-                    'pdf_url'      => route('admin.vods.pdf', $vod),                     // stream on the fly
-                    'download_url' => $vod->pdf_path ? route('admin.vods.download', $vod) : null,
+                    'origine'     => 'ParkX',
+                    'emitted_at'  => $vod->created_at,
+                    'visit_date'  => $vod->date,
+                    'projet'      => $vod->projet,
+                    'entreprises' => $vod->entreprise_observee,
+                    'pdf_url'     => $vod->pdf_url,
                 ];
             });
 
+        // --- Contractant VODs
+        $contractants = ContractantVod::when($q, function ($query, $q) {
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('projet', 'like', "%{$q}%")
+                        ->orWhere('activite', 'like', "%{$q}%")
+                        ->orWhere('observateur', 'like', "%{$q}%")
+                        ->orWhereJsonContains('entreprise_observee', $q);
+                });
+            })
+            ->get()
+            ->map(function ($vod) {
+                return [
+                    'id'          => "contractant-{$vod->id}",
+                    'type'        => 'contractant',
+                    'user'        => [
+                        'name'  => $vod->observateur,
+                        'email' => null,
+                    ],
+                    'origine'     => 'Contractant',
+                    'emitted_at'  => $vod->created_at,
+                    'visit_date'  => $vod->date,
+                    'projet'      => $vod->projet,
+                    'entreprises' => $vod->entreprise_observee,
+                    'pdf_url'     => $vod->pdf_url,
+                ];
+            });
+
+        // --- Merge + sort
+        $all = $parkx->merge($contractants)->sortByDesc('emitted_at');
+
+        // --- Paginate manually (since merged collections don’t paginate automatically)
+        $page = LengthAwarePaginator::resolveCurrentPage();
+        $perPage = 20;
+        $items = $all->slice(($page - 1) * $perPage, $perPage)->values();
+        $vods = new LengthAwarePaginator($items, $all->count(), $perPage, $page, [
+            'path' => request()->url(),
+            'query' => request()->query(),
+        ]);
+
         return inertia('Admin/Vods/Index', [
-            'vods'    => $vods,                     // 👈 what your React expects
+            'vods'    => $vods,
             'filters' => $request->only('q'),
         ]);
     }
 
-    public function pdf(Vod $vod)
+    public function statsData(Request $request)
     {
-        $vod->load('user');
-        $pdf = Pdf::loadView('vods.pdf', ['vod' => $vod])->setPaper('a4');
-        return $pdf->stream("vod-{$vod->id}.pdf");
-    }
+        $year = $request->get('year', now()->year);
 
-    public function generate(Vod $vod)
-    {
-        $vod->load('user');
-        $pdf = Pdf::loadView('vods.pdf', ['vod' => $vod])->setPaper('a4');
+        $users = User::all();
 
-        $file = "vods/vod-{$vod->id}.pdf";
-        Storage::disk('public')->put($file, $pdf->output());
+        // --- Quotas employés (annuels)
+        $byUser = $users->map(function ($u) use ($year) {
+            $quota = (int) ($u->vods_quota ?? 0);
 
-        $vod->update(['pdf_path' => $file]);
+            $submitted = Vod::where('user_id', $u->id)
+                ->whereYear('created_at', $year)
+                ->count();
 
-        return back()->with('success', 'PDF généré avec succès.');
-    }
+            $expected = $quota * 12;
+            $missed   = max($expected - $submitted, 0);
 
-    public function download(Vod $vod)
-    {
-        if (!$vod->pdf_path || !Storage::disk('public')->exists($vod->pdf_path)) {
-            return back()->with('error', 'PDF introuvable. Cliquez sur “Générer”.');
+            return [
+                'id'        => $u->id,
+                'name'      => $u->name,
+                'email'     => $u->email,
+                'quota'     => $quota,
+                'submitted' => $submitted,
+                'missed'    => $missed,
+            ];
+        });
+
+        // --- Statistiques mensuelles par utilisateur
+        $byMonthRaw = Vod::selectRaw('user_id, MONTH(created_at) as m, COUNT(*) as cnt')
+            ->whereYear('created_at', $year)
+            ->groupBy('user_id', 'm')
+            ->get();
+
+        $byMonth = [];
+        foreach ($byMonthRaw as $row) {
+            $byMonth[$row->user_id][] = [
+                'm'   => (int) $row->m,
+                'cnt' => (int) $row->cnt,
+            ];
         }
-        return Storage::disk('public')->download($vod->pdf_path, "vod-{$vod->id}.pdf");
+
+        // --- Répartition par entreprise (ParkX + Contractants)
+        $byCompany = collect()
+            ->merge(
+                Vod::selectRaw('JSON_UNQUOTE(JSON_EXTRACT(entreprise_observee, "$[0]")) as company, COUNT(*) as count')
+                    ->whereYear('created_at', $year)
+                    ->groupBy('company')
+                    ->get()
+            )
+            ->merge(
+                ContractantVod::selectRaw('JSON_UNQUOTE(JSON_EXTRACT(entreprise_observee, "$[0]")) as company, COUNT(*) as count')
+                    ->whereYear('created_at', $year)
+                    ->groupBy('company')
+                    ->get()
+            )
+            ->map(function ($row) {
+                return [
+                    'company' => $row->company ?: 'Inconnue',
+                    'count'   => $row->count,
+                ];
+            });
+
+        // --- Risques
+        $risks = [];
+        Vod::whereYear('created_at', $year)->get()->each(function ($vod) use (&$risks) {
+            foreach ($vod->comportements ?? [] as $c) {
+                if (!empty($c['type'])) {
+                    $risks[$c['type']] = ($risks[$c['type']] ?? 0) + 1;
+                }
+            }
+        });
+        ContractantVod::whereYear('created_at', $year)->get()->each(function ($vod) use (&$risks) {
+            foreach ($vod->comportements ?? [] as $c) {
+                if (!empty($c['type'])) {
+                    $risks[$c['type']] = ($risks[$c['type']] ?? 0) + 1;
+                }
+            }
+        });
+
+        // --- Conditions
+        $conditions = [];
+        Vod::whereYear('created_at', $year)->get()->each(function ($vod) use (&$conditions) {
+            foreach ($vod->conditions ?? [] as $label => $val) {
+                if ($val) {
+                    $conditions[$label] = ($conditions[$label] ?? 0) + 1;
+                }
+            }
+        });
+        ContractantVod::whereYear('created_at', $year)->get()->each(function ($vod) use (&$conditions) {
+            foreach ($vod->conditions ?? [] as $label => $val) {
+                if ($val) {
+                    $conditions[$label] = ($conditions[$label] ?? 0) + 1;
+                }
+            }
+        });
+
+        return response()->json([
+            'byUser'     => $byUser,
+            'byMonth'    => $byMonth,
+            'byCompany'  => $byCompany,
+            'risks'      => $risks,
+            'conditions' => $conditions,
+        ]);
     }
 }

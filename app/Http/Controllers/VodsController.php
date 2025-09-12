@@ -6,6 +6,7 @@ use App\Models\Vod;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 
 class VodsController extends Controller
 {
@@ -15,28 +16,27 @@ class VodsController extends Controller
         return Inertia::render('Vods/VodsPage');
     }
 
- public function notifications()
-{
-    $u = auth()->user();
-    $quota = (int)($u->vods_quota ?? 0);
-    $start = now()->startOfMonth()->toDateString();
-    $end   = now()->endOfMonth()->toDateString();
-    $submitted = Vod::where('user_id', $u->id)
-        ->whereBetween('date', [$start, $end])
-        ->count();
+    public function notifications()
+    {
+        $u = auth()->user();
+        $quota = (int)($u->vods_quota ?? 0);
+        $start = now()->startOfMonth()->toDateString();
+        $end   = now()->endOfMonth()->toDateString();
+        $submitted = Vod::where('user_id', $u->id)
+            ->whereBetween('date', [$start, $end])
+            ->count();
 
-    $remaining = max($quota - $submitted, 0);
-    $daysLeft  = now()->endOfMonth()->diffInDays(now());
+        $remaining = max($quota - $submitted, 0);
+        $daysLeft  = now()->endOfMonth()->diffInDays(now());
 
-    return Inertia::render('Vods/VodsNotifications', [
-        'vodsToComplete' => $remaining,
-        'deadline'       => now()->endOfMonth()->format('d/m/Y'),
-        'submitted'      => $submitted,
-        'quota'          => $quota,
-        'daysLeft'       => $daysLeft,
-    ]);
-}
-
+        return Inertia::render('Vods/VodsNotifications', [
+            'vodsToComplete' => $remaining,
+            'deadline'       => now()->endOfMonth()->format('d/m/Y'),
+            'submitted'      => $submitted,
+            'quota'          => $quota,
+            'daysLeft'       => $daysLeft,
+        ]);
+    }
 
     public function history()
     {
@@ -46,25 +46,26 @@ class VodsController extends Controller
             'vods' => $user->vods()->latest()->get(),
         ]);
     }
-public function store(Request $request)
-{
-    $user  = $request->user();
-    $quota = (int) ($user->vods_quota ?? 0);
 
-    if ($quota > 0) {
-        // ✅ filtre sur created_at (date d’émission)
-        $start = now()->startOfMonth()->startOfDay();
-        $end   = now()->endOfMonth()->endOfDay();
+    public function store(Request $request)
+    {
+        $user  = $request->user();
+        $quota = (int) ($user->vods_quota ?? 0);
 
-        $submitted = Vod::where('user_id', $user->id)
-            ->whereBetween('created_at', [$start, $end])
-            ->count();
+        if ($quota > 0) {
+            // ✅ filtre sur created_at (date d’émission)
+            $start = now()->startOfMonth()->startOfDay();
+            $end   = now()->endOfMonth()->endOfDay();
 
-        if ($submitted >= $quota) {
-            $next = now()->startOfMonth()->addMonth()->format('d/m/Y');
-            return back()->with('error', "Quota mensuel atteint. Le formulaire est bloqué jusqu’au {$next}.");
+            $submitted = Vod::where('user_id', $user->id)
+                ->whereBetween('created_at', [$start, $end])
+                ->count();
+
+            if ($submitted >= $quota) {
+                $next = now()->startOfMonth()->addMonth()->format('d/m/Y');
+                return back()->with('error', "Quota mensuel atteint. Le formulaire est bloqué jusqu’au {$next}.");
+            }
         }
-    }
 
         $data = $request->validate([
             'date'                  => ['required', 'date'],
@@ -121,7 +122,7 @@ public function store(Request $request)
             ];
         }
 
-        // Actions correctives (avec photo)
+        // Actions correctives
         $correctives = [];
         foreach ($request->input('correctives', []) as $key => $c) {
             $path = $request->hasFile("correctives.$key.photo")
@@ -136,7 +137,8 @@ public function store(Request $request)
             ];
         }
 
-        Vod::create([
+        // ✅ Save VOD
+        $vod = Vod::create([
             'user_id'             => auth()->id(),
             'date'                => $data['date'],
             'projet'              => $data['projet'],
@@ -150,8 +152,15 @@ public function store(Request $request)
             'correctives'         => $correctives,
         ]);
 
-      
-return back()->with('success', 'Formulaire bien rempli.');
+        // ✅ Generate PDF immediately after saving
+        $pdf = Pdf::loadView('vods.pdf', ['vod' => $vod])->setPaper('a4');
+        $dir  = "vods/{$vod->id}";
+        $path = "$dir/vod.pdf";
+
+        Storage::disk('public')->put($path, $pdf->output());
+        $vod->update(['pdf_path' => $path]);
+
+        return back()->with('success', 'Formulaire bien rempli et PDF généré.');
     }
 
     public function pdf(Vod $vod, Request $request)
@@ -160,14 +169,27 @@ return back()->with('success', 'Formulaire bien rempli.');
             abort(403);
         }
 
-        $pdf = Pdf::loadView('vods.pdf', ['vod' => $vod])->setPaper('a4');
+        // Ensure arrays instead of null (avoids Blade errors)
+        $vod->personnes_observees = $vod->personnes_observees ?? [];
+        $vod->entreprise_observee = $vod->entreprise_observee ?? [];
+        $vod->pratiques           = $vod->pratiques ?? [];
+        $vod->comportements       = $vod->comportements ?? [];
+        $vod->conditions          = $vod->conditions ?? [];
+        $vod->correctives         = $vod->correctives ?? [];
+
+        // ✅ Generate or stream PDF
+        if (!$vod->pdf_path) {
+            $pdf = Pdf::loadView('vods.pdf', ['vod' => $vod])->setPaper('a4');
+            return $request->boolean('download')
+                ? $pdf->download("VOD-{$vod->id}.pdf")
+                : $pdf->stream("VOD-{$vod->id}.pdf");
+        }
 
         return $request->boolean('download')
-            ? $pdf->download("VOD-{$vod->id}.pdf")
-            : $pdf->stream("VOD-{$vod->id}.pdf");
+            ? response()->download(storage_path("app/public/{$vod->pdf_path}"))
+            : response()->file(storage_path("app/public/{$vod->pdf_path}"));
     }
 
-    // Data endpoints pour tes onglets SPA
     public function historyData()
     {
         $user = auth()->user();

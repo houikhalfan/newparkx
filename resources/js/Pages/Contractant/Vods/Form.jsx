@@ -31,8 +31,7 @@ export default function VodsForm() {
     title: "Lettres et espaces uniquement",
   };
 
-  const defaultObserver =
-    auth?.user?.name || auth?.contractor?.name || auth?.name || "";
+const defaultObserver = auth?.contractor?.name || "";
 
   const [header, setHeader] = useState({
     date: "",

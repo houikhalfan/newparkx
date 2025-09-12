@@ -151,10 +151,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/home', [AdminController::class, 'home'])->name('home');
         Route::get('/',      [AdminController::class, 'dashboard'])->name('dashboard');
 
-        Route::get('vods', [AdminVodController::class, 'index'])->name('vods.index');
-        Route::get('vods/{vod}/pdf', [AdminVodController::class, 'pdf'])->name('vods.pdf');
-        Route::get('vods/{vod}/download', [AdminVodController::class, 'download'])->name('vods.download');
-        Route::post('vods/{vod}/generate', [AdminVodController::class, 'generate'])->name('vods.generate');
+        Route::get('/vods/stats-data', [AdminVodController::class, 'statsData'])
+        ->name('vods.stats');
+
+    Route::get('vods', [AdminVodController::class, 'index'])->name('vods.index');
+    Route::get('vods/{vod}/pdf', [AdminVodController::class, 'pdf'])->name('vods.pdf');
+    Route::get('vods/{vod}/download', [AdminVodController::class, 'download'])->name('vods.download');
+    Route::post('vods/{vod}/generate', [AdminVodController::class, 'generate'])->name('vods.generate');
+
 
         // Sites
         Route::get ('/sites',               [AdminSiteController::class, 'index'])->name('sites.index');

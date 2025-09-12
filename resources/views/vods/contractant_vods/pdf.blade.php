@@ -52,6 +52,7 @@
 </table>
 
 <!-- Informations -->
+<!-- Informations -->
 <div class="section-bar">Informations</div>
 <table>
   <tr>
@@ -61,12 +62,23 @@
   </tr>
   <tr>
     <td><strong>Observateur :</strong> {{ $vod->observateur }}</td>
-    <td colspan="2">
-      <strong>Entreprise :</strong>
-      {{ optional($vod->contractor)->company_name ?? '—' }}
+    <td><strong>Personnes observées :</strong>
+      @if(!empty($vod->personnes_observees) && is_array($vod->personnes_observees))
+        {{ implode(', ', $vod->personnes_observees) }}
+      @else
+        —
+      @endif
+    </td>
+    <td><strong>Entreprises observées :</strong>
+      @if(!empty($vod->entreprise_observee) && is_array($vod->entreprise_observee))
+        {{ implode(', ', $vod->entreprise_observee) }}
+      @else
+        —
+      @endif
     </td>
   </tr>
 </table>
+
 
 <!-- Bonnes pratiques -->
 <div class="section-bar">Bonnes pratiques</div>

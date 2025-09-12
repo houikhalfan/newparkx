@@ -171,4 +171,12 @@ class Vod extends Model
             }
         });
     }
+    // app/Models/Vod.php
+
+
+public function getDownloadUrlAttribute(): string
+{
+    return route('vods.pdf', ['vod' => $this->id, 'download' => 1]);
+}
+
 }

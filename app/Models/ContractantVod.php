@@ -33,14 +33,17 @@ class ContractantVod extends Model
         'correctives'          => 'array',
     ];
 
-    // Small helpers for URLs (public disk)
-    public function getPdfUrlAttribute(): ?string
-    {
-        return $this->pdf_path ? asset('storage/' . ltrim($this->pdf_path, '/')) : null;
-    }
+  
 
     public function getThumbUrlAttribute(): ?string
     {
         return $this->thumb_path ? asset('storage/' . ltrim($this->thumb_path, '/')) : null;
     }
+
+public function getPdfUrlAttribute()
+{
+    return $this->pdf_path
+        ? asset('storage/' . $this->pdf_path)
+        : null;
+}
 }
