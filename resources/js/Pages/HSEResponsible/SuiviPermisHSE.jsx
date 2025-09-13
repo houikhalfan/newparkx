@@ -1,5 +1,5 @@
 import React from "react";
-import { usePage, Link } from "@inertiajs/react"; // ✅ import Link
+import { usePage, Link } from "@inertiajs/react"; 
 import DashboardLayout from "@/Pages/DashboardLayout";
 
 export default function SuiviPermis() {
@@ -26,26 +26,30 @@ export default function SuiviPermis() {
                 <th className="px-4 py-3">Type</th>
                 <th className="px-4 py-3">Date</th>
                 <th className="px-4 py-3">Statut</th>
-                <th className="px-4 py-3">Site</th>
-                <th className="px-4 py-3">Commentaire</th>
-                <th className="px-4 py-3">PDF Original</th>
-                <th className="px-4 py-3">PDF Signé</th>
-                <th className="px-4 py-3">Action</th> {/* ✅ New column */}
+                <th className="px-4 py-3">PDF</th>
+                <th className="px-4 py-3">Action</th>
               </tr>
             </thead>
             <tbody>
               {permis.length === 0 ? (
                 <tr>
-                  <td colSpan="9" className="px-4 py-6 text-center text-gray-500">
+                  <td colSpan="6" className="px-4 py-6 text-center text-gray-500">
                     Aucun permis trouvé.
                   </td>
                 </tr>
               ) : (
                 permis.map((p, idx) => (
                   <tr key={p.id} className="border-t hover:bg-gray-50 transition">
+                    {/* # */}
                     <td className="px-4 py-2">{idx + 1}</td>
+
+                    {/* Type */}
                     <td className="px-4 py-2">{p.type}</td>
+
+                    {/* Date */}
                     <td className="px-4 py-2">{p.date}</td>
+
+                    {/* Statut */}
                     <td className="px-4 py-2">
                       <span
                         className={`px-2 py-1 rounded text-xs font-medium ${
@@ -57,10 +61,9 @@ export default function SuiviPermis() {
                         {p.status}
                       </span>
                     </td>
-                    <td className="px-4 py-2">{p.site}</td>
-                    <td className="px-4 py-2">{p.commentaire || "—"}</td>
 
-                    <td className="px-4 py-2">
+                    {/* PDF (Original ou Signé) */}
+                    <td className="px-4 py-2 space-x-3">
                       {p.pdf_original ? (
                         <a
                           href={p.pdf_original}
@@ -68,23 +71,38 @@ export default function SuiviPermis() {
                           rel="noopener noreferrer"
                           className="text-emerald-600 underline font-medium"
                         >
-                          📄 Voir PDF
+                          📄 Télécharger 
+                        </a>
+                      ) : (
+                        <span className="text-gray-400">—</span>
+                      )}
+
+                      {p.pdf_signed ? (
+                        <a
+                          href={p.pdf_signed}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 underline font-medium"
+                        >
+                          📄 Signé
                         </a>
                       ) : (
                         <span className="text-gray-400">—</span>
                       )}
                     </td>
 
-                  
-
-                    {/* ✅ Link to sign/show */}
+                    {/* Action */}
                     <td className="px-4 py-2">
-                      <Link
-                        href={route("hseResponsible.permis.show", p.id)}
-                        className="text-indigo-600 underline font-medium"
-                      >
-                       Signer
-                      </Link>
+                      {p.status === "signe" ? (
+                        <span className="text-gray-400 italic">Déjà signé</span>
+                      ) : (
+                        <Link
+                          href={route("hseResponsible.permis.show", p.id)}
+                          className="text-indigo-600 underline font-medium"
+                        >
+                          Signer
+                        </Link>
+                      )}
                     </td>
                   </tr>
                 ))

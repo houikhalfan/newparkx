@@ -12,21 +12,32 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class PermisController extends Controller
 {
     public function index()
-    {
-        $user = auth()->user();
+{
+    $user = auth()->user();
 
-        // ✅ fetch only "en_cours" and "signe" permits where this user is HSE responsible
-        $permis = PermisExcavation::whereIn('status', ['en_cours', 'signe'])
-            ->whereHas('site', function ($q) use ($user) {
-                $q->where('responsible_hse_id', $user->id);
-            })
-            ->orderByDesc('created_at')
-            ->get();
+    $permis = PermisExcavation::whereIn('status', ['en_cours', 'signe'])
+        ->whereHas('site', function ($q) use ($user) {
+            $q->where('responsible_hse_id', $user->id);
+        })
+        ->orderByDesc('created_at')
+        ->get()
+        ->map(function ($p) {
+            return [
+                'id'           => $p->id,
+                'type'         => 'Excavation',
+                'date'         => $p->created_at->format('Y-m-d'),
+                'status'       => $p->status,
+                'pdf_original' => $p->pdf_original ? asset('storage/' . $p->pdf_original) : null,
+                'pdf_signed'   => $p->pdf_signed ? asset('storage/' . $p->pdf_signed) : null,
+                'commentaire'  => $p->commentaire,
+                'site'         => $p->site?->name,
+            ];
+        });
 
-        return Inertia::render('HSEResponsible/SuiviPermisHSE', [
-            'permis' => $permis,
-        ]);
-    }
+    return Inertia::render('HSEResponsible/SuiviPermisHSE', [
+        'permis' => $permis,
+    ]);
+}
 
     public function show(PermisExcavation $permisExcavation)
     {

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\PermisExcavation;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PermisController extends Controller
 {
@@ -13,30 +15,48 @@ class PermisController extends Controller
     {
         $user = auth()->user();
 
-        // ✅ fetch only permits for sites managed by this user
         $permis = PermisExcavation::whereHas('site', function ($q) use ($user) {
-            $q->where('responsible_user_id', $user->id);
-        })
-        ->orderByDesc('created_at')
-        ->get();
+                $q->where('responsible_user_id', $user->id);
+            })
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(function ($p) {
+                return [
+                    'id'           => $p->id,
+                    'type'         => 'Excavation',
+                    'date'         => $p->created_at->format('Y-m-d'),
+                    'numero_permis'=> $p->numero_permis,
+                    'status'       => $p->status,
+                    'pdf_original' => $p->pdf_original ? asset('storage/' . $p->pdf_original) : null,
+                    'pdf_signed'   => $p->pdf_signed ? asset('storage/' . $p->pdf_signed) : null,
+                ];
+            });
 
         return Inertia::render('ResponsibleSite/SuiviPermisSite', [
             'permis' => $permis,
         ]);
     }
-public function show(PermisExcavation $permisExcavation)
-{
-    $readonly = $permisExcavation->status === 'signe';
-    $showFermeture = $permisExcavation->status === 'signe';
 
-    return Inertia::render('ResponsibleSite/PermisSign', [
-        'permis' => $permisExcavation->load('site'),
-        'readonly' => $readonly,
-        'showSignatureResponsableSite' => !$readonly, // autoriser signature seulement si pas signé
-        'showFermeture' => $showFermeture,
-    ]);
-}
+    public function show(PermisExcavation $permisExcavation)
+    {
+        $readonly = $permisExcavation->status === 'signe';
+        $showFermeture = $permisExcavation->status === 'signe';
 
+        $permisExcavation->pdf_original = $permisExcavation->pdf_original 
+            ? asset('storage/' . $permisExcavation->pdf_original) 
+            : null;
+
+        $permisExcavation->pdf_signed = $permisExcavation->pdf_signed 
+            ? asset('storage/' . $permisExcavation->pdf_signed) 
+            : null;
+
+        return Inertia::render('ResponsibleSite/PermisSign', [
+            'permis' => $permisExcavation->load('site'),
+            'readonly' => $readonly,
+            'showSignatureResponsableSite' => !$readonly,
+            'showFermeture' => $showFermeture,
+        ]);
+    }
 
     public function sign(Request $request, PermisExcavation $permis)
     {
@@ -61,13 +81,26 @@ public function show(PermisExcavation $permisExcavation)
                 ->store('signatures', 'public');
         }
 
-        // ✅ After site responsible signs → move status to "en_cours"
+        // ✅ Après signature du responsable site → statut "en_cours"
         $data['status'] = 'en_cours';
 
         $permis->update($data);
 
+        // ✅ Recharger pour PDF
+        $permis->load('site');
+
+        // ✅ Générer le PDF original à ce stade
+        $pdf = Pdf::loadView('pdf.excavation', ['permis' => $permis])
+            ->setPaper('a4', 'portrait');
+
+        $pdfPath = "permis/pdf_original/permis_excavation_{$permis->id}.pdf";
+        Storage::disk('public')->put($pdfPath, $pdf->output());
+
+        // ✅ Mettre à jour en DB
+        $permis->update(['pdf_original' => $pdfPath]);
+
         return redirect()
             ->route('responsibleSite.permis.index')
-            ->with('success', 'Signature enregistrée avec succès.');
+            ->with('success', 'Signature enregistrée et PDF généré avec succès.');
     }
 }
