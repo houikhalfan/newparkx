@@ -22,8 +22,7 @@ export default function SuiviPermis() {
                 <th className="px-4 py-3">Date</th>
                 <th className="px-4 py-3">Statut</th>
                 <th className="px-4 py-3">Voir</th>
-                <th className="px-4 py-3">Signé</th>
-                <th className="px-4 py-3">Commentaire</th>
+  
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -55,6 +54,9 @@ export default function SuiviPermis() {
                         En attente
                       </span>
                     )}
+                      {p.status === "en_cours" && (
+    <span className="text-blue-600 font-medium">En cours</span>
+  )}
                     {p.status === "rejete" && (
                       <span className="text-red-600 font-medium">Rejeté</span>
                     )}
@@ -65,29 +67,23 @@ export default function SuiviPermis() {
                   </td>
 
                   {/* ✅ Bouton Voir */}
-                  <td className="px-6 py-4">
-                    <Link
-                      href={route("contractant.permisexcavation.show", p.id)}
-                      className="text-blue-600 hover:underline font-medium"
-                    >
-                      Voir
-                    </Link>
-                  </td>
+                <td className="px-6 py-4">
+  {p.status === "en_cours" ? (
+    <span className="text-gray-400 font-medium cursor-not-allowed">
+      Voir
+    </span>
+  ) : (
+    <Link
+      href={route("contractant.permisexcavation.show", p.id)}
+      className="text-blue-600 hover:underline font-medium"
+    >
+      Voir
+    </Link>
+  )}
+</td>
 
-                  <td className="px-6 py-4">
-                    {p.pdf_signed ? (
-                      <a
-                        href={`/storage/${p.pdf_signed}`}
-                        target="_blank"
-                        className="text-green-600 hover:underline"
-                      >
-                        Voir
-                      </a>
-                    ) : (
-                      "—"
-                    )}
-                  </td>
-                  <td className="px-6 py-4">{p.commentaire || "—"}</td>
+
+                
                 </tr>
               ))}
             </tbody>

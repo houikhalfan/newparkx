@@ -1,11 +1,20 @@
-// resources/js/Pages/Contractant/PermisExcavation.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import { usePage, useForm } from "@inertiajs/react";
+import { useForm } from "@inertiajs/react";
 import { motion, AnimatePresence } from "framer-motion";
-import DashboardLayout from '@/Pages/DashboardLayout';
+import DashboardLayout from "@/Pages/DashboardLayout";
+
 
 /* --------------------------- UI building blocks --------------------------- */
 const BRAND = "#0E8A5D"; // ParkX green
+export default function PermisSign({
+  permis,
+  sites = [],
+  flash = {},
+  readonly = false,
+  showSignatureResponsableSite = true,
+  showFermeture = false,
+}) {
+  const contractorName = permis?.contractant || "GENERIC";
 
 const FormCard = ({ title, children }) => (
   <div className="rounded-xl border border-gray-300 bg-white shadow-md overflow-hidden">
@@ -146,13 +155,10 @@ function SignaturePicker({ id, label, value, onChange, disabled, error }) {
 }
 
 /* ================================= PAGE ================================== */
-export default function PermisSign() {
-  const { permis = null, flash, contractor = null, sites = [] } = usePage().props || {};
 
-  const readonly = false;  // 👈 allow form submission
-  const showSignatureResponsableSite = true; // 👈 site responsible can sign
-  const contractorName = contractor && contractor.name ? contractor.name : "GENERIC";
-  const showFermeture = false;
+
+ 
+
 
 
 
@@ -253,7 +259,7 @@ export default function PermisSign() {
     ? {
         // HEADER
         numero_permis_general: permis.numero_permis_general || "",
-      numero_permis: permis.numero_permis || "",
+numero_permis: generatePermitNumber(contractorName),
 
         // IDENTIFICATION
         site_id: permis.site_id || "",
@@ -302,7 +308,13 @@ export default function PermisSign() {
         sig_resp_hse_nom: permis.sig_resp_hse_nom || "",
         sig_resp_hse_date: permis.sig_resp_hse_date || "",
         sig_resp_hse_file: permis.sig_resp_hse_file || null,
+cm_parkx_nom: permis.cm_parkx_nom || "",
+      cm_parkx_date: permis.cm_parkx_date || "",
+      cm_parkx_file: permis.cm_parkx_file || null,
 
+      hse_parkx_nom: permis.hse_parkx_nom || "",
+      hse_parkx_date: permis.hse_parkx_date || "",
+      hse_parkx_file: permis.hse_parkx_file || null,
         // FERMETURE (kept in state but not shown for contractant)
         ferm_q1: !!permis.ferm_q1,
         ferm_q2: !!permis.ferm_q2,
@@ -369,7 +381,13 @@ export default function PermisSign() {
         sig_resp_hse_nom: "",
         sig_resp_hse_date: "",
         sig_resp_hse_file: null,
+  cm_parkx_nom: "",
+  cm_parkx_date: "",
+  cm_parkx_file: null,
 
+  hse_parkx_nom: "",
+  hse_parkx_date: "",
+  hse_parkx_file: null,
         // FERMETURE (hidden now)
         ferm_q1: false,
         ferm_q2: false,
@@ -918,53 +936,55 @@ return (
                 <FieldError>{errors.sig_resp_hse_date}</FieldError>
               </div>
             </Row>
-            </FormCard>
-            {/* ParkX placeholders (disabled) */}
-          <FormCard title="Construction manager ParkX">
-            <Row label="Construction manager ParkX">
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <div className="space-y-3">
-                  <Text
-                    placeholder="Nom (à compléter par ParkX)"
-                    disabled={readonly && !showSignatureResponsableSite}
-                    value={data.cm_parkx_nom || ""}
-                    onChange={(e) => setData("cm_parkx_nom", e.target.value)}
-                  />
-                  <Text
-                    type="date"
-                    disabled={readonly && !showSignatureResponsableSite}
-                    value={data.cm_parkx_date || ""}
-                    onChange={(e) => setData("cm_parkx_date", e.target.value)}
-                  />
-                </div>
-                <SignaturePicker
-                  id="sig_cm_parkx"
-                  label="Signature (JPG/PNG)"
-                  value={data.cm_parkx_file}
-                  onChange={(f) => setData("cm_parkx_file", f)}
-                  disabled={readonly && !showSignatureResponsableSite}
-                  error={errors.cm_parkx_file}
-                />
-              </div>
-            </Row>
+            </FormCard> 
+  </fieldset>
+           {/* ParkX Signatures */}
+<FormCard title="Validation ParkX">
+  <Row label="Construction manager ParkX">
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      <div className="space-y-3">
+        <Text
+          placeholder="Nom (à compléter par ParkX)"
+          disabled={readonly && !showSignatureResponsableSite}
+          value={data.cm_parkx_nom || ""}
+          onChange={(e) => setData("cm_parkx_nom", e.target.value)}
+        />
+        <Text
+          type="date"
+          disabled={readonly && !showSignatureResponsableSite}
+          value={data.cm_parkx_date || ""}
+          onChange={(e) => setData("cm_parkx_date", e.target.value)}
+        />
+      </div>
+      <SignaturePicker
+        id="sig_cm_parkx"
+        label="Signature (JPG/PNG)"
+        value={data.cm_parkx_file}
+        onChange={(f) => setData("cm_parkx_file", f)}
+        disabled={readonly && !showSignatureResponsableSite}
+        error={errors.cm_parkx_file}
+      />
+    </div>
+  </Row>
 
+  <Row label="HSE Manager ParkX">
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 opacity-60">
+      <div className="space-y-3">
+        <Text disabled placeholder="Nom (à compléter par ParkX)" />
+        <Text disabled placeholder="Date —" />
+      </div>
+      <SignaturePicker
+        id="sig_hse_parkx"
+        label="Signature (désactivée)"
+        value={null}
+        onChange={() => {}}
+        disabled
+      />
+    </div>
+  </Row>
+</FormCard>
 
-            <Row label="HSE Manager ParkX">
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2 opacity-60">
-                <div className="space-y-3">
-                  <Text disabled placeholder="Nom (à compléter par ParkX)" />
-                  <Text disabled placeholder="Date —" />
-                </div>
-                <SignaturePicker
-                  id="sig_hse_parkx"
-                  label="Signature (désactivée)"
-                  value={null}
-                  onChange={() => {}}
-                  disabled
-                />
-              </div>
-            </Row>
-          </FormCard>
+         
 
           {/* FERMETURE — hidden for contractants now, available later for admin */}
           {showFermeture && (
