@@ -25,10 +25,10 @@ import {
     Building2
 } from 'lucide-react';
 
-export default function AdminPPERequestShow({ ppeRequest }) {
+export default function AdminEPIRequestShow({ epiRequest }) {
     const [formData, setFormData] = useState({
-        etat: ppeRequest.etat,
-        commentaires_admin: ppeRequest.commentaires_admin || '',
+        etat: epiRequest.etat,
+        commentaires_admin: epiRequest.commentaires_admin || '',
     });
 
     const [errors, setErrors] = useState({});
@@ -47,7 +47,7 @@ export default function AdminPPERequestShow({ ppeRequest }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         
-        router.put(route('admin.ppe-requests.update', ppeRequest.id), formData, {
+        router.put(route('admin.epi-requests.update', epiRequest.id), formData, {
             onError: (errors) => setErrors(errors),
             onSuccess: () => {
                 // Success message will be handled by the controller
@@ -88,7 +88,7 @@ export default function AdminPPERequestShow({ ppeRequest }) {
         );
     };
 
-    const formattedEpiList = ppeRequest.formatted_epi_list || [];
+    const formattedEpiList = epiRequest.formatted_epi_list || [];
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 relative overflow-hidden">
@@ -123,7 +123,7 @@ export default function AdminPPERequestShow({ ppeRequest }) {
                                     Demande d'EPI
                                 </h1>
                                 <p className="text-lg text-slate-600 dark:text-slate-300 mt-2 font-medium">
-                                    {ppeRequest.nom_prenom} • {new Date(ppeRequest.date_demande).toLocaleDateString()}
+                                    {epiRequest.nom_prenom} • {new Date(epiRequest.date_demande).toLocaleDateString()}
                                 </p>
                             </div>
                         </div>
@@ -132,7 +132,7 @@ export default function AdminPPERequestShow({ ppeRequest }) {
                             whileTap={{ scale: 0.95 }}
                         >
                             <Link
-                                href={route('admin.ppe-requests.index')}
+                                href={route('admin.epi-requests.index')}
                                 className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-slate-600 to-slate-700 text-white rounded-2xl hover:from-slate-700 hover:to-slate-800 transition-all font-medium shadow-lg"
                             >
                                 <ArrowLeft className="w-5 h-5" />
@@ -176,7 +176,7 @@ export default function AdminPPERequestShow({ ppeRequest }) {
                                             <User className="w-5 h-5 text-blue-500" />
                                             <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Nom et Prénom</label>
                                         </div>
-                                        <p className="text-lg font-semibold text-slate-900 dark:text-white">{ppeRequest.nom_prenom}</p>
+                                        <p className="text-lg font-semibold text-slate-900 dark:text-white">{epiRequest.nom_prenom}</p>
                                     </motion.div>
 
                                     <motion.div
@@ -189,7 +189,7 @@ export default function AdminPPERequestShow({ ppeRequest }) {
                                             <Calendar className="w-5 h-5 text-green-500" />
                                             <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Date de demande</label>
                                         </div>
-                                        <p className="text-lg font-semibold text-slate-900 dark:text-white">{new Date(ppeRequest.date_demande).toLocaleDateString()}</p>
+                                        <p className="text-lg font-semibold text-slate-900 dark:text-white">{new Date(epiRequest.date_demande).toLocaleDateString()}</p>
                                     </motion.div>
 
                                     <motion.div
@@ -202,8 +202,8 @@ export default function AdminPPERequestShow({ ppeRequest }) {
                                             <UserCheck className="w-5 h-5 text-purple-500" />
                                             <label className="text-sm font-bold text-slate-700 dark:text-slate-200">Demandeur</label>
                                         </div>
-                                        <p className="text-lg font-semibold text-slate-900 dark:text-white">{ppeRequest.user.name}</p>
-                                        <p className="text-sm text-slate-500 dark:text-slate-400">{ppeRequest.user.email}</p>
+                                        <p className="text-lg font-semibold text-slate-900 dark:text-white">{epiRequest.user.name}</p>
+                                        <p className="text-sm text-slate-500 dark:text-slate-400">{epiRequest.user.email}</p>
                                     </motion.div>
 
                                     <motion.div
@@ -217,7 +217,7 @@ export default function AdminPPERequestShow({ ppeRequest }) {
                                             <label className="text-sm font-bold text-slate-700 dark:text-slate-200">État actuel</label>
                                         </div>
                                         <div className="mt-1">
-                                            {getEtatBadge(ppeRequest.etat)}
+                                            {getEtatBadge(epiRequest.etat)}
                                         </div>
                                     </motion.div>
                                 </div>
@@ -386,7 +386,7 @@ export default function AdminPPERequestShow({ ppeRequest }) {
                                 </form>
 
                                 {/* Processing History */}
-                                {ppeRequest.admin && (
+                                {epiRequest.admin && (
                                     <motion.div
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
@@ -407,11 +407,11 @@ export default function AdminPPERequestShow({ ppeRequest }) {
                                         <div className="space-y-3 text-sm text-slate-600 dark:text-slate-400">
                                             <div className="flex items-center gap-2">
                                                 <UserCheck className="w-4 h-4 text-purple-500" />
-                                                <span>Traité par: <strong className="text-slate-900 dark:text-white">{ppeRequest.admin.full_name || ppeRequest.admin.email}</strong></span>
+                                                <span>Traité par: <strong className="text-slate-900 dark:text-white">{epiRequest.admin.full_name || epiRequest.admin.email}</strong></span>
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <Clock className="w-4 h-4 text-blue-500" />
-                                                <span>Dernière mise à jour: <strong className="text-slate-900 dark:text-white">{new Date(ppeRequest.updated_at).toLocaleDateString()}</strong></span>
+                                                <span>Dernière mise à jour: <strong className="text-slate-900 dark:text-white">{new Date(epiRequest.updated_at).toLocaleDateString()}</strong></span>
                                             </div>
                                         </div>
                                     </motion.div>
@@ -426,4 +426,4 @@ export default function AdminPPERequestShow({ ppeRequest }) {
 }
 
 // Set the layout
-AdminPPERequestShow.layout = (page) => <AdminLayout>{page}</AdminLayout>;
+AdminEPIRequestShow.layout = (page) => <AdminLayout>{page}</AdminLayout>;

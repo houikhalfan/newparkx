@@ -34,4 +34,9 @@ class Site extends Model
     return $this->hasMany(PermisExcavation::class, 'site_id');
 }
 
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
+
 }

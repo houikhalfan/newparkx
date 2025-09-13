@@ -1,5 +1,5 @@
 import React from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { 
   Package, 
@@ -16,10 +16,14 @@ import {
   MessageSquare,
   Database,
   FileText,
-  BarChart3
+  BarChart3,
+  LogOut,
+  UserCircle
 } from 'lucide-react';
 
-export default function PPERequestShow({ ppeRequest, flash }) {
+export default function EPIRequestShow({ epiRequest, flash }) {
+    const { auth } = usePage().props || {};
+    const { user } = auth || {};
     const getEtatBadge = (etat) => {
         const badges = {
             en_cours: 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white',
@@ -50,11 +54,11 @@ export default function PPERequestShow({ ppeRequest, flash }) {
         );
     };
 
-    const formattedEpiList = ppeRequest.formatted_epi_list || [];
+    const formattedEpiList = epiRequest.formatted_epi_list || [];
 
     return (
         <>
-            <Head title={`Ma Demande d'EPI - ${ppeRequest.nom_prenom}`} />
+            <Head title={`Ma Demande d'EPI - ${epiRequest.nom_prenom}`} />
 
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50">
                 {/* Animated Background Elements */}
@@ -96,15 +100,10 @@ export default function PPERequestShow({ ppeRequest, flash }) {
                                 </div>
 
                                 {/* Action Buttons */}
-                                <motion.div
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.4, duration: 0.5 }}
-                                    className="flex space-x-3"
-                                >
+                                <div className="flex items-center space-x-4">
                                     <Link
-                                        href={route('ppe-requests.history')}
-                                        className="group relative inline-flex items-center space-x-2 px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
+                                        href={route('epi-requests.history')}
+                                        className="group relative inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-sm"
                                         style={{ background: 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)' }}
                                     >
                                         <ArrowLeft className="w-4 h-4" />
@@ -112,13 +111,31 @@ export default function PPERequestShow({ ppeRequest, flash }) {
                                     </Link>
                                     <Link
                                         href="/dashboard"
-                                        className="group relative inline-flex items-center space-x-2 px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
+                                        className="group relative inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-sm"
                                         style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
                                     >
                                         <BarChart3 className="w-4 h-4" />
                                         <span>Tableau de Bord</span>
                                     </Link>
-                                </motion.div>
+                                    <Link
+                                        href="/logout"
+                                        method="post"
+                                        className="group relative inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105 shadow-lg bg-red-500 hover:bg-red-600 text-sm"
+                                    >
+                                        <LogOut className="w-4 h-4" />
+                                        <span>Déconnexion</span>
+                                    </Link>
+                                    {/* User Info */}
+                                    <div className="flex items-center space-x-3 bg-white/90 backdrop-blur-sm rounded-2xl px-4 py-2.5 shadow-lg border border-gray-100">
+                                        <div className="w-9 h-9 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">
+                                            <UserCircle className="w-5 h-5 text-white" />
+                                        </div>
+                                        <div className="text-slate-800">
+                                            <p className="text-sm font-semibold">{user?.name || 'Utilisateur'}</p>
+                                            <p className="text-xs text-slate-500">ParkX</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -135,10 +152,10 @@ export default function PPERequestShow({ ppeRequest, flash }) {
                             className="text-center mb-12"
                         >
                             <h2 className="text-5xl font-bold mb-4 bg-gradient-to-r from-slate-800 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-                                Ma Demande d'EPI - {ppeRequest.nom_prenom}
+                                Ma Demande d'EPI - {epiRequest.nom_prenom}
                             </h2>
                             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-                                Demande du {new Date(ppeRequest.date_demande).toLocaleDateString()}
+                                Demande du {new Date(epiRequest.date_demande).toLocaleDateString()}
                             </p>
                         </motion.div>
 
@@ -191,14 +208,14 @@ export default function PPERequestShow({ ppeRequest, flash }) {
                                                 <User className="w-4 h-4 mr-2" />
                                                 Nom et Prénom
                                             </label>
-                                            <p className="text-lg font-bold text-slate-800">{ppeRequest.nom_prenom}</p>
+                                            <p className="text-lg font-bold text-slate-800">{epiRequest.nom_prenom}</p>
                                         </div>
                                         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-4">
                                             <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center">
                                                 <Calendar className="w-4 h-4 mr-2" />
                                                 Date de demande
                                             </label>
-                                            <p className="text-lg font-bold text-slate-800">{new Date(ppeRequest.date_demande).toLocaleDateString()}</p>
+                                            <p className="text-lg font-bold text-slate-800">{new Date(epiRequest.date_demande).toLocaleDateString()}</p>
                                         </div>
                                         <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-4">
                                             <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center">
@@ -206,7 +223,7 @@ export default function PPERequestShow({ ppeRequest, flash }) {
                                                 État actuel
                                             </label>
                                             <div className="mt-1">
-                                                {getEtatBadge(ppeRequest.etat)}
+                                                {getEtatBadge(epiRequest.etat)}
                                             </div>
                                         </div>
                                         <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl p-4">
@@ -214,7 +231,7 @@ export default function PPERequestShow({ ppeRequest, flash }) {
                                                 <Clock className="w-4 h-4 mr-2" />
                                                 Date de création
                                             </label>
-                                            <p className="text-lg font-bold text-slate-800">{new Date(ppeRequest.created_at).toLocaleDateString()}</p>
+                                            <p className="text-lg font-bold text-slate-800">{new Date(epiRequest.created_at).toLocaleDateString()}</p>
                                         </div>
                                     </div>
 
@@ -279,30 +296,30 @@ export default function PPERequestShow({ ppeRequest, flash }) {
                                         Traitement
                                     </h3>
                                     
-                                    {ppeRequest.admin ? (
+                                    {epiRequest.admin ? (
                                         <div className="space-y-6">
                                             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-4">
                                                 <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center">
                                                     <User className="w-4 h-4 mr-2" />
                                                     Traité par
                                                 </label>
-                                                <p className="text-lg font-bold text-slate-800">{ppeRequest.admin.full_name || ppeRequest.admin.email}</p>
+                                                <p className="text-lg font-bold text-slate-800">{epiRequest.admin.full_name || epiRequest.admin.email}</p>
                                             </div>
                                             <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-4">
                                                 <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center">
                                                     <Clock className="w-4 h-4 mr-2" />
                                                     Dernière mise à jour
                                                 </label>
-                                                <p className="text-lg font-bold text-slate-800">{new Date(ppeRequest.updated_at).toLocaleDateString()}</p>
+                                                <p className="text-lg font-bold text-slate-800">{new Date(epiRequest.updated_at).toLocaleDateString()}</p>
                                             </div>
-                                            {ppeRequest.commentaires_admin && (
+                                            {epiRequest.commentaires_admin && (
                                                 <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-4">
                                                     <label className="block text-sm font-semibold text-slate-700 mb-2 flex items-center">
                                                         <FileText className="w-4 h-4 mr-2" />
                                                         Commentaires
                                                     </label>
                                                     <div className="mt-2 p-4 bg-white rounded-xl border-2 border-purple-100">
-                                                        <p className="text-slate-800 font-medium">{ppeRequest.commentaires_admin}</p>
+                                                        <p className="text-slate-800 font-medium">{epiRequest.commentaires_admin}</p>
                                                     </div>
                                                 </div>
                                             )}
@@ -317,7 +334,7 @@ export default function PPERequestShow({ ppeRequest, flash }) {
                                     )}
 
                                     {/* Edit Button */}
-                                    {ppeRequest.etat === 'en_cours' && (
+                                    {epiRequest.etat === 'en_cours' && (
                                         <motion.div
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
@@ -325,7 +342,7 @@ export default function PPERequestShow({ ppeRequest, flash }) {
                                             className="mt-8 pt-6 border-t border-slate-200"
                                         >
                                             <Link
-                                                href={route('ppe-requests.edit', ppeRequest.id)}
+                                                href={route('epi-requests.edit', epiRequest.id)}
                                                 className="w-full inline-flex justify-center items-center space-x-2 px-6 py-4 rounded-2xl text-white font-bold transition-all duration-300 shadow-lg hover:scale-105"
                                                 style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
                                             >

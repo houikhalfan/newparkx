@@ -3,19 +3,19 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\PPERequest;
+use App\Models\EPIRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-class PPERequestController extends Controller
+class EPIRequestController extends Controller
 {
     /**
-     * Display a listing of PPE requests.
+     * Display a listing of EPI requests.
      */
     public function index(Request $request)
     {
-        $query = PPERequest::with(['user', 'admin'])->latest();
+        $query = EPIRequest::with(['user', 'admin'])->latest();
 
         // Search
         if ($request->filled('search')) {
@@ -38,37 +38,37 @@ class PPERequestController extends Controller
             $query->whereDate('date_demande', $request->date);
         }
 
-        $ppeRequests = $query->paginate(15);
+        $epiRequests = $query->paginate(15);
 
-        return Inertia::render('Admin/PPERequests/Index', [
-            'ppeRequests' => $ppeRequests,
+        return Inertia::render('Admin/EPIRequests/Index', [
+            'epiRequests' => $epiRequests,
             'filters' => $request->only(['search', 'etat', 'date']),
         ]);
     }
 
     /**
-     * Display the specified PPE request.
+     * Display the specified EPI request.
      */
-    public function show(PPERequest $ppeRequest)
+    public function show(EPIRequest $epiRequest)
     {
-        $ppeRequest->load(['user', 'admin']);
+        $epiRequest->load(['user', 'admin']);
         
-        return Inertia::render('Admin/PPERequests/Show', [
-            'ppeRequest' => $ppeRequest,
+        return Inertia::render('Admin/EPIRequests/Show', [
+            'epiRequest' => $epiRequest,
         ]);
     }
 
     /**
-     * Update the specified PPE request.
+     * Update the specified EPI request.
      */
-    public function update(Request $request, PPERequest $ppeRequest)
+    public function update(Request $request, EPIRequest $epiRequest)
     {
         $validated = $request->validate([
             'etat' => 'required|in:en_cours,en_traitement,done,rejected',
             'commentaires_admin' => 'nullable|string|max:1000',
         ]);
 
-        $ppeRequest->update([
+        $epiRequest->update([
             'etat' => $validated['etat'],
             'commentaires_admin' => $validated['commentaires_admin'],
             'admin_id' => Auth::guard('admin')->id(),
@@ -83,23 +83,23 @@ class PPERequestController extends Controller
     public function stats()
     {
         $stats = [
-            'total' => PPERequest::count(),
-            'en_cours' => PPERequest::where('etat', 'en_cours')->count(),
-            'en_traitement' => PPERequest::where('etat', 'en_traitement')->count(),
-            'done' => PPERequest::where('etat', 'done')->count(),
-            'rejected' => PPERequest::where('etat', 'rejected')->count(),
-            'recent' => PPERequest::where('created_at', '>=', now()->subDays(7))->count(),
+            'total' => EPIRequest::count(),
+            'en_cours' => EPIRequest::where('etat', 'en_cours')->count(),
+            'en_traitement' => EPIRequest::where('etat', 'en_traitement')->count(),
+            'done' => EPIRequest::where('etat', 'done')->count(),
+            'rejected' => EPIRequest::where('etat', 'rejected')->count(),
+            'recent' => EPIRequest::where('created_at', '>=', now()->subDays(7))->count(),
         ];
 
         return response()->json($stats);
     }
 
     /**
-     * Get recent PPE requests for notifications.
+     * Get recent EPI requests for notifications.
      */
     public function recent()
     {
-        $recentRequests = PPERequest::with(['user'])
+        $recentRequests = EPIRequest::with(['user'])
             ->where('created_at', '>=', now()->subDays(1))
             ->orderBy('created_at', 'desc')
             ->limit(10)

@@ -16,7 +16,7 @@ import {
   UserCircle
 } from 'lucide-react';
 
-export default function PPERequestsIndex({ availableEpiTypes, availableSizes, availablePointures }) {
+export default function EPIRequestsIndex({ availableEpiTypes, availableSizes, availablePointures }) {
     const { auth } = usePage().props || {};
     const { user } = auth || {};
     const [formData, setFormData] = useState({
@@ -80,7 +80,7 @@ export default function PPERequestsIndex({ availableEpiTypes, availableSizes, av
             pointures: formData.pointures.filter((_, index) => formData.liste_epi[index] !== ''),
         };
 
-        router.post(route('ppe-requests.store'), filteredData, {
+        router.post(route('epi-requests.store'), filteredData, {
             onError: (errors) => setErrors(errors),
         });
     };
@@ -163,7 +163,7 @@ export default function PPERequestsIndex({ availableEpiTypes, availableSizes, av
                                         transition={{ delay: 0.4, duration: 0.5 }}
                                     >
                                         <Link
-                                            href={route('ppe-requests.history')}
+                                            href={route('epi-requests.history')}
                                             className="group relative inline-flex items-center space-x-2 px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
                                             style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
                                         >

@@ -2,22 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { Package, X } from 'lucide-react';
 import { usePage } from '@inertiajs/react';
 
-export default function PPENotifications() {
+export default function EPINotifications() {
     const { route } = usePage().props;
     const [notifications, setNotifications] = useState([]);
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
-        // Fetch recent PPE requests for notifications
+        // Fetch recent EPI requests for notifications
         const fetchNotifications = async () => {
             try {
-                const response = await fetch('/admin/ppe-requests/recent');
+                const response = await fetch('/admin/epi-requests/recent');
                 if (response.ok) {
                     const data = await response.json();
                     setNotifications(data.slice(0, 5)); // Show only 5 most recent
                 }
             } catch (error) {
-                console.error('Error fetching PPE notifications:', error);
+                console.error('Error fetching EPI notifications:', error);
             }
         };
 
@@ -67,7 +67,7 @@ export default function PPENotifications() {
                     
                     <div className="mt-3 pt-3 border-t border-gray-200">
                         <a
-                            href={route('admin.ppe-requests.index')}
+                            href={route('admin.epi-requests.index')}
                             className="text-xs text-blue-600 hover:text-blue-800 font-medium"
                         >
                             Voir toutes les demandes →

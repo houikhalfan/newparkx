@@ -26,7 +26,8 @@ import {
   Shield,
   TrendingUp,
   Archive,
-  AlertTriangle
+  AlertTriangle,
+  FolderOpen
 } from "lucide-react";
 import AdminNotifications from "@/Components/AdminNotifications";
 
@@ -95,6 +96,12 @@ export default function AdminLayout({ children }) {
       Icon: MapPin,
     },
     {
+      label: "Projets",
+      href: route("admin.projects.index"),
+      match: "^/admin/projects",
+      Icon: FolderOpen,
+    },
+    {
       label: "Gestion des Comptes",
       href: route("admin.dashboard"),
       match: "^/admin\\?$|^/admin$|^/admin\\?tab=parkx|^/admin\\?tab=contractors",
@@ -132,8 +139,8 @@ export default function AdminLayout({ children }) {
     },
     {
       label: "Demandes EPI",
-      href: route("admin.ppe-requests.index"),
-      match: "^/admin/ppe-requests",
+      href: route("admin.epi-requests.index"),
+      match: "^/admin/epi-requests",
       Icon: Package,
     },
   ];

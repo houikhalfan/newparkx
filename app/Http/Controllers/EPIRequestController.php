@@ -2,25 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\PPERequest;
+use App\Models\EPIRequest;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
-class PPERequestController extends Controller
+class EPIRequestController extends Controller
 {
     /**
-     * Display the PPE request form.
+     * Display the EPI request form.
      */
     public function index()
     {
-        $availableEpiTypes = PPERequest::getAvailableEpiTypes();
-        $availableSizes = PPERequest::getAvailableSizes();
-        $availablePointures = PPERequest::getAvailablePointures();
+        $availableEpiTypes = EPIRequest::getAvailableEpiTypes();
+        $availableSizes = EPIRequest::getAvailableSizes();
+        $availablePointures = EPIRequest::getAvailablePointures();
 
-        return Inertia::render('PPERequests/Index', [
+        return Inertia::render('EPIRequests/Index', [
             'availableEpiTypes' => $availableEpiTypes,
             'availableSizes' => $availableSizes,
             'availablePointures' => $availablePointures,
@@ -28,7 +28,7 @@ class PPERequestController extends Controller
     }
 
     /**
-     * Store a new PPE request.
+     * Store a new EPI request.
      */
     public function store(Request $request)
     {
@@ -36,13 +36,13 @@ class PPERequestController extends Controller
             'nom_prenom' => 'required|string|max:255',
             'date_demande' => 'required|date',
             'liste_epi' => 'required|array|min:1',
-            'liste_epi.*' => 'required|string|in:' . implode(',', PPERequest::getAvailableEpiTypes()),
+            'liste_epi.*' => 'required|string|in:' . implode(',', EPIRequest::getAvailableEpiTypes()),
             'quantites' => 'required|array',
             'quantites.*' => 'required|integer|min:1|max:10',
             'tailles' => 'nullable|array',
-            'tailles.*' => 'nullable|string|in:' . implode(',', PPERequest::getAvailableSizes()),
+            'tailles.*' => 'nullable|string|in:' . implode(',', EPIRequest::getAvailableSizes()),
             'pointures' => 'nullable|array',
-            'pointures.*' => 'nullable|integer|in:' . implode(',', PPERequest::getAvailablePointures()),
+            'pointures.*' => 'nullable|integer|in:' . implode(',', EPIRequest::getAvailablePointures()),
         ]);
 
         // Ensure arrays have the same length
@@ -59,7 +59,7 @@ class PPERequestController extends Controller
             return back()->withErrors(['pointures' => 'Le nombre de pointures doit correspondre au nombre d\'EPI.']);
         }
 
-        $ppeRequest = PPERequest::create([
+        $epiRequest = EPIRequest::create([
             'nom_prenom' => $validated['nom_prenom'],
             'date_demande' => $validated['date_demande'],
             'liste_epi' => $validated['liste_epi'],
@@ -73,99 +73,99 @@ class PPERequestController extends Controller
         // Send notification to all admins
         $admins = Admin::all();
         foreach ($admins as $admin) {
-            $admin->notify(new \App\Notifications\PPERequestNotification($ppeRequest));
+            $admin->notify(new \App\Notifications\EPIRequestNotification($epiRequest));
         }
 
-        return redirect()->route('ppe-requests.history')->with('success', 'Votre demande d\'EPI a été soumise avec succès.');
+        return redirect()->route('epi-requests.history')->with('success', 'Votre demande d\'EPI a été soumise avec succès.');
     }
 
     /**
-     * Display user's PPE request history.
+     * Display user's EPI request history.
      */
     public function history()
     {
-        $ppeRequests = PPERequest::where('user_id', Auth::id())
+        $epiRequests = EPIRequest::where('user_id', Auth::id())
             ->with('admin')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return Inertia::render('PPERequests/History', [
-            'ppeRequests' => $ppeRequests,
+        return Inertia::render('EPIRequests/History', [
+            'epiRequests' => $epiRequests,
             'flash' => session()->get('flash', []),
         ]);
     }
 
     /**
-     * Display the specified PPE request for the user.
+     * Display the specified EPI request for the user.
      */
-    public function show(PPERequest $ppeRequest)
+    public function show(EPIRequest $epiRequest)
     {
         // Ensure the user can only view their own requests
-        if ($ppeRequest->user_id !== Auth::id()) {
+        if ($epiRequest->user_id !== Auth::id()) {
             abort(403, 'Access denied');
         }
 
-        $ppeRequest->load('admin');
+        $epiRequest->load('admin');
         
-        return Inertia::render('PPERequests/Show', [
-            'ppeRequest' => $ppeRequest,
-            'availableEpiTypes' => PPERequest::getAvailableEpiTypes(),
-            'availableSizes' => PPERequest::getAvailableSizes(),
-            'availablePointures' => PPERequest::getAvailablePointures(),
+        return Inertia::render('EPIRequests/Show', [
+            'epiRequest' => $epiRequest,
+            'availableEpiTypes' => EPIRequest::getAvailableEpiTypes(),
+            'availableSizes' => EPIRequest::getAvailableSizes(),
+            'availablePointures' => EPIRequest::getAvailablePointures(),
         ]);
     }
 
     /**
-     * Show the form for editing the specified PPE request.
+     * Show the form for editing the specified EPI request.
      */
-    public function edit(PPERequest $ppeRequest)
+    public function edit(EPIRequest $epiRequest)
     {
         // Ensure the user can only edit their own requests
-        if ($ppeRequest->user_id !== Auth::id()) {
+        if ($epiRequest->user_id !== Auth::id()) {
             abort(403, 'Access denied');
         }
 
         // Only allow editing if request is still "en cours"
-        if ($ppeRequest->etat !== 'en_cours') {
-            return redirect()->route('ppe-requests.show', $ppeRequest)->with('error', 'Vous ne pouvez modifier que les demandes en cours.');
+        if ($epiRequest->etat !== 'en_cours') {
+            return redirect()->route('epi-requests.show', $epiRequest)->with('error', 'Vous ne pouvez modifier que les demandes en cours.');
         }
 
-        $ppeRequest->load('admin');
+        $epiRequest->load('admin');
         
-        return Inertia::render('PPERequests/Edit', [
-            'ppeRequest' => $ppeRequest,
-            'availableEpiTypes' => PPERequest::getAvailableEpiTypes(),
-            'availableSizes' => PPERequest::getAvailableSizes(),
-            'availablePointures' => PPERequest::getAvailablePointures(),
+        return Inertia::render('EPIRequests/Edit', [
+            'epiRequest' => $epiRequest,
+            'availableEpiTypes' => EPIRequest::getAvailableEpiTypes(),
+            'availableSizes' => EPIRequest::getAvailableSizes(),
+            'availablePointures' => EPIRequest::getAvailablePointures(),
         ]);
     }
 
     /**
-     * Update the specified PPE request.
+     * Update the specified EPI request.
      */
-    public function update(Request $request, PPERequest $ppeRequest)
+    public function update(Request $request, EPIRequest $epiRequest)
     {
         // Ensure the user can only update their own requests
-        if ($ppeRequest->user_id !== Auth::id()) {
+        if ($epiRequest->user_id !== Auth::id()) {
             abort(403, 'Access denied');
         }
 
         // Only allow updating if request is still "en cours"
-        if ($ppeRequest->etat !== 'en_cours') {
-            return redirect()->route('ppe-requests.show', $ppeRequest)->with('error', 'Vous ne pouvez modifier que les demandes en cours.');
+        if ($epiRequest->etat !== 'en_cours') {
+            return redirect()->route('epi-requests.show', $epiRequest)->with('error', 'Vous ne pouvez modifier que les demandes en cours.');
         }
 
         $validated = $request->validate([
             'nom_prenom' => 'required|string|max:255',
             'date_demande' => 'required|date',
             'liste_epi' => 'required|array|min:1',
-            'liste_epi.*' => 'required|string|in:' . implode(',', PPERequest::getAvailableEpiTypes()),
+            'liste_epi.*' => 'required|string|in:' . implode(',', EPIRequest::getAvailableEpiTypes()),
             'quantites' => 'required|array',
             'quantites.*' => 'required|integer|min:1|max:10',
             'tailles' => 'nullable|array',
-            'tailles.*' => 'nullable|string|in:' . implode(',', PPERequest::getAvailableSizes()),
+            'tailles.*' => 'nullable|string|in:' . implode(',', EPIRequest::getAvailableSizes()),
             'pointures' => 'nullable|array',
-            'pointures.*' => 'nullable|integer|in:' . implode(',', PPERequest::getAvailablePointures()),
+            'pointures.*' => 'nullable|integer|in:' . implode(',', EPIRequest::getAvailablePointures()),
         ]);
 
         // Ensure arrays have the same length
@@ -180,7 +180,7 @@ class PPERequestController extends Controller
             return back()->withErrors(['pointures' => 'Le nombre de pointures doit correspondre au nombre d\'EPI.']);
         }
 
-        $ppeRequest->update([
+        $epiRequest->update([
             'nom_prenom' => $validated['nom_prenom'],
             'date_demande' => $validated['date_demande'],
             'liste_epi' => $validated['liste_epi'],
@@ -189,6 +189,6 @@ class PPERequestController extends Controller
             'pointures' => $validated['pointures'] ?? [],
         ]);
 
-        return redirect()->route('ppe-requests.show', $ppeRequest)->with('success', 'Votre demande d\'EPI a été mise à jour avec succès.');
+        return redirect()->route('epi-requests.show', $epiRequest)->with('success', 'Votre demande d\'EPI a été mise à jour avec succès.');
     }
 }

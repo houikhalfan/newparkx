@@ -1,5 +1,5 @@
 import React from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { 
   Package, 
@@ -14,10 +14,14 @@ import {
   Clock,
   XCircle,
   AlertCircle,
-  Sparkles
+  Sparkles,
+  LogOut,
+  UserCircle
 } from 'lucide-react';
 
-export default function PPERequestsHistory({ ppeRequests, flash }) {
+export default function EPIRequestsHistory({ epiRequests, flash }) {
+    const { auth } = usePage().props || {};
+    const { user } = auth || {};
     const getEtatBadge = (etat) => {
         const badges = {
             en_cours: 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white',
@@ -92,29 +96,42 @@ export default function PPERequestsHistory({ ppeRequests, flash }) {
                                 </div>
 
                                 {/* Action Buttons */}
-                                <motion.div
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: 0.4, duration: 0.5 }}
-                                    className="flex space-x-3"
-                                >
+                                <div className="flex items-center space-x-4">
                                     <Link
                                         href="/dashboard"
-                                        className="group relative inline-flex items-center space-x-2 px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
+                                        className="group relative inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-sm"
                                         style={{ background: 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)' }}
                                     >
                                         <ArrowLeft className="w-4 h-4" />
                                         <span>Retour au Tableau de Bord</span>
                                     </Link>
                                     <Link
-                                        href={route('ppe-requests.index')}
-                                        className="group relative inline-flex items-center space-x-2 px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
+                                        href={route('epi-requests.index')}
+                                        className="group relative inline-flex items-center space-x-2 px-5 py-2.5 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105 shadow-lg text-sm"
                                         style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
                                     >
                                         <Plus className="w-4 h-4" />
                                         <span>Nouvelle Demande</span>
                                     </Link>
-                                </motion.div>
+                                    <Link
+                                        href="/logout"
+                                        method="post"
+                                        className="group relative inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105 shadow-lg bg-red-500 hover:bg-red-600 text-sm"
+                                    >
+                                        <LogOut className="w-4 h-4" />
+                                        <span>Déconnexion</span>
+                                    </Link>
+                                    {/* User Info */}
+                                    <div className="flex items-center space-x-3 bg-white/90 backdrop-blur-sm rounded-2xl px-4 py-2.5 shadow-lg border border-gray-100">
+                                        <div className="w-9 h-9 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">
+                                            <UserCircle className="w-5 h-5 text-white" />
+                                        </div>
+                                        <div className="text-slate-800">
+                                            <p className="text-sm font-semibold">{user?.name || 'Utilisateur'}</p>
+                                            <p className="text-xs text-slate-500">ParkX</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -188,7 +205,7 @@ export default function PPERequestsHistory({ ppeRequests, flash }) {
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-200">
-                                        {ppeRequests.data.length === 0 ? (
+                                        {epiRequests.data.length === 0 ? (
                                             <tr>
                                                 <td colSpan="7" className="px-8 py-12 text-center">
                                                     <motion.div
@@ -206,7 +223,7 @@ export default function PPERequestsHistory({ ppeRequests, flash }) {
                                                 </td>
                                             </tr>
                                         ) : (
-                                            ppeRequests.data.map((request, index) => (
+                                            epiRequests.data.map((request, index) => (
                                                 <motion.tr
                                                     key={request.id}
                                                     initial={{ opacity: 0, y: 20 }}
@@ -271,7 +288,7 @@ export default function PPERequestsHistory({ ppeRequests, flash }) {
                                                         <div className="flex space-x-2">
                                                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                                                 <Link
-                                                                    href={route('ppe-requests.show', request.id)}
+                                                                    href={route('epi-requests.show', request.id)}
                                                                     className="inline-flex items-center space-x-1 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 shadow-lg"
                                                                     style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
                                                                 >
@@ -282,7 +299,7 @@ export default function PPERequestsHistory({ ppeRequests, flash }) {
                                                             {request.etat === 'en_cours' && (
                                                                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                                                                     <Link
-                                                                        href={route('ppe-requests.edit', request.id)}
+                                                                        href={route('epi-requests.edit', request.id)}
                                                                         className="inline-flex items-center space-x-1 px-4 py-2 rounded-xl text-sm font-bold transition-all duration-300 shadow-lg"
                                                                         style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}
                                                                     >
@@ -302,7 +319,7 @@ export default function PPERequestsHistory({ ppeRequests, flash }) {
                         </motion.div>
 
                         {/* Pagination */}
-                        {ppeRequests.links && (
+                        {epiRequests.links && (
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
@@ -312,9 +329,9 @@ export default function PPERequestsHistory({ ppeRequests, flash }) {
                                 <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20">
                                     <nav className="flex items-center justify-between">
                                         <div className="flex-1 flex justify-between sm:hidden">
-                                            {ppeRequests.links.prev ? (
+                                            {epiRequests.links.prev ? (
                                                 <Link
-                                                    href={ppeRequests.links.prev}
+                                                    href={epiRequests.links.prev}
                                                     className="flex items-center space-x-2 px-6 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 shadow-lg"
                                                     style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}
                                                 >
@@ -328,9 +345,9 @@ export default function PPERequestsHistory({ ppeRequests, flash }) {
                                                 </span>
                                             )}
                                             
-                                            {ppeRequests.links.next ? (
+                                            {epiRequests.links.next ? (
                                                 <Link
-                                                    href={ppeRequests.links.next}
+                                                    href={epiRequests.links.next}
                                                     className="ml-3 flex items-center space-x-2 px-6 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 shadow-lg"
                                                     style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}
                                                 >
@@ -348,12 +365,12 @@ export default function PPERequestsHistory({ ppeRequests, flash }) {
                                         <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                                             <div>
                                                 <p className="text-sm font-semibold text-slate-600">
-                                                    Affichage de <span className="font-bold text-slate-800">{ppeRequests.from}</span> à <span className="font-bold text-slate-800">{ppeRequests.to}</span> sur <span className="font-bold text-slate-800">{ppeRequests.total}</span> résultats
+                                                    Affichage de <span className="font-bold text-slate-800">{epiRequests.from}</span> à <span className="font-bold text-slate-800">{epiRequests.to}</span> sur <span className="font-bold text-slate-800">{epiRequests.total}</span> résultats
                                                 </p>
                                             </div>
                                             <div>
                                                 <nav className="relative z-0 inline-flex rounded-2xl shadow-lg -space-x-px">
-                                                    {ppeRequests.links.map((link, index) => (
+                                                    {epiRequests.links.map((link, index) => (
                                                         link.url ? (
                                                             <Link
                                                                 key={index}

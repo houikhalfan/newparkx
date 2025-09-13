@@ -918,34 +918,35 @@ return (
                 <FieldError>{errors.sig_resp_hse_date}</FieldError>
               </div>
             </Row>
-  </fieldset>
+            </FormCard>
             {/* ParkX placeholders (disabled) */}
-          <Row label="Construction manager ParkX">
-  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-    <div className="space-y-3">
-      <Text
-        placeholder="Nom (à compléter par ParkX)"
-        disabled={readonly && !showSignatureResponsableSite}
-        value={data.cm_parkx_nom || ""}
-        onChange={(e) => setData("cm_parkx_nom", e.target.value)}
-      />
-      <Text
-        type="date"
-        disabled={readonly && !showSignatureResponsableSite}
-        value={data.cm_parkx_date || ""}
-        onChange={(e) => setData("cm_parkx_date", e.target.value)}
-      />
-    </div>
-    <SignaturePicker
-      id="sig_cm_parkx"
-      label="Signature (JPG/PNG)"
-      value={data.cm_parkx_file}
-      onChange={(f) => setData("cm_parkx_file", f)}
-      disabled={readonly && !showSignatureResponsableSite}
-      error={errors.cm_parkx_file}
-    />
-  </div>
-</Row>
+          <FormCard title="Construction manager ParkX">
+            <Row label="Construction manager ParkX">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <div className="space-y-3">
+                  <Text
+                    placeholder="Nom (à compléter par ParkX)"
+                    disabled={readonly && !showSignatureResponsableSite}
+                    value={data.cm_parkx_nom || ""}
+                    onChange={(e) => setData("cm_parkx_nom", e.target.value)}
+                  />
+                  <Text
+                    type="date"
+                    disabled={readonly && !showSignatureResponsableSite}
+                    value={data.cm_parkx_date || ""}
+                    onChange={(e) => setData("cm_parkx_date", e.target.value)}
+                  />
+                </div>
+                <SignaturePicker
+                  id="sig_cm_parkx"
+                  label="Signature (JPG/PNG)"
+                  value={data.cm_parkx_file}
+                  onChange={(f) => setData("cm_parkx_file", f)}
+                  disabled={readonly && !showSignatureResponsableSite}
+                  error={errors.cm_parkx_file}
+                />
+              </div>
+            </Row>
 
 
             <Row label="HSE Manager ParkX">

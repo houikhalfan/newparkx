@@ -165,8 +165,178 @@ class StatisticsController extends Controller
             'observations_hse_total' => $allStats->sum('observations_hse'),
         ];
 
+        // Prepare chart data
+        $chartData = [
+            'labels' => $allStats->pluck('date')->map(function($date) {
+                return $date->format('Y-m-d');
+            })->toArray(),
+            'datasets' => [
+                [
+                    'label' => 'TRIR',
+                    'data' => $allStats->pluck('trir')->toArray(),
+                    'borderColor' => '#ef4444',
+                    'backgroundColor' => 'rgba(239, 68, 68, 0.1)',
+                    'tension' => 0.4
+                ],
+                [
+                    'label' => 'LTIR',
+                    'data' => $allStats->pluck('ltir')->toArray(),
+                    'borderColor' => '#f97316',
+                    'backgroundColor' => 'rgba(249, 115, 22, 0.1)',
+                    'tension' => 0.4
+                ],
+                [
+                    'label' => 'DART',
+                    'data' => $allStats->pluck('dart')->toArray(),
+                    'borderColor' => '#eab308',
+                    'backgroundColor' => 'rgba(234, 179, 8, 0.1)',
+                    'tension' => 0.4
+                ]
+            ]
+        ];
+
+        // Accidents chart data
+        $accidentsChartData = [
+            'labels' => ['Accidents Mortels', 'Accidents Arrêt', 'Soins Médicaux', 'Restriction Temporaire', 'Premier Soin', 'Presque Accident', 'Dommage Matériel', 'Incident Environnemental'],
+            'datasets' => [
+                [
+                    'label' => 'Nombre d\'incidents',
+                    'data' => [
+                        $aggregatedData['accidents']['mortel'],
+                        $aggregatedData['accidents']['arret'],
+                        $aggregatedData['accidents']['soins_medicaux'],
+                        $aggregatedData['accidents']['restriction_temporaire'],
+                        $aggregatedData['accidents']['premier_soin'],
+                        $aggregatedData['accidents']['presque_accident'],
+                        $aggregatedData['accidents']['dommage_materiel'],
+                        $aggregatedData['accidents']['incident_environnemental']
+                    ],
+                    'backgroundColor' => [
+                        '#dc2626', '#ea580c', '#d97706', '#ca8a04',
+                        '#65a30d', '#16a34a', '#059669', '#0d9488'
+                    ],
+                    'borderColor' => [
+                        '#b91c1c', '#c2410c', '#b45309', '#a16207',
+                        '#4d7c0f', '#15803d', '#047857', '#0f766e'
+                    ],
+                    'borderWidth' => 2
+                ]
+            ]
+        ];
+
+        // Training and sensibilisation chart data
+        $trainingChartData = [
+            'labels' => $allStats->pluck('date')->map(function($date) {
+                return $date->format('Y-m-d');
+            })->toArray(),
+            'datasets' => [
+                [
+                    'label' => 'Sensibilisations',
+                    'data' => $allStats->pluck('nb_sensibilisations')->toArray(),
+                    'borderColor' => '#10b981',
+                    'backgroundColor' => 'rgba(16, 185, 129, 0.1)',
+                    'tension' => 0.4
+                ],
+                [
+                    'label' => 'Personnes Sensibilisées',
+                    'data' => $allStats->pluck('personnes_sensibilisees')->toArray(),
+                    'borderColor' => '#06b6d4',
+                    'backgroundColor' => 'rgba(6, 182, 212, 0.1)',
+                    'tension' => 0.4
+                ],
+                [
+                    'label' => 'Heures de Formation',
+                    'data' => $allStats->pluck('formations_total_heures')->toArray(),
+                    'borderColor' => '#8b5cf6',
+                    'backgroundColor' => 'rgba(139, 92, 246, 0.1)',
+                    'tension' => 0.4
+                ]
+            ]
+        ];
+
+        // PTSR and Permis chart data
+        $ptsrPermisChartData = [
+            'labels' => ['PTSR Total', 'PTSR Contrôlés', 'Permis Général', 'Permis Excavation', 'Permis Point Chaud', 'Permis Espace Confiné', 'Permis Travail Hauteur', 'Permis Levage', 'Permis Consignation', 'Permis Électrique'],
+            'datasets' => [
+                [
+                    'label' => 'Quantités',
+                    'data' => [
+                        $aggregatedData['ptsr_total'],
+                        $aggregatedData['ptsr_controles'],
+                        $aggregatedData['permis_general_total'],
+                        $aggregatedData['permis_specifiques']['excavation'],
+                        $aggregatedData['permis_specifiques']['point_chaud'],
+                        $aggregatedData['permis_specifiques']['espace_confine'],
+                        $aggregatedData['permis_specifiques']['travail_hauteur'],
+                        $aggregatedData['permis_specifiques']['levage'],
+                        $aggregatedData['permis_specifiques']['consignation'],
+                        $aggregatedData['permis_specifiques']['electrique_tension']
+                    ],
+                    'backgroundColor' => [
+                        '#3b82f6', '#1d4ed8', '#10b981', '#059669',
+                        '#0d9488', '#0891b2', '#0284c7', '#2563eb',
+                        '#7c3aed', '#9333ea'
+                    ],
+                    'borderColor' => [
+                        '#2563eb', '#1e40af', '#047857', '#065f46',
+                        '#0f766e', '#0e7490', '#0369a1', '#1d4ed8',
+                        '#6d28d9', '#7c2d12'
+                    ],
+                    'borderWidth' => 2
+                ]
+            ]
+        ];
+
+        // Prepare single metric data for all available metrics
+        $singleMetricData = [];
+        $availableMetrics = [
+            'effectif_personnel' => ['name' => 'Effectif', 'color' => '#3b82f6', 'type' => 'bar'],
+            'total_heures' => ['name' => 'Volume Horaire', 'color' => '#10b981', 'type' => 'bar'],
+            'trir' => ['name' => 'TRIR', 'color' => '#ef4444', 'type' => 'line'],
+            'ltir' => ['name' => 'LTIR', 'color' => '#f97316', 'type' => 'line'],
+            'dart' => ['name' => 'DART', 'color' => '#eab308', 'type' => 'line'],
+            'acc_mortel' => ['name' => 'Acc. Mortel', 'color' => '#dc2626', 'type' => 'bar'],
+            'acc_arret' => ['name' => 'Acc. Arrêt', 'color' => '#ea580c', 'type' => 'bar'],
+            'acc_soins_medicaux' => ['name' => 'Acc. Soins', 'color' => '#d97706', 'type' => 'bar'],
+            'acc_restriction_temporaire' => ['name' => 'Acc. Restriction', 'color' => '#ca8a04', 'type' => 'bar'],
+            'premier_soin' => ['name' => 'Premier Soin', 'color' => '#65a30d', 'type' => 'bar'],
+            'presque_accident' => ['name' => 'Presque Accident', 'color' => '#16a34a', 'type' => 'bar'],
+            'dommage_materiel' => ['name' => 'Dommage Matériel', 'color' => '#059669', 'type' => 'bar'],
+            'incident_environnemental' => ['name' => 'Incident Env.', 'color' => '#0d9488', 'type' => 'bar'],
+            'nb_sensibilisations' => ['name' => 'Sensibilisations', 'color' => '#06b6d4', 'type' => 'line'],
+            'personnes_sensibilisees' => ['name' => 'Personnes Sens.', 'color' => '#0891b2', 'type' => 'line'],
+            'inductions_total_personnes' => ['name' => 'Inductions', 'color' => '#0284c7', 'type' => 'line'],
+            'formations_total_heures' => ['name' => 'H. Formation', 'color' => '#7c3aed', 'type' => 'line'],
+            'inductions_volume_heures' => ['name' => 'H. Induction', 'color' => '#9333ea', 'type' => 'line'],
+            'formations_total_heures' => ['name' => 'H. Formation Spéc.', 'color' => '#a855f7', 'type' => 'line'],
+            'ptsr_total' => ['name' => 'PTSR Total', 'color' => '#6366f1', 'type' => 'bar'],
+            'ptsr_controles' => ['name' => 'PTSR Contrôlés', 'color' => '#4f46e5', 'type' => 'bar'],
+            'permis_general' => ['name' => 'Permis Général', 'color' => '#8b5cf6', 'type' => 'bar'],
+            'permis_excavation' => ['name' => 'Permis Excavation', 'color' => '#a855f7', 'type' => 'bar'],
+            'permis_point_chaud' => ['name' => 'Permis Point Chaud', 'color' => '#c084fc', 'type' => 'bar'],
+            'permis_espace_confine' => ['name' => 'Permis Espace Confiné', 'color' => '#d8b4fe', 'type' => 'bar'],
+            'permis_travail_hauteur' => ['name' => 'Permis Travail Hauteur', 'color' => '#e9d5ff', 'type' => 'bar'],
+            'permis_levage' => ['name' => 'Permis Levage', 'color' => '#f3e8ff', 'type' => 'bar'],
+            'permis_consignation' => ['name' => 'Permis Consignation', 'color' => '#fae8ff', 'type' => 'bar'],
+            'permis_electrique_tension' => ['name' => 'Permis Électrique', 'color' => '#fce7f3', 'type' => 'bar'],
+            'observations_hse' => ['name' => 'Observations HSE', 'color' => '#fdf2f8', 'type' => 'line']
+        ];
+
+        foreach ($availableMetrics as $field => $config) {
+            $singleMetricData[$field] = [
+                'name' => $config['name'],
+                'color' => $config['color'],
+                'type' => $config['type'],
+                'labels' => $allStats->pluck('date')->map(function($date) {
+                    return $date->format('Y-m-d');
+                })->toArray(),
+                'values' => $allStats->pluck($field)->toArray()
+            ];
+        }
+
         return Inertia::render('Admin/HseStatistics/Aggregated', [
             'aggregatedData' => $aggregatedData,
+            'singleMetricData' => $singleMetricData,
             'filters' => $request->only(['start_date', 'end_date', 'site', 'entreprise'])
         ]);
     }

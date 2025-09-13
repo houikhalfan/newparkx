@@ -18,13 +18,23 @@ class Contractor extends Authenticatable implements CanResetPasswordContract
         'phone',
         'company_name',
         'role',
+        'project_id',
         'is_approved',
     ];
 
     protected $hidden = ['password', 'remember_token'];
+
+    /**
+     * Get the project that the contractor belongs to.
+     */
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+
     public function sendPasswordResetNotification($token): void
-{
-    $this->notify(new \App\Notifications\ContractorResetPassword($token));
-}
+    {
+        $this->notify(new \App\Notifications\ContractorResetPassword($token));
+    }
 
 }

@@ -22,7 +22,7 @@ import {
     Hash
 } from 'lucide-react';
 
-export default function Index({ ppeRequests }) {
+export default function Index({ epiRequests }) {
     const [search, setSearch] = useState('');
     const [etatFilter, setEtatFilter] = useState('');
     const [dateFilter, setDateFilter] = useState('');
@@ -230,7 +230,7 @@ export default function Index({ ppeRequests }) {
                             </div>
                     </motion.div>
 
-                    {/* Enhanced PPE Requests Table */}
+                    {/* Enhanced EPI Requests Table */}
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -252,7 +252,7 @@ export default function Index({ ppeRequests }) {
                                         </tr>
                                     </thead>
                                 <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-                                        {ppeRequests.data.length === 0 ? (
+                                        {epiRequests.data.length === 0 ? (
                                         <motion.tr
                                             initial={{ opacity: 0 }}
                                             animate={{ opacity: 1 }}
@@ -280,7 +280,7 @@ export default function Index({ ppeRequests }) {
                                                 </td>
                                         </motion.tr>
                                     ) : (
-                                        ppeRequests.data.map((request, index) => (
+                                        epiRequests.data.map((request, index) => (
                                             <motion.tr
                                                 key={request.id}
                                                 initial={{ opacity: 0, y: 20 }}
@@ -371,7 +371,7 @@ export default function Index({ ppeRequests }) {
                                                         whileTap={{ scale: 0.95 }}
                                                     >
                                                         <Link
-                                                            href={route('admin.ppe-requests.show', request.id)}
+                                                            href={route('admin.epi-requests.show', request.id)}
                                                             className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg hover:from-blue-600 hover:to-indigo-600 transition-all font-medium text-sm shadow-lg"
                                                         >
                                                             <Eye className="w-4 h-4" />
@@ -396,7 +396,7 @@ export default function Index({ ppeRequests }) {
                     >
                         <nav className="flex justify-center">
                             <div className="flex items-center gap-2 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-lg p-2">
-                                    {ppeRequests.links.map((link, index) => (
+                                    {epiRequests.links.map((link, index) => (
                                     <motion.div
                                         key={index}
                                         whileHover={{ scale: 1.05 }}

@@ -284,11 +284,7 @@ const cards = useMemo(() => {
 
           <h2 className="text-6xl md:text-7xl font-extrabold mb-6 leading-tight">
             <span className="bg-gradient-to-r from-slate-800 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              Outils, transparence,
-            </span>
-            <br />
-            <span className="bg-gradient-to-r from-purple-600 via-pink-500 to-rose-500 bg-clip-text text-transparent">
-              collaboration
+              Sécurité avec audace
             </span>
           </h2>
           
@@ -297,43 +293,6 @@ const cards = useMemo(() => {
             en un seul endroit pour optimiser votre expérience industrielle.
           </p>
 
-          {/* Quick Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.6 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto"
-          >
-            <div className="group">
-              <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Activity className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-slate-800 mb-2">24/7</h3>
-                <p className="text-slate-600 font-medium">Accès continu</p>
-              </div>
-            </div>
-
-            <div className="group">
-              <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <TrendingUp className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-slate-800 mb-2">+25%</h3>
-                <p className="text-slate-600 font-medium">Efficacité</p>
-              </div>
-            </div>
-
-            <div className="group">
-              <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Users className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-slate-800 mb-2">100%</h3>
-                <p className="text-slate-600 font-medium">Satisfaction</p>
-              </div>
-            </div>
-          </motion.div>
         </div>
       </motion.section>
 

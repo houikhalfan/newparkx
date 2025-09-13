@@ -100,6 +100,7 @@ export default function Welcome() {
 
   const { props } = usePage();
   const flashMessage = props?.flash?.message || props?.flash?.success || props?.flash?.info;
+  const projects = props?.projects || [];
 
   // Forms
   const loginForm = useForm({ email: '', password: '' });
@@ -111,6 +112,7 @@ export default function Welcome() {
     phone: '',
     company_name: '',
     role: '',
+    project_id: '',
   });
 
   // Handle query params for banners & tab selection (after reset/forgot flows)
@@ -556,6 +558,32 @@ export default function Welcome() {
                                 className="text-sm text-red-300 mt-1"
                               >
                                 {signupForm.errors.role}
+                              </motion.p>
+                            )}
+                          </div>
+                          <div>
+                            <label className="text-sm font-medium text-white/90">
+                              Projet
+                            </label>
+                            <select
+                              value={signupForm.data.project_id}
+                              onChange={(e) => signupForm.setData('project_id', e.target.value)}
+                              className="mt-2 w-full px-4 py-4 bg-white/15 backdrop-blur-sm border-2 border-white/30 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all font-medium"
+                            >
+                              <option value="" className="bg-slate-800">Sélectionner un projet</option>
+                              {projects.map((project) => (
+                                <option key={project.id} value={project.id} className="bg-slate-800">
+                                  {project.name} - {project.site?.name || 'Site non spécifié'}
+                                </option>
+                              ))}
+                            </select>
+                            {signupForm.errors?.project_id && (
+                              <motion.p
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="text-sm text-red-300 mt-1"
+                              >
+                                {signupForm.errors.project_id}
                               </motion.p>
                             )}
                           </div>

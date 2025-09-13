@@ -4,14 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Contractor;
+use App\Models\Project;
 use App\Models\Vod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
 
 class AuthController extends Controller
 {
+    public function welcome()
+    {
+        $projects = Project::with('site')->get();
+        return Inertia::render('Welcome', [
+            'projects' => $projects
+        ]);
+    }
     public function login(Request $request)
     {
         $type = $request->input('type', 'parkx'); // 'parkx' or 'contractor'
@@ -96,6 +105,7 @@ class AuthController extends Controller
             'phone'                 => 'nullable|string|max:20',
             'company_name'          => 'nullable|string|max:255',
             'role'                  => 'nullable|string|max:100',
+            'project_id'            => 'nullable|exists:projects,id',
         ]);
 
         Contractor::create([
@@ -105,6 +115,7 @@ class AuthController extends Controller
             'phone'        => $validated['phone'] ?? null,
             'company_name' => $validated['company_name'] ?? null,
             'role'         => $validated['role'] ?? null,
+            'project_id'   => $validated['project_id'] ?? null,
             'is_approved'  => false,
         ]);
 

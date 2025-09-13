@@ -28,6 +28,9 @@ use App\Http\Controllers\Employee\ResponsibleSiteController;
 // Sites
 use App\Http\Controllers\Admin\SiteController as AdminSiteController;
 
+// Projects
+use App\Http\Controllers\Admin\ProjectController;
+
 // Matériel
 use App\Http\Controllers\Employee\MaterialRequestInboxController as EmpMaterialCtrl;
 use App\Http\Controllers\Contractant\MaterialRequestController as ContractorMaterialCtrl;
@@ -44,7 +47,7 @@ use App\Http\Controllers\Admin\StatisticsController as AdminStatsController;
 | PUBLIC + USER ROUTES
 |--------------------------------------------------------------------------
 */
-Route::get('/', fn () => Inertia::render('Welcome'))->name('home');
+Route::get('/', [AuthController::class, 'welcome'])->name('home');
 Route::get('/login', fn () => Inertia::render('Welcome'))->name('login');
 
 Route::post('/login', [AuthController::class, 'login'])->name('login.attempt');
@@ -126,13 +129,13 @@ $isHseResponsible = \App\Models\Site::where('responsible_hse_id', $user->id)->ex
     Route::get('/vods/notifications/data', [VodsController::class, 'notificationsData'])->name('vods.notifications.data');
     Route::get('/vods/{vod}/pdf',          [VodsController::class, 'pdf'])->whereNumber('vod')->name('vods.pdf');
 
-    // PPE Requests
-    Route::get('/ppe-requests',            [\App\Http\Controllers\PPERequestController::class, 'index'])->name('ppe-requests.index');
-    Route::post('/ppe-requests',           [\App\Http\Controllers\PPERequestController::class, 'store'])->name('ppe-requests.store');
-    Route::get('/ppe-requests/history',    [\App\Http\Controllers\PPERequestController::class, 'history'])->name('ppe-requests.history');
-    Route::get('/ppe-requests/{ppeRequest}', [\App\Http\Controllers\PPERequestController::class, 'show'])->whereNumber('ppeRequest')->name('ppe-requests.show');
-    Route::get('/ppe-requests/{ppeRequest}/edit', [\App\Http\Controllers\PPERequestController::class, 'edit'])->whereNumber('ppeRequest')->name('ppe-requests.edit');
-    Route::put('/ppe-requests/{ppeRequest}', [\App\Http\Controllers\PPERequestController::class, 'update'])->whereNumber('ppeRequest')->name('ppe-requests.update');
+    // EPI Requests
+    Route::get('/epi-requests',            [\App\Http\Controllers\EPIRequestController::class, 'index'])->name('epi-requests.index');
+    Route::post('/epi-requests',           [\App\Http\Controllers\EPIRequestController::class, 'store'])->name('epi-requests.store');
+    Route::get('/epi-requests/history',    [\App\Http\Controllers\EPIRequestController::class, 'history'])->name('epi-requests.history');
+    Route::get('/epi-requests/{epiRequest}', [\App\Http\Controllers\EPIRequestController::class, 'show'])->whereNumber('epiRequest')->name('epi-requests.show');
+    Route::get('/epi-requests/{epiRequest}/edit', [\App\Http\Controllers\EPIRequestController::class, 'edit'])->whereNumber('epiRequest')->name('epi-requests.edit');
+    Route::put('/epi-requests/{epiRequest}', [\App\Http\Controllers\EPIRequestController::class, 'update'])->whereNumber('epiRequest')->name('epi-requests.update');
 
     // Documents (for regular ParkX users)
     Route::get('/documents',               [\App\Http\Controllers\UserController::class, 'documents'])->name('documents');
@@ -184,6 +187,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/sites/{site}/update', [AdminSiteController::class, 'update'])->name('sites.update');
         Route::post('/sites/{site}/delete', [AdminSiteController::class, 'destroy'])->name('sites.delete');
 
+        // Projects
+        Route::resource('projects', ProjectController::class);
+
         // ParkX users
         Route::post('/users',                   [AdminController::class, 'createParkxUser'])->name('users.store');
         Route::post('/users/{id}/update-quota', [AdminController::class, 'updateUserVodsQuota'])->whereNumber('id')->name('users.update-quota');
@@ -224,12 +230,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get ('/documents/{document}/download',         [\App\Http\Controllers\Admin\DocumentController::class, 'download'])->whereNumber('document')->name('documents.download');
         Route::post('/documents/bulk-delete',                 [\App\Http\Controllers\Admin\DocumentController::class, 'bulkDelete'])->name('documents.bulk-delete');
 
-        // PPE Requests Management
-        Route::get ('/ppe-requests',                         [\App\Http\Controllers\Admin\PPERequestController::class, 'index'])->name('ppe-requests.index');
-        Route::get ('/ppe-requests/{ppeRequest}',            [\App\Http\Controllers\Admin\PPERequestController::class, 'show'])->whereNumber('ppeRequest')->name('ppe-requests.show');
-        Route::put ('/ppe-requests/{ppeRequest}',            [\App\Http\Controllers\Admin\PPERequestController::class, 'update'])->whereNumber('ppeRequest')->name('ppe-requests.update');
-        Route::get ('/ppe-requests/{ppeRequest}/stats',      [\App\Http\Controllers\Admin\PPERequestController::class, 'stats'])->whereNumber('ppeRequest')->name('ppe-requests.stats');
-        Route::get ('/ppe-requests/recent',                  [\App\Http\Controllers\Admin\PPERequestController::class, 'recent'])->name('ppe-requests.recent');
+        // EPI Requests Management
+        Route::get ('/epi-requests',                         [\App\Http\Controllers\Admin\EPIRequestController::class, 'index'])->name('epi-requests.index');
+        Route::get ('/epi-requests/{epiRequest}',            [\App\Http\Controllers\Admin\EPIRequestController::class, 'show'])->whereNumber('epiRequest')->name('epi-requests.show');
+        Route::put ('/epi-requests/{epiRequest}',            [\App\Http\Controllers\Admin\EPIRequestController::class, 'update'])->whereNumber('epiRequest')->name('epi-requests.update');
+        Route::get ('/epi-requests/{epiRequest}/stats',      [\App\Http\Controllers\Admin\EPIRequestController::class, 'stats'])->whereNumber('epiRequest')->name('epi-requests.stats');
+        Route::get ('/epi-requests/recent',                  [\App\Http\Controllers\Admin\EPIRequestController::class, 'recent'])->name('epi-requests.recent');
         
         // Debug route to check admin session
         Route::get('/debug-admin', function() {
