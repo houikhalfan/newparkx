@@ -99,6 +99,9 @@ class PermisExcavationController extends Controller
             'commentaires' => 'nullable|string',
 
             // Booleans
+            'autor_q1' => 'sometimes|boolean',
+            'autor_q2' => 'sometimes|boolean',
+            'autor_q3' => 'sometimes|boolean',
             'danger_aucun' => 'boolean',
             'epi_sans_additionnel' => 'boolean',
             'equip_non_requis' => 'boolean',
@@ -119,18 +122,93 @@ class PermisExcavationController extends Controller
                 ->store('signatures', 'public');
         }
 
-        // ✅ keep user’s numero_permis_general, fallback only if missing
+        // ✅ Normalize booleans
+        $validated['autor_q1'] = $request->boolean('autor_q1');
+        $validated['autor_q2'] = $request->boolean('autor_q2');
+        $validated['autor_q3'] = $request->boolean('autor_q3');
+
+        // keep user’s numero_permis_general, fallback only if missing
         $validated['numero_permis_general'] = $validated['numero_permis_general'] ?: now()->format('Y');
 
         // Always generate unique numero_permis
         $validated['numero_permis'] = 'PX-' . strtoupper(Str::slug($validated['contractant'], '-'))
             . '-' . now()->format('Ymd') . '-' . rand(1000, 9999);
 
-        // Create record
         PermisExcavation::create($validated);
 
         return redirect()
             ->route('contractant.suivi-permis.index')
             ->with('success', 'Votre permis a été soumis et enregistré avec succès.');
+    }
+
+    /**
+     * Update existing permit (optional, for admin or parkx)
+     */
+    public function update(Request $request, PermisExcavation $permisExcavation)
+    {
+        $validated = $request->validate([
+            'site_id' => 'sometimes|exists:sites,id',
+            'duree_de' => 'sometimes|date',
+            'duree_a' => 'sometimes|date|after_or_equal:duree_de',
+            'description' => 'sometimes|string',
+            'analyse_par' => 'sometimes|string',
+            'date_analyse' => 'sometimes|date',
+            'demandeur' => 'sometimes|string',
+            'contractant' => 'sometimes|string',
+
+            'proprietaire_nom' => 'sometimes|string',
+            'proprietaire_signature' => 'sometimes|image|mimes:png,jpg,jpeg|max:2048',
+            'proprietaire_date' => 'sometimes|date',
+
+            'sig_resp_construction_nom' => 'sometimes|string',
+            'sig_resp_construction_date' => 'sometimes|date',
+            'sig_resp_construction_file' => 'sometimes|image|mimes:png,jpg,jpeg|max:2048',
+
+            'sig_resp_hse_nom' => 'sometimes|string',
+            'sig_resp_hse_date' => 'sometimes|date',
+            'sig_resp_hse_file' => 'sometimes|image|mimes:png,jpg,jpeg|max:2048',
+
+            'excavation_est' => 'nullable|array',
+            'conduites' => 'nullable|array',
+            'situations' => 'nullable|array',
+            'epi_simples' => 'nullable|array',
+            'equip_checks' => 'nullable|array',
+
+            'situation_autre' => 'nullable|string',
+            'epi_autre' => 'nullable|string',
+            'equip_autre' => 'nullable|string',
+            'commentaires' => 'nullable|string',
+
+            'autor_q1' => 'sometimes|boolean',
+            'autor_q2' => 'sometimes|boolean',
+            'autor_q3' => 'sometimes|boolean',
+            'danger_aucun' => 'boolean',
+            'epi_sans_additionnel' => 'boolean',
+            'equip_non_requis' => 'boolean',
+            'aucun_commentaire' => 'boolean',
+        ]);
+
+        // File uploads
+        if ($request->hasFile('proprietaire_signature')) {
+            $validated['proprietaire_signature'] = $request->file('proprietaire_signature')
+                ->store('signatures', 'public');
+        }
+        if ($request->hasFile('sig_resp_construction_file')) {
+            $validated['sig_resp_construction_file'] = $request->file('sig_resp_construction_file')
+                ->store('signatures', 'public');
+        }
+        if ($request->hasFile('sig_resp_hse_file')) {
+            $validated['sig_resp_hse_file'] = $request->file('sig_resp_hse_file')
+                ->store('signatures', 'public');
+        }
+
+        // ✅ Normalize booleans
+        $validated['autor_q1'] = $request->boolean('autor_q1');
+        $validated['autor_q2'] = $request->boolean('autor_q2');
+        $validated['autor_q3'] = $request->boolean('autor_q3');
+
+        $permisExcavation->update($validated);
+
+        return back()->with('success', 'Le permis a été mis à jour avec succès.');
     }
 }

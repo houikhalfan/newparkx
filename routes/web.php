@@ -17,13 +17,15 @@ use App\Http\Controllers\Admin\AdminPasswordController;
 use App\Http\Controllers\Contractant\PermisExcavationController;
 use App\Http\Controllers\Admin\VodController as AdminVodController;
 use App\Http\Controllers\ResponsibleSite\PermisController;
+use App\Http\Controllers\Employee\ResponsibleSiteController;
 
 // Signatures
 use App\Http\Controllers\Contractant\SignatureRequestController as ContractorSignCtrl;
 use App\Http\Controllers\Admin\SignatureRequestController as AdminSignCtrl;
 use App\Http\Controllers\Employee\SignatureInboxController;
-use App\Http\Controllers\Employee\ResponsibleSiteController;
 
+use App\Http\Controllers\ResponsibleSite\PermisController as ResponsibleSitePermisCtrl;
+use App\Http\Controllers\HSEResponsible\PermisController as HSEResponsiblePermisCtrl;
 
 // Sites
 use App\Http\Controllers\Admin\SiteController as AdminSiteController;
@@ -75,20 +77,20 @@ Route::middleware('auth')->group(function () {
         Route::get ('/{id}/download/{field}', [EmpMaterialCtrl::class, 'download'])->whereNumber('id')->name('download');
     });
 // routes/web.php
-Route::middleware(['auth'])->prefix('responsible-site')->group(function () {
-    Route::get('/permis', [\App\Http\Controllers\ResponsibleSite\PermisController::class, 'index'])
-        ->name('responsibleSite.permis.index');
-    Route::get('/permis/{permisExcavation}', [\App\Http\Controllers\ResponsibleSite\PermisController::class, 'show'])
-        ->name('responsibleSite.permis.show');
-
-
-// POST route to save the form
-Route::post('responsible-site/permis/{permis}/sign', [PermisController::class, 'storeSignature'])
-    ->name('responsibleSite.permis.storeSignature');
-
+Route::middleware(['auth'])->prefix('responsible-site')->name('responsibleSite.')->group(function () {
+    Route::get('/permis', [ResponsibleSitePermisCtrl::class, 'index'])->name('permis.index');
+    Route::get('/permis/{permisExcavation}', [ResponsibleSitePermisCtrl::class, 'show'])->name('permis.show');
+    Route::post('/permis/{permis}/sign', [ResponsibleSitePermisCtrl::class, 'sign'])->name('permis.sign');
 });
-Route::post('/responsible-site/permis/{permis}/sign', [PermisController::class, 'sign'])
-    ->name('responsibleSite.permis.sign');
+
+Route::middleware(['auth'])->prefix('hse-responsible')->name('hseResponsible.')->group(function () {
+    Route::get('/permis', [HSEResponsiblePermisCtrl::class, 'index'])->name('permis.index');
+    Route::get('/permis/{permisExcavation}', [HSEResponsiblePermisCtrl::class, 'show'])->name('permis.show');
+    Route::post('/permis/{permis}/sign', [HSEResponsiblePermisCtrl::class, 'sign'])->name('permis.sign');
+});
+
+
+
 Route::get('/responsible-site/suivi-permis', [ResponsibleSiteController::class, 'index'])
     ->name('responsible.suivi-permis.index');
     // Dashboard

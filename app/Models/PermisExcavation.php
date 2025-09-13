@@ -42,10 +42,20 @@ class PermisExcavation extends Model
         'sig_resp_hse_nom',
         'sig_resp_hse_date',
         'sig_resp_hse_file',
-'cm_parkx_nom',
+        'cm_parkx_nom',
         'cm_parkx_date',
         'cm_parkx_file',
+        'autor_q1',
+        'autor_q2',
+        'autor_q3',
+
         // useful tracking
+        'hse_parkx_nom',
+        'hse_parkx_date',
+        'hse_parkx_file',
+        'pdf_signed',
+            'pdf_original',   // 👈 add this
+
         'status',
         'commentaire',
     ];
@@ -60,6 +70,13 @@ class PermisExcavation extends Model
         'epi_sans_additionnel' => 'boolean',
         'equip_non_requis' => 'boolean',
         'aucun_commentaire' => 'boolean',
+
+        'autor_q1' => 'boolean',
+        'autor_q2' => 'boolean',
+        'autor_q3' => 'boolean',
+
+        // 👇 only the date needs casting
+        'hse_parkx_date' => 'date',
     ];
 
     public function site()

@@ -927,32 +927,31 @@ export default function PermisExcavation() {
             </Row>
 
             {/* ParkX placeholders (disabled) */}
-          <Row label="Construction manager ParkX">
-  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+     {/* Construction Manager ParkX - always disabled for contractants */}
+<Row label="Construction manager ParkX">
+  <div className="grid grid-cols-1 gap-3 md:grid-cols-2 opacity-60">
     <div className="space-y-3">
       <Text
         placeholder="Nom (à compléter par ParkX)"
-        disabled={readonly && !showSignatureResponsableSite}
         value={data.cm_parkx_nom || ""}
-        onChange={(e) => setData("cm_parkx_nom", e.target.value)}
+        disabled
       />
       <Text
         type="date"
-        disabled={readonly && !showSignatureResponsableSite}
         value={data.cm_parkx_date || ""}
-        onChange={(e) => setData("cm_parkx_date", e.target.value)}
+        disabled
       />
     </div>
     <SignaturePicker
       id="sig_cm_parkx"
-      label="Signature (JPG/PNG)"
+      label="Signature (désactivée)"
       value={data.cm_parkx_file}
-      onChange={(f) => setData("cm_parkx_file", f)}
-      disabled={readonly && !showSignatureResponsableSite}
-      error={errors.cm_parkx_file}
+      onChange={() => {}}
+      disabled
     />
   </div>
 </Row>
+
 
 
             <Row label="HSE Manager ParkX">
@@ -1101,37 +1100,40 @@ export default function PermisExcavation() {
               </Row>
 
               {/* ParkX placeholders (disabled) */}
-              <Row label="Construction manager ParkX">
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 opacity-60">
-                  <div className="space-y-3">
-                    <Text disabled placeholder="Nom (ParkX)" />
-                    <Text disabled placeholder="Date —" />
-                  </div>
-                  <SignaturePicker
-                    id="ferm_cm_parkx"
-                    label="Signature (désactivée)"
-                    value={null}
-                    onChange={() => {}}
-                    disabled
-                  />
-                </div>
-              </Row>
+            {/* Construction Manager ParkX - always disabled for contractants */}
+<Row label="Construction manager ParkX">
+  <div className="grid grid-cols-1 gap-3 md:grid-cols-2 opacity-60">
+    <div className="space-y-3">
+      <Text placeholder="Nom (à compléter par ParkX)" value={data.cm_parkx_nom || ""} disabled />
+      <Text type="date" value={data.cm_parkx_date || ""} disabled />
+    </div>
+    <SignaturePicker
+      id="sig_cm_parkx"
+      label="Signature (désactivée)"
+      value={data.cm_parkx_file}
+      onChange={() => {}}
+      disabled
+    />
+  </div>
+</Row>
 
-              <Row label="HSE Manager ParkX">
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 opacity-60">
-                  <div className="space-y-3">
-                    <Text disabled placeholder="Nom (ParkX)" />
-                    <Text disabled placeholder="Date —" />
-                  </div>
-                  <SignaturePicker
-                    id="ferm_hse_parkx"
-                    label="Signature (désactivée)"
-                    value={null}
-                    onChange={() => {}}
-                    disabled
-                  />
-                </div>
-              </Row>
+{/* HSE Manager ParkX - always disabled for contractants */}
+<Row label="HSE Manager ParkX">
+  <div className="grid grid-cols-1 gap-3 md:grid-cols-2 opacity-60">
+    <div className="space-y-3">
+      <Text placeholder="Nom (à compléter par ParkX)" disabled />
+      <Text type="date" placeholder="Date —" disabled />
+    </div>
+    <SignaturePicker
+      id="sig_hse_parkx"
+      label="Signature (désactivée)"
+      value={null}
+      onChange={() => {}}
+      disabled
+    />
+  </div>
+</Row>
+
             </FormCard>
           )}
 

@@ -112,7 +112,7 @@ const hseResponsableCards = useMemo(
       title: 'Signatures HSE',
       description: 'Validez les permis et documents en attente de signature HSE',
       icon: Shield, // or FileSignature if you prefer
-      href: '/hse-signatures',
+      href: '/hse-responsible/permis',
       badge: assignedPending,
       gradient: 'from-green-500 to-emerald-500',
       lightGradient: 'from-green-50 to-emerald-50',

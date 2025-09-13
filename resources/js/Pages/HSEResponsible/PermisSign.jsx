@@ -454,7 +454,7 @@ const onSubmit = (e) => {
   e.preventDefault();
   if (!validateForm()) return;
 
-  post(route("responsibleSite.permis.sign", permis.id), {
+post(route("hseResponsible.permis.sign", permis.id), {
     data,
     forceFormData: true,
     onSuccess: () => {
@@ -525,6 +525,7 @@ return (
         </AnimatePresence>
 
         <form onSubmit={onSubmit} className="space-y-6">
+              <fieldset disabled>
           {/* IDENTIFICATION */}
           <FormCard title="Identification">
             <Row label="Endroit / Plan">
@@ -942,6 +943,7 @@ return (
               </div>
             </Row>
             </FormCard> 
+  </fieldset>
            {/* ParkX Signatures */}
 <FormCard title="Validation ParkX">
   <Row label="Construction manager ParkX">
@@ -971,26 +973,35 @@ return (
     </div>
   </Row>
 
-  <Row label="HSE Manager ParkX">
-    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 opacity-60">
-      <div className="space-y-3">
-        <Text disabled placeholder="Nom (à compléter par ParkX)" />
-        <Text disabled placeholder="Date —" />
-      </div>
-      <SignaturePicker
-        id="sig_hse_parkx"
-        label="Signature (désactivée)"
-        value={null}
-        onChange={() => {}}
-        disabled
+<Row label="HSE Manager ParkX">
+  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+    <div className="space-y-3">
+      <Text
+        placeholder="Nom (à compléter par ParkX)"
+        value={data.hse_parkx_nom || ""}
+        onChange={(e) => setData("hse_parkx_nom", e.target.value)}
+      />
+      <Text
+        type="date"
+        value={data.hse_parkx_date || ""}
+        onChange={(e) => setData("hse_parkx_date", e.target.value)}
       />
     </div>
-  </Row>
+    <SignaturePicker
+      id="sig_hse_parkx"
+      label="Signature (JPG/PNG)"
+      value={data.hse_parkx_file}
+      onChange={(f) => setData("hse_parkx_file", f)}
+      error={errors.hse_parkx_file}
+    />
+  </div>
+</Row>
+
 </FormCard>
 
          
 
-               {showFermeture && (
+         {showFermeture && (
   <FormCard title="Fermeture du permis (à remplir physiquement)">
     <Row label="Checklist de fermeture (à cocher manuellement)">
       <ul className="list-disc pl-5 text-sm text-gray-700 space-y-2">
@@ -1060,6 +1071,7 @@ return (
     </Row>
   </FormCard>
 )}
+
 
           {/* ACTIONS */}
 {!readonly && (
