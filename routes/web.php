@@ -33,6 +33,9 @@ use App\Http\Controllers\Admin\SiteController as AdminSiteController;
 // Projects
 use App\Http\Controllers\Admin\ProjectController;
 
+// Permis d’excavation
+use App\Http\Controllers\Admin\PermisAdminController;
+
 // Matériel
 use App\Http\Controllers\Employee\MaterialRequestInboxController as EmpMaterialCtrl;
 use App\Http\Controllers\Contractant\MaterialRequestController as ContractorMaterialCtrl;
@@ -191,7 +194,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/sites',               [AdminSiteController::class, 'store'])->name('sites.store');
         Route::post('/sites/{site}/update', [AdminSiteController::class, 'update'])->name('sites.update');
         Route::post('/sites/{site}/delete', [AdminSiteController::class, 'destroy'])->name('sites.delete');
-
+    
+        // Permis d’excavation
+Route::get('/permis', [PermisAdminController::class, 'index'])
+        ->name('permis.index');
         // Projects
         Route::resource('projects', ProjectController::class);
 

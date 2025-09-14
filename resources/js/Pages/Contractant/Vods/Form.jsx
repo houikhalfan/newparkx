@@ -32,10 +32,11 @@ export default function VodsForm() {
   };
 
 const defaultObserver = auth?.contractor?.name || "";
+const contractorProject = auth?.contractor?.project?.name || "";
 
   const [header, setHeader] = useState({
     date: "",
-    projet: "",
+  projet: contractorProject,  // ✅ auto-filled
     activite: "",
     observateur: defaultObserver,
     personnesObservees: [""],
@@ -339,22 +340,18 @@ const defaultObserver = auth?.contractor?.name || "";
             }
           />
 
-          <Field
-            label="Projet"
-            error={errors.projet}
-            input={
-              <input
-                type="text"
-                placeholder="Projet"
-                value={header.projet}
-                onChange={(e) => setHeader({ ...header, projet: e.target.value })}
-                className="input w-full"
-                {...lettersOnlyProps}
-                required
-                aria-invalid={!!errors.projet}
-              />
-            }
-          />
+  <Field
+  label="Projet"
+  input={
+    <input
+      type="text"
+      value={header.projet}
+      readOnly
+      className="input w-full bg-gray-100 text-gray-700 cursor-not-allowed"
+    />
+  }
+/>
+
 
           <Field
             label="Activité"

@@ -193,7 +193,7 @@ export default function AdminMaterialIndex() {
                     name="q"
                     defaultValue={q}
                     className="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 pl-12 pr-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    placeholder="Rechercher (contractant, email, site, matricule)…"
+                    placeholder="Rechercher (contractant, email, site, matricule / Numéro de série)…"
                   />
                 </div>
 
@@ -248,18 +248,19 @@ export default function AdminMaterialIndex() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="min-w-[1400px] w-full text-sm">
+            <table className="min-w-[1500px] w-full text-sm">
               <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-700">
                 <tr className="text-left text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-600">
                   <Th>Site</Th>
                   <Th>Contractant</Th>
-                  <Th>Matricule</Th>
+                  <Th>Matricule/Numéro de série</Th>
                   <Th>Statut</Th>
                   <Th>Créé le</Th>
-                  <Th className="text-center">Contrôle réglementaire</Th>
+                  <Th className="text-center">Visite technique</Th>
                   <Th className="text-center">Assurance</Th>
+                  <Th className="text-center">Carte grise</Th> {/* ✅ new */}
                   <Th className="text-center">Habilitation</Th>
-                  <Th className="text-center pr-6">Rapport de conformité</Th>
+                  <Th className="text-center pr-6">Checklist</Th>
                 </tr>
               </thead>
 
@@ -271,7 +272,7 @@ export default function AdminMaterialIndex() {
                       animate={{ opacity: 1 }}
                       className="border-b last:border-0"
                     >
-                      <td colSpan={9} className="px-6 py-12 text-center">
+                      <td colSpan={10} className="px-6 py-12 text-center">
                         <div className="flex flex-col items-center gap-4">
                           <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center">
                             <Package className="w-8 h-8 text-slate-400" />
@@ -333,6 +334,9 @@ export default function AdminMaterialIndex() {
                       </Td>
                       <Td className="text-center">
                         <EnhancedFileLink path={row.assurance_path} kind="auto" />
+                      </Td>
+                      <Td className="text-center">
+                        <EnhancedFileLink path={row.carte_grise_path} kind="auto" /> {/* ✅ new */}
                       </Td>
                       <Td className="text-center">
                         <EnhancedFileLink path={row.habilitation_conducteur_path} kind="auto" />

@@ -17,6 +17,8 @@ class MaterialRequest extends Model
         'assurance_path',
         'habilitation_conducteur_path',
         'rapports_conformite_path',
+            'carte_grise_path',  // ✅ new
+
         'status',
         'qrcode_path',
         'qrcode_text',

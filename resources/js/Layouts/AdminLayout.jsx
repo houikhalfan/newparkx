@@ -107,12 +107,12 @@ export default function AdminLayout({ children }) {
       match: "^/admin\\?$|^/admin$|^/admin\\?tab=parkx|^/admin\\?tab=contractors",
       Icon: Users,
     },
-    {
-      label: "Signatures",
-      href: route("admin.signatures.index"),
-      match: "^/admin/signatures",
-      Icon: Mail,
-    },
+  {
+  label: "Permis",
+  href: route("admin.permis.index"),   // ta route Laravel
+  match: "^/admin/permis",             // pour activer l’état "actif"
+  Icon: Shield,                        // j’ai utilisé l’icône Shield, tu peux changer
+},
     {
       label: "Matériel (demandes)",
       href: route("admin.material.index"),

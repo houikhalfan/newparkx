@@ -19,7 +19,6 @@ class MaterialRequestInboxController extends Controller
         $q = (string) $request->query('q', '');
         $s = (string) $request->query('s', '');
 
-        // ✅ Show all requests assigned to the employee OR linked to a site they manage
         $items = MR::with(['contractor:id,name,email', 'site:id,name'])
             ->where(function ($qb) use ($user) {
                 $qb->where('assigned_user_id', $user->id)
@@ -31,7 +30,7 @@ class MaterialRequestInboxController extends Controller
                     $inner->orWhereHas('site', fn($sq) => $sq->where('name', 'like', $like))
                           ->orWhereHas('contractor', fn($cq) => $cq->where('name', 'like', $like)
                           ->orWhere('email', 'like', $like))
-                          ->orWhere('matricule', 'like', $like); // ✅ Search by matricule too
+                          ->orWhere('matricule', 'like', $like);
                 });
             })
             ->when(in_array($s, ['pending', 'accepted', 'rejected']), fn($qb) => $qb->where('status', $s))
@@ -79,7 +78,7 @@ class MaterialRequestInboxController extends Controller
 
         $hasImagick = extension_loaded('imagick') && class_exists(\Imagick::class);
 
-        $qrBinary = QrCode::format($hasImagick ? 'png' : 'svg')
+        $qrBinary = \QrCode::format($hasImagick ? 'png' : 'svg')
             ->size($hasImagick ? 800 : 300)
             ->margin(1)
             ->encoding('UTF-8')
@@ -125,7 +124,13 @@ class MaterialRequestInboxController extends Controller
     public function download(Request $request, int $id, string $field)
     {
         $user = $request->user();
-        $allowed = ['controle_reglementaire', 'assurance', 'habilitation_conducteur', 'rapports_conformite'];
+        $allowed = [
+            'controle_reglementaire',
+            'assurance',
+            'carte_grise',              // ✅ added
+            'habilitation_conducteur',
+            'rapports_conformite'
+        ];
         abort_unless(in_array($field, $allowed, true), 404);
 
         $mr = MR::findOrFail($id);

@@ -85,13 +85,13 @@ class PermisController extends Controller
 
     // ✅ Generate the full PDF (with excavation.blade.php)
     $pdf = Pdf::loadView('pdf.excavation', ['permis' => $permis])
-        ->setPaper('a4', 'portrait');
+    ->setPaper('a4', 'portrait');
 
-    $pdfPath = "permis/pdf_original/permis_excavation_{$permis->id}.pdf";
-    Storage::disk('public')->put($pdfPath, $pdf->output());
+$pdfPath = "permis/pdf_signed/permis_excavation_{$permis->id}.pdf";
+Storage::disk('public')->put($pdfPath, $pdf->output());
 
-    // ✅ Save path in DB
-    $permis->update(['pdf_original' => $pdfPath]);
+// ✅ Save path in DB
+$permis->update(['pdf_signed' => $pdfPath]);
 
     return redirect()
         ->route('hseResponsible.permis.index')

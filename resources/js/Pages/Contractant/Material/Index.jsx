@@ -1,4 +1,3 @@
-// resources/js/Pages/Contractant/Material/Index.jsx
 import React, { useMemo, useState, useEffect } from "react";
 import { usePage, useForm } from "@inertiajs/react";
 import ContractantLayout from "@/Pages/ContractantLayout";
@@ -11,10 +10,9 @@ export default function MaterialIndex() {
     rejected = [],
     sites = [],
     csrf_token,
-    swal, // { type, text }
+    swal,
   } = usePage().props || {};
 
-  // SweetAlert from server flash
   useEffect(() => {
     if (!swal) return;
     if (window?.Swal?.fire) {
@@ -30,7 +28,7 @@ export default function MaterialIndex() {
   }, [swal]);
 
   const [showUpload, setShowUpload] = useState(false);
-  const [active, setActive] = useState("pending"); // 'pending' | 'accepted' | 'rejected'
+  const [active, setActive] = useState("pending");
   const [q, setQ] = useState("");
 
   const countsSafe = {
@@ -41,7 +39,6 @@ export default function MaterialIndex() {
 
   const source = active === "pending" ? pending : active === "accepted" ? accepted : rejected;
 
-  // search only by site name
   const filtered = useMemo(() => {
     if (!q.trim()) return source;
     const k = q.toLowerCase();
@@ -247,9 +244,10 @@ function Card({ row, kind }) {
 function UploadModal({ csrf_token, sites = [], onClose }) {
   const { post, processing, errors, setData, data, reset } = useForm({
     site_id: "",
-    matricule: "", // ✅ New field
+    matricule: "",
     controle_reglementaire: null,
     assurance: null,
+    carte_grise: null, // ✅ new
     habilitation_conducteur: null,
     rapports_conformite: null,
   });
@@ -310,9 +308,9 @@ function UploadModal({ csrf_token, sites = [], onClose }) {
             {errors.site_id && <div className="text-red-600 text-xs mt-1">{errors.site_id}</div>}
           </div>
 
-          {/* ✅ New Matricule Field */}
+          {/* Matricule */}
           <div>
-            <label className="text-sm text-gray-700 font-medium">Matricule *</label>
+            <label className="text-sm text-gray-700 font-medium">Matricule / Numéro de série *</label>
             <input
               type="text"
               required
@@ -324,10 +322,12 @@ function UploadModal({ csrf_token, sites = [], onClose }) {
             {errors.matricule && <div className="text-red-600 text-xs mt-1">{errors.matricule}</div>}
           </div>
 
-          <FileField label="Contrôle réglementaire *" onChange={(f) => setData("controle_reglementaire", f)} error={errors.controle_reglementaire} />
+          {/* Files */}
+          <FileField label="Visite technique *" onChange={(f) => setData("controle_reglementaire", f)} error={errors.controle_reglementaire} />
           <FileField label="Assurance *" onChange={(f) => setData("assurance", f)} error={errors.assurance} />
+          <FileField label="Carte grise *" onChange={(f) => setData("carte_grise", f)} error={errors.carte_grise} /> {/* ✅ new */}
           <FileField label="Habilitation du conducteur *" onChange={(f) => setData("habilitation_conducteur", f)} error={errors.habilitation_conducteur} />
-          <FileField label="Rapports de chantier et conformité *" onChange={(f) => setData("rapports_conformite", f)} error={errors.rapports_conformite} />
+          <FileField label="Checklist *" onChange={(f) => setData("rapports_conformite", f)} error={errors.rapports_conformite} />
 
           <div className="md:col-span-2 flex items-center justify-end gap-3 pt-2">
             <button
@@ -351,7 +351,6 @@ function UploadModal({ csrf_token, sites = [], onClose }) {
   );
 }
 
-
 function FileField({ label, onChange, error }) {
   return (
     <div>
@@ -372,14 +371,11 @@ function FileField({ label, onChange, error }) {
 /* ----------------------------- helpers ----------------------------- */
 
 function printQR(url, title, text) {
-  // URL absolue de l’image (sinon about:blank ne sait pas où la charger)
   const imgUrl = new URL(url, window.location.origin).href;
-
   const esc = (s) =>
     String(s || "")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;");
-
   const safeTitle = esc(title || "QR de conformité");
   const safeText = esc(text || "").replace(/\n/g, "<br>");
 
@@ -404,7 +400,6 @@ function printQR(url, title, text) {
     ${safeText ? `<div class="hint">${safeText}</div>` : ``}
   </div>
   <script>
-    // Imprimer dès que l'image est chargée
     const go = () => setTimeout(() => { window.print(); window.close(); }, 200);
     const img = document.getElementById('qr');
     if (img.complete) { go(); } else { img.addEventListener('load', go); }
@@ -412,10 +407,9 @@ function printQR(url, title, text) {
 </body>
 </html>`;
 
-  // Ouvre via un Blob pour éviter les restrictions de document.write
   const blob = new Blob([html], { type: "text/html" });
   const blobUrl = URL.createObjectURL(blob);
-  window.open(blobUrl, "_blank"); // le navigateur doit autoriser les pop-ups
+  window.open(blobUrl, "_blank");
   setTimeout(() => URL.revokeObjectURL(blobUrl), 15000);
 }
 

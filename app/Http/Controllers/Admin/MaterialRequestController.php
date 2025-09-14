@@ -23,7 +23,7 @@ class MaterialRequestController extends Controller
                         ->orWhereHas('contractor', fn($cq) => $cq
                             ->where('name', 'like', $like)
                             ->orWhere('email', 'like', $like))
-                        ->orWhere('matricule', 'like', $like); // ✅ search by matricule
+                        ->orWhere('matricule', 'like', $like);
                 });
             })
             ->when(in_array($s, ['pending', 'accepted', 'rejected']), fn($qb) => $qb->where('status', $s))
@@ -33,7 +33,7 @@ class MaterialRequestController extends Controller
             ->through(function ($mr) {
                 return [
                     'id'   => $mr->id,
-                    'matricule'  => $mr->matricule, // ✅ added matricule
+                    'matricule'  => $mr->matricule,
                     'status'     => $mr->status,
                     'created_at' => $mr->created_at,
 
@@ -47,6 +47,7 @@ class MaterialRequestController extends Controller
                     // fichiers
                     'controle_reglementaire_path'   => $mr->controle_reglementaire_path,
                     'assurance_path'                => $mr->assurance_path,
+                    'carte_grise_path'              => $mr->carte_grise_path,   // ✅ added
                     'habilitation_conducteur_path'  => $mr->habilitation_conducteur_path,
                     'rapports_conformite_path'      => $mr->rapports_conformite_path,
                 ];

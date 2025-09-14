@@ -13,14 +13,15 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class ContractantVodController extends Controller
 {
     // UI shell (tabs)
-    public function index(Request $request)
-    {
-        $contractor = auth('contractor')->user();
+   public function index(Request $request)
+{
+    $contractor = auth('contractor')->user()->load('project'); // ✅ load project relation
 
-        return Inertia::render('Contractant/Vods/Index', [
-            'contractor' => $contractor,
-        ]);
-    }
+    return Inertia::render('Contractant/Vods/Index', [
+        'contractor' => $contractor,
+    ]);
+}
+
 
     // History data for the React fetcher
     public function historyData(Request $request)
@@ -56,19 +57,21 @@ class ContractantVodController extends Controller
 
         $request->validate([
             'date'     => ['required','date'],
-            'projet'   => ['required','regex:/^[\pL\s\-\']+$/u'],
             'activite' => ['required','regex:/^[\pL\s\-\']+$/u'],
         ]);
 
         return DB::transaction(function () use ($request, $cid, $contractor) {
+                $projectName = $contractor?->project?->name ?? ''; // ✅ fetch from DB
+
             // Create base record
+
             $vod = ContractantVod::create([
                 'contractor_id' => $cid,
                 'date'          => $request->date,
                 'due_year'      => (int)date('Y', strtotime($request->date)),
                 'due_month'     => (int)date('n', strtotime($request->date)),
                 'week_of_year'  => (int)date('W', strtotime($request->date)),
-                'projet'        => $request->projet,
+        'projet'        => $projectName,   // ✅ auto-fill
                 'activite'      => $request->activite,
                 'observateur'   => $contractor?->name,
                 'has_danger'    => false,
