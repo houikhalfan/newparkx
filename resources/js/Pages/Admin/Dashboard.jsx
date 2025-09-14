@@ -168,6 +168,44 @@ function AdminDashboard() {
     flash: _flash,
   } = usePage().props;
   const flash = _flash || {};
+  
+  // State for expandable contractor details
+  const [expandedContractors, setExpandedContractors] = useState(new Set());
+  const [contractorDetails, setContractorDetails] = useState({});
+
+  // Function to toggle contractor details
+  const toggleContractorDetails = async (contractorId) => {
+    const newExpanded = new Set(expandedContractors);
+    
+    if (newExpanded.has(contractorId)) {
+      // If already expanded, collapse it
+      newExpanded.delete(contractorId);
+      setExpandedContractors(newExpanded);
+    } else {
+      // If not expanded, fetch details and expand
+      if (!contractorDetails[contractorId]) {
+        try {
+          const response = await fetch(route('admin.contractors.show', contractorId));
+          const data = await response.json();
+          setContractorDetails(prev => ({
+            ...prev,
+            [contractorId]: data.contractor
+          }));
+        } catch (error) {
+          console.error('Error fetching contractor details:', error);
+          Swal.fire({
+            title: 'Erreur',
+            text: 'Impossible de charger les détails du contractant.',
+            icon: 'error',
+            confirmButtonColor: '#dc2626'
+          });
+          return;
+        }
+      }
+      newExpanded.add(contractorId);
+      setExpandedContractors(newExpanded);
+    }
+  };
 
     // Enhanced SweetAlert with better styling
   const fireSuccess = (message) =>
@@ -868,8 +906,8 @@ function AdminDashboard() {
                                                     </motion.tr>
                                                 ) : (
                                                     rowsContractors.map((r, idx) => (
+                                                        <React.Fragment key={`${r.kind}-${r.id}`}>
                                                         <motion.tr
-                      key={`${r.kind}-${r.id}`}
                                                             initial={{ opacity: 0, y: 20 }}
                                                             animate={{ opacity: 1, y: 0 }}
                                                             transition={{ delay: idx * 0.1, duration: 0.4 }}
@@ -919,6 +957,21 @@ function AdminDashboard() {
                                                             <Td className="text-right">
                         {r.kind === "pending" ? (
                           <div className="inline-flex gap-2">
+                            <motion.button
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              type="button"
+                              onClick={() => toggleContractorDetails(r.id)}
+                              className={`inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                                expandedContractors.has(r.id)
+                                  ? 'bg-blue-200 hover:bg-blue-300 dark:bg-blue-800 dark:hover:bg-blue-700 text-blue-700 dark:text-blue-200'
+                                  : 'bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400'
+                              }`}
+                              title={expandedContractors.has(r.id) ? 'Masquer les détails' : 'Voir les détails du contractant'}
+                            >
+                              <Eye className="w-3 h-3" />
+                              {expandedContractors.has(r.id) ? 'Masquer' : 'Voir Details'}
+                            </motion.button>
                             <form method="POST" action={route("admin.contractors.approve", r.id)}>
                               <input type="hidden" name="_token" value={csrf_token} />
                                                                             <motion.button
@@ -984,6 +1037,125 @@ function AdminDashboard() {
                             </form>
                                                             </Td>
                                                         </motion.tr>
+                                                        
+                                                        {/* Expandable Details Section */}
+                                                        {expandedContractors.has(r.id) && contractorDetails[r.id] && (
+                                                          <motion.tr
+                                                            initial={{ opacity: 0, height: 0 }}
+                                                            animate={{ opacity: 1, height: 'auto' }}
+                                                            exit={{ opacity: 0, height: 0 }}
+                                                            transition={{ duration: 0.3 }}
+                                                            className="bg-blue-50 dark:bg-blue-900/10"
+                                                          >
+                                                            <td colSpan={6} className="px-6 py-6">
+                                                              <motion.div
+                                                                initial={{ y: -10 }}
+                                                                animate={{ y: 0 }}
+                                                                transition={{ delay: 0.1 }}
+                                                                className="bg-white dark:bg-slate-800 rounded-xl border border-blue-200 dark:border-blue-700 p-6 shadow-sm"
+                                                              >
+                                                                <div className="flex items-center gap-3 mb-4">
+                                                                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                                                                    <Eye className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                                                                  </div>
+                                                                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                                                                    Détails du Contractant
+                                                                  </h3>
+                                                                </div>
+                                                                
+                                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                                  <div className="space-y-4">
+                                                                    <div>
+                                                                      <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
+                                                                        Nom complet
+                                                                      </label>
+                                                                      <p className="text-slate-900 dark:text-white font-medium">
+                                                                        {contractorDetails[r.id].name}
+                                                                      </p>
+                                                                    </div>
+                                                                    
+                                                                    <div>
+                                                                      <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
+                                                                        Email
+                                                                      </label>
+                                                                      <p className="text-slate-900 dark:text-white">
+                                                                        {contractorDetails[r.id].email}
+                                                                      </p>
+                                                                    </div>
+                                                                    
+                                                                    <div>
+                                                                      <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
+                                                                        Téléphone
+                                                                      </label>
+                                                                      <p className="text-slate-900 dark:text-white">
+                                                                        {contractorDetails[r.id].phone || 'Non spécifié'}
+                                                                      </p>
+                                                                    </div>
+                                                                  </div>
+                                                                  
+                                                                  <div className="space-y-4">
+                                                                    <div>
+                                                                      <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
+                                                                        Entreprise
+                                                                      </label>
+                                                                      <p className="text-slate-900 dark:text-white">
+                                                                        {contractorDetails[r.id].company_name || 'Non spécifiée'}
+                                                                      </p>
+                                                                    </div>
+                                                                    
+                                                                    <div>
+                                                                      <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
+                                                                        Rôle
+                                                                      </label>
+                                                                      <p className="text-slate-900 dark:text-white">
+                                                                        {contractorDetails[r.id].role || 'Non spécifié'}
+                                                                      </p>
+                                                                    </div>
+                                                                    
+                                                                    <div>
+                                                                      <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
+                                                                        Projet assigné
+                                                                      </label>
+                                                                      <p className="text-slate-900 dark:text-white">
+                                                                        {contractorDetails[r.id].project_name || 'Aucun projet assigné'}
+                                                                      </p>
+                                                                    </div>
+                                                                  </div>
+                                                                </div>
+                                                                
+                                                                <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+                                                                  <div className="flex items-center justify-between">
+                                                                    <div>
+                                                                      <label className="block text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">
+                                                                        Date de demande
+                                                                      </label>
+                                                                      <p className="text-slate-900 dark:text-white">
+                                                                        {new Date(contractorDetails[r.id].created_at).toLocaleDateString('fr-FR', { 
+                                                                          year: 'numeric', 
+                                                                          month: 'long', 
+                                                                          day: 'numeric',
+                                                                          hour: '2-digit',
+                                                                          minute: '2-digit'
+                                                                        })}
+                                                                      </p>
+                                                                    </div>
+                                                                    
+                                                                    <div className="flex items-center gap-2">
+                                                                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                                                        contractorDetails[r.id].is_approved 
+                                                                          ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                                                                          : 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
+                                                                      }`}>
+                                                                        {contractorDetails[r.id].is_approved ? 'Approuvé' : 'En attente'}
+                                                                      </span>
+                                                                    </div>
+                                                                  </div>
+                                                                </div>
+                                                              </motion.div>
+                                                            </td>
+                                                          </motion.tr>
+                                                        )}
+                                                        </React.Fragment>
                                                     ))
                         )}
                 </tbody>

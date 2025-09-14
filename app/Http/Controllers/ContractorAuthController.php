@@ -70,6 +70,14 @@ class ContractorAuthController extends Controller
             'is_approved'  => false, // pending by default
         ]);
 
+        // Send notification to all admins
+        $admins = \App\Models\Admin::all();
+        \Log::info('Sending contractor registration notifications to ' . $admins->count() . ' admins');
+        foreach ($admins as $admin) {
+            \Log::info('Sending contractor registration notification to admin: ' . $admin->email);
+            $admin->notify(new \App\Notifications\ContractorRegistrationNotification($contractor));
+        }
+
         return back()->with('message', 'Demande envoyée. Vous serez notifié après approbation.');
     }
 }

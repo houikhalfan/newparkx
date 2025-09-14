@@ -80,7 +80,7 @@ export default function Dashboard() {
         title: 'Demande EPI',
         description: 'Demandez et gérez vos équipements de protection individuelle',
         icon: Package,
-        href: '/ppe-requests',
+        href: '/epi-requests',
         gradient: 'from-purple-500 to-pink-500',
         lightGradient: 'from-purple-50 to-pink-50',
         stats: 'Équipements disponibles',

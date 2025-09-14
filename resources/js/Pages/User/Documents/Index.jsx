@@ -28,11 +28,24 @@ export default function DocumentsIndex({ documents, filters }) {
     const { auth } = usePage().props || {};
     const { user } = auth || {};
     const [search, setSearch] = useState(filters.search || '');
+    const [date, setDate] = useState(filters.date || '');
 
     const handleSearch = (e) => {
         setSearch(e.target.value);
         router.get(route('documents'), {
             search: e.target.value,
+            date: date,
+        }, {
+            preserveState: true,
+            replace: true,
+        });
+    };
+
+    const handleDateChange = (e) => {
+        setDate(e.target.value);
+        router.get(route('documents'), {
+            search: search,
+            date: e.target.value,
         }, {
             preserveState: true,
             replace: true,
@@ -41,22 +54,23 @@ export default function DocumentsIndex({ documents, filters }) {
 
     const clearFilters = () => {
         setSearch('');
+        setDate('');
         router.get(route('documents'));
     };
 
     const getFileIcon = (fileType) => {
         if (fileType.startsWith('image/')) {
-            return <Image className="w-5 h-5" style={{ color: '#4A5C6A' }} />;
+            return <Image className="w-8 h-8" style={{ color: '#FF6B9D' }} />;
         } else if (fileType === 'application/pdf') {
-            return <FileText className="w-5 h-5" style={{ color: '#4A5C6A' }} />;
+            return <FileText className="w-8 h-8" style={{ color: '#FF6B6B' }} />;
         } else if (fileType.startsWith('text/')) {
-            return <FileText className="w-5 h-5" style={{ color: '#4A5C6A' }} />;
+            return <FileText className="w-8 h-8" style={{ color: '#4ECDC4' }} />;
         } else if (fileType.includes('word') || fileType.includes('document')) {
-            return <FileType className="w-5 h-5" style={{ color: '#4A5C6A' }} />;
+            return <FileType className="w-8 h-8" style={{ color: '#45B7D1' }} />;
         } else if (fileType.includes('excel') || fileType.includes('spreadsheet')) {
-            return <FileSpreadsheet className="w-5 h-5" style={{ color: '#4A5C6A' }} />;
+            return <FileSpreadsheet className="w-8 h-8" style={{ color: '#96CEB4' }} />;
         } else {
-            return <Archive className="w-5 h-5" style={{ color: '#4A5C6A' }} />;
+            return <Archive className="w-8 h-8" style={{ color: '#FFEAA7' }} />;
         }
     };
 
@@ -159,145 +173,220 @@ export default function DocumentsIndex({ documents, filters }) {
                 </motion.header>
 
                 {/* Main Content */}
-                <div className="relative z-10 py-8 px-6">
-                    <div className="max-w-7xl mx-auto">
+                <div className="relative z-10 py-6 px-6">
+                    <div className="max-w-6xl mx-auto">
                         {/* Page Title */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2, duration: 0.6 }}
-                            className="text-center mb-12"
+                            className="text-center mb-8"
                         >
-                            <h2 className="text-5xl font-bold mb-4 bg-gradient-to-r from-slate-800 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                            <h2 className="text-3xl md:text-4xl font-bold mb-3 bg-gradient-to-r from-slate-800 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
                                 Documents Publics
                             </h2>
-                            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+                            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
                                 Consultez et téléchargez les documents publics
                             </p>
                         </motion.div>
 
-                        {/* Search Section */}
+                        {/* Compact Search Section */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.4, duration: 0.6 }}
-                            className="mb-8"
+                            className="mb-6"
                         >
-                            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20">
-                                <div className="flex flex-col lg:flex-row gap-6">
+                            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-white/20 max-w-4xl mx-auto">
+                                <div className="flex flex-col sm:flex-row gap-4 items-end">
+                                    {/* Search Input */}
                                     <div className="flex-1">
-                                        <label className="block text-sm font-bold mb-3 text-slate-700">
-                                            Rechercher
+                                        <label className="block text-xs font-medium mb-1 text-slate-600">
+                                            Titre
                                         </label>
                                         <div className="relative">
-                                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
                                             <input
                                                 type="text"
                                                 value={search}
                                                 onChange={handleSearch}
-                                                placeholder="Rechercher par titre ou description..."
-                                                className="w-full pl-12 pr-4 py-4 rounded-2xl border-2 border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 bg-white/70 backdrop-blur-sm"
+                                                placeholder="Rechercher par titre..."
+                                                className="w-full pl-10 pr-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 bg-white/70 backdrop-blur-sm text-sm"
                                             />
                                         </div>
                                     </div>
-                                    <div className="flex items-end">
+
+                                    {/* Date */}
+                                    <div className="w-full sm:w-48">
+                                        <label className="block text-xs font-medium mb-1 text-slate-600">
+                                            Date
+                                        </label>
+                                        <div className="relative">
+                                            <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                            <input
+                                                type="date"
+                                                value={date}
+                                                onChange={handleDateChange}
+                                                className="w-full pl-10 pr-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 bg-white/70 backdrop-blur-sm text-sm"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Clear Button */}
                                         <motion.button
                                             whileHover={{ scale: 1.05 }}
                                             whileTap={{ scale: 0.95 }}
                                             onClick={clearFilters}
-                                            className="flex items-center space-x-2 px-6 py-4 rounded-2xl text-sm font-semibold transition-all duration-300 shadow-lg"
+                                        className="flex items-center space-x-1 px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-300 shadow-md"
                                             style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}
                                         >
-                                            <X className="w-4 h-4" />
+                                        <X className="w-3 h-3" />
                                             <span className="text-white">Effacer</span>
                                         </motion.button>
-                                    </div>
                                 </div>
                             </div>
                         </motion.div>
 
-                        {/* Documents Table */}
+                        {/* Documents Cards Grid */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.6, duration: 0.6 }}
-                            className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 overflow-hidden"
+                            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
                         >
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full">
-                                    <thead className="bg-gradient-to-r from-slate-800 to-slate-700">
-                                        <tr>
-                                            <th className="px-8 py-6 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                Document
-                                            </th>
-                                            <th className="px-8 py-6 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                Date
-                                            </th>
-                                            <th className="px-8 py-6 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                Uploadé par
-                                            </th>
-                                            <th className="px-8 py-6 text-left text-sm font-bold text-white uppercase tracking-wider">
-                                                Actions
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-200">
                                         {documents.data.map((document, index) => (
-                                            <motion.tr
+                                <motion.div
                                                 key={document.id}
-                                                initial={{ opacity: 0, y: 20 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                transition={{ delay: 0.8 + index * 0.1, duration: 0.5 }}
-                                                className="hover:bg-slate-50/80 transition-all duration-300 group"
-                                            >
-                                                <td className="px-8 py-6">
-                                                    <div className="flex items-center space-x-4">
-                                                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                    initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    transition={{ 
+                                        delay: 0.8 + index * 0.1, 
+                                        duration: 0.6,
+                                        type: "spring",
+                                        stiffness: 100
+                                    }}
+                                    whileHover={{ 
+                                        scale: 1.05, 
+                                        y: -8,
+                                        transition: { duration: 0.2 }
+                                    }}
+                                    className="group relative"
+                                >
+                                    {/* Glass-morphism Card */}
+                                    <div 
+                                        className="relative h-full bg-white/90 backdrop-blur-xl rounded-3xl p-8 border border-white/50 shadow-2xl overflow-hidden hover:shadow-3xl transition-all duration-500"
+                                        style={{
+                                            background: `linear-gradient(135deg, 
+                                                ${index % 4 === 0 ? 'rgba(147, 51, 234, 0.15)' : 
+                                                  index % 4 === 1 ? 'rgba(59, 130, 246, 0.15)' :
+                                                  index % 4 === 2 ? 'rgba(236, 72, 153, 0.15)' :
+                                                  'rgba(16, 185, 129, 0.15)'}, 
+                                                ${index % 4 === 0 ? 'rgba(236, 72, 153, 0.1)' : 
+                                                  index % 4 === 1 ? 'rgba(147, 51, 234, 0.1)' :
+                                                  index % 4 === 2 ? 'rgba(16, 185, 129, 0.1)' :
+                                                  'rgba(59, 130, 246, 0.1)'}, 
+                                                rgba(255, 255, 255, 0.8)
+                                            )`
+                                        }}
+                                    >
+                                        {/* Gradient Background Overlay */}
+                                        <div 
+                                            className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                                            style={{
+                                                background: `linear-gradient(135deg, 
+                                                    ${index % 4 === 0 ? 'rgba(147, 51, 234, 0.25)' : 
+                                                      index % 4 === 1 ? 'rgba(59, 130, 246, 0.25)' :
+                                                      index % 4 === 2 ? 'rgba(236, 72, 153, 0.25)' :
+                                                      'rgba(16, 185, 129, 0.25)'}, 
+                                                    ${index % 4 === 0 ? 'rgba(236, 72, 153, 0.15)' : 
+                                                      index % 4 === 1 ? 'rgba(147, 51, 234, 0.15)' :
+                                                      index % 4 === 2 ? 'rgba(16, 185, 129, 0.15)' :
+                                                      'rgba(59, 130, 246, 0.15)'}
+                                                )`
+                                            }}
+                                        />
+                                        
+                                        {/* Concentric Circles Background */}
+                                        <div className="absolute inset-0 overflow-hidden rounded-3xl">
+                                            <div className="absolute -top-20 -right-20 w-40 h-40 bg-white/20 rounded-full blur-xl animate-pulse" />
+                                            <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-white/20 rounded-full blur-lg animate-pulse delay-1000" />
+                                        </div>
+
+                                        {/* Card Content */}
+                                        <div className="relative z-10">
+                                            {/* Document Icon */}
+                                            <div className="flex justify-center mb-6">
+                                                <motion.div
+                                                    whileHover={{ rotate: 360 }}
+                                                    transition={{ duration: 0.8 }}
+                                                    className="w-20 h-20 rounded-2xl bg-white/30 backdrop-blur-sm flex items-center justify-center shadow-lg border border-white/20"
+                                                >
+                                                    <div className="text-4xl">
                                                             {getFileIcon(document.file_type)}
-                                                        </div>
-                                                        <div>
-                                                            <div className="text-lg font-bold text-slate-800 group-hover:text-slate-900 transition-colors">
-                                                                {document.title}
-                                                            </div>
-                                                            <div className="text-sm text-slate-500 group-hover:text-slate-600 transition-colors">
-                                                                {document.original_filename}
-                                                            </div>
-                                                        </div>
                                                     </div>
-                                                </td>
-                                                <td className="px-8 py-6 whitespace-nowrap">
-                                                    <div className="flex items-center space-x-2">
-                                                        <Calendar className="w-4 h-4 text-slate-400" />
-                                                        <span className="text-sm font-medium text-slate-600">
-                                                            {new Date(document.created_at).toLocaleDateString()}
+                                                </motion.div>
+                                            </div>
+
+                                            {/* Document Title */}
+                                            <div className="text-center mb-6">
+                                                <h3 className="text-xl font-bold text-slate-800 mb-2 line-clamp-2 group-hover:text-slate-900 transition-colors duration-300">
+                                                    {document.title}
+                                                </h3>
+                                                <p className="text-sm text-slate-600 group-hover:text-slate-700 transition-colors duration-300">
+                                                    {document.original_filename}
+                                                </p>
+                                            </div>
+
+                                            {/* Document Info */}
+                                            <div className="mb-8">
+                                                {/* Date */}
+                                                <div className="flex items-center justify-center space-x-2 text-slate-700 group-hover:text-slate-800 transition-colors duration-300">
+                                                    <Calendar className="w-4 h-4" />
+                                                    <span className="text-sm font-medium">
+                                                        {new Date(document.created_at).toLocaleDateString('fr-FR', {
+                                                            year: 'numeric',
+                                                            month: 'short',
+                                                            day: 'numeric'
+                                                        })}
                                                         </span>
                                                     </div>
-                                                </td>
-                                                <td className="px-8 py-6 whitespace-nowrap">
-                                                    <div className="flex items-center space-x-2">
-                                                        <User className="w-4 h-4 text-slate-400" />
-                                                        <span className="text-sm font-semibold text-slate-700">
-                                                            {document.full_name}
-                                                        </span>
                                                     </div>
-                                                </td>
-                                                <td className="px-8 py-6 whitespace-nowrap">
+
+                                            {/* Download Button */}
                                                     <motion.a
                                                         whileHover={{ scale: 1.05 }}
                                                         whileTap={{ scale: 0.95 }}
                                                         href={route('documents.download', document.id)}
-                                                        className="inline-flex items-center space-x-2 px-6 py-3 rounded-2xl text-sm font-bold transition-all duration-300 shadow-lg"
-                                                        style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
-                                                    >
-                                                        <Download className="w-4 h-4" />
-                                                        <span className="text-white">Télécharger</span>
+                                                className="block w-full"
+                                            >
+                                                <div 
+                                                    className="rounded-2xl px-6 py-4 text-center transition-all duration-300 group-hover:shadow-lg"
+                                                    style={{
+                                                        background: `linear-gradient(135deg, 
+                                                            ${index % 4 === 0 ? '#9333ea' : 
+                                                              index % 4 === 1 ? '#3b82f6' :
+                                                              index % 4 === 2 ? '#ec4899' :
+                                                              '#10b981'}, 
+                                                            ${index % 4 === 0 ? '#ec4899' : 
+                                                              index % 4 === 1 ? '#9333ea' :
+                                                              index % 4 === 2 ? '#10b981' :
+                                                              '#3b82f6'}
+                                                        )`
+                                                    }}
+                                                >
+                                                    <div className="flex items-center justify-center space-x-2">
+                                                        <Download className="w-5 h-5 text-white" />
+                                                        <span className="text-white font-semibold">Télécharger</span>
+                                                    </div>
+                                                </div>
                                                     </motion.a>
-                                                </td>
-                                            </motion.tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
+                                        </div>
+
+                                        {/* Shimmer Effect */}
+                                        <div className="absolute inset-0 -top-2 -left-2 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
+                                    </div>
+                                </motion.div>
+                            ))}
                         </motion.div>
 
                         {/* Pagination */}
@@ -393,12 +482,21 @@ export default function DocumentsIndex({ documents, filters }) {
                                 transition={{ delay: 0.8, duration: 0.6 }}
                                 className="text-center py-20"
                             >
-                                <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-12 shadow-xl border border-white/20 max-w-md mx-auto">
-                                    <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center">
-                                        <FileText className="w-10 h-10 text-blue-600" />
+                                <div className="relative bg-white/90 backdrop-blur-xl rounded-3xl p-12 shadow-2xl border border-white/50 max-w-md mx-auto overflow-hidden">
+                                    {/* Background Effects */}
+                                    <div className="absolute inset-0 bg-gradient-to-br from-purple-500/15 via-blue-500/10 to-pink-500/15 rounded-3xl" />
+                                    <div className="absolute inset-0 overflow-hidden rounded-3xl">
+                                        <div className="absolute -top-20 -right-20 w-40 h-40 bg-white/20 rounded-full blur-xl animate-pulse" />
+                                        <div className="absolute -bottom-16 -left-16 w-32 h-32 bg-white/20 rounded-full blur-lg animate-pulse delay-1000" />
+                                    </div>
+                                    
+                                    <div className="relative z-10">
+                                        <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-white/50 backdrop-blur-sm flex items-center justify-center border border-white/30">
+                                            <FileText className="w-10 h-10 text-slate-600" />
                                     </div>
                                     <h3 className="text-2xl font-bold text-slate-800 mb-3">Aucun document</h3>
                                     <p className="text-lg text-slate-600">Aucun document public n'est disponible.</p>
+                                    </div>
                                 </div>
                             </motion.div>
                         )}

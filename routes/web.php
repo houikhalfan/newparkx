@@ -201,6 +201,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('/users/{id}/delete',       [AdminController::class, 'deleteParkxUser'])->whereNumber('id')->name('users.delete');
 
         // Contractors
+        Route::get('/contractors/{id}/show',     [AdminController::class, 'showContractor'])->whereNumber('id')->name('contractors.show');
         Route::post('/contractors/{id}/approve', [AdminController::class, 'approveContractor'])->whereNumber('id')->name('contractors.approve');
         Route::post('/contractors/{id}/reject',  [AdminController::class, 'rejectContractor'])->whereNumber('id')->name('contractors.reject');
         Route::post('/contractors/{id}/delete',  [AdminController::class, 'deleteApprovedContractor'])->whereNumber('id')->name('contractors.delete');

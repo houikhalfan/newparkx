@@ -108,7 +108,7 @@ class AuthController extends Controller
             'project_id'            => 'nullable|exists:projects,id',
         ]);
 
-        Contractor::create([
+        $contractor = Contractor::create([
             'name'         => $validated['name'],
             'email'        => $validated['email'],
             'password'     => bcrypt($validated['password']),
@@ -118,6 +118,14 @@ class AuthController extends Controller
             'project_id'   => $validated['project_id'] ?? null,
             'is_approved'  => false,
         ]);
+
+        // Send notification to all admins
+        $admins = \App\Models\Admin::all();
+        \Log::info('Sending contractor registration notifications to ' . $admins->count() . ' admins');
+        foreach ($admins as $admin) {
+            \Log::info('Sending contractor registration notification to admin: ' . $admin->email);
+            $admin->notify(new \App\Notifications\ContractorRegistrationNotification($contractor));
+        }
 
         return back()->with('message', 'Registration submitted. Admin approval is required.');
     }

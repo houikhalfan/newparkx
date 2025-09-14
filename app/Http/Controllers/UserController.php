@@ -13,7 +13,7 @@ class UserController extends Controller
         $query = Document::whereJsonContains('visibility', 'public')
             ->with('admin')->latest();
 
-        // Search
+        // Search by title and description
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('title', 'like', '%' . $request->search . '%')
@@ -21,11 +21,16 @@ class UserController extends Controller
             });
         }
 
+        // Filter by date
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->date);
+        }
+
         $documents = $query->paginate(15);
 
         return Inertia::render('User/Documents/Index', [
             'documents' => $documents,
-            'filters' => $request->only(['search']),
+            'filters' => $request->only(['search', 'date']),
         ]);
     }
 

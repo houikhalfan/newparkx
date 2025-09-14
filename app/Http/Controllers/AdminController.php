@@ -187,6 +187,33 @@ class AdminController extends Controller
     }
 
     /**
+     * Show contractor details
+     */
+    public function showContractor($id)
+    {
+        $contractor = Contractor::findOrFail($id);
+        
+        // Load related data
+        $contractor->load('project');
+        
+        return response()->json([
+            'contractor' => [
+                'id' => $contractor->id,
+                'name' => $contractor->name,
+                'email' => $contractor->email,
+                'phone' => $contractor->phone,
+                'company_name' => $contractor->company_name,
+                'role' => $contractor->role,
+                'project_id' => $contractor->project_id,
+                'project_name' => $contractor->project ? $contractor->project->name : null,
+                'is_approved' => $contractor->is_approved,
+                'created_at' => $contractor->created_at,
+                'updated_at' => $contractor->updated_at,
+            ]
+        ]);
+    }
+
+    /**
      * Admin Home
      */
     public function home()
