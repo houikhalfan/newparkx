@@ -16,7 +16,6 @@ use App\Http\Controllers\ContractorAuthController;
 use App\Http\Controllers\Admin\AdminPasswordController;
 use App\Http\Controllers\Contractant\PermisExcavationController;
 use App\Http\Controllers\Admin\VodController as AdminVodController;
-use App\Http\Controllers\ResponsibleSite\PermisController;
 use App\Http\Controllers\Employee\ResponsibleSiteController;
 
 // Signatures
@@ -69,6 +68,24 @@ Route::post('/password/reset',        [UserPasswordController::class, 'reset'])-
 | LOGGED-IN ParkX USERS (web guard)
 |--------------------------------------------------------------------------
 */
+// routes/web.php (temporary debug route)
+Route::get('/debug-permis', function() {
+    $user = auth()->user();
+    
+    if (!$user) {
+        return "No user authenticated";
+    }
+    
+    // Check the database structure
+    $firstPermis = \App\Models\PermisExcavation::first();
+    $fields = $firstPermis ? array_keys($firstPermis->getAttributes()) : [];
+    
+    return response()->json([
+        'user' => $user,
+        'database_fields' => $fields,
+        'first_permis' => $firstPermis
+    ]);
+})->middleware('auth');
 Route::middleware('auth')->group(function () {
 
     // Employee – Matériel inbox (site responsables)
@@ -86,6 +103,9 @@ Route::middleware(['auth'])->prefix('responsible-site')->name('responsibleSite.'
     Route::post('/permis/{permis}/sign', [ResponsibleSitePermisCtrl::class, 'sign'])->name('permis.sign');
 });
 
+Route::get('/responsible-site/suivi-permis', [ResponsibleSiteController::class, 'index'])
+    ->name('responsible.suivi-permis.index');
+    
 Route::middleware(['auth'])->prefix('hse-responsible')->name('hseResponsible.')->group(function () {
     Route::get('/permis', [HSEResponsiblePermisCtrl::class, 'index'])->name('permis.index');
     Route::get('/permis/{permisExcavation}', [HSEResponsiblePermisCtrl::class, 'show'])->name('permis.show');
@@ -94,8 +114,7 @@ Route::middleware(['auth'])->prefix('hse-responsible')->name('hseResponsible.')-
 
 
 
-Route::get('/responsible-site/suivi-permis', [ResponsibleSiteController::class, 'index'])
-    ->name('responsible.suivi-permis.index');
+
     // Dashboard
     Route::get('/dashboard', function () {
         $user = auth()->user();

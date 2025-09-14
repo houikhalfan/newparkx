@@ -6,11 +6,11 @@
   <title>Permis d’excavation</title>
   <style>
     body{ font-family: DejaVu Sans, Arial, Helvetica, sans-serif; font-size:11px; line-height:1.35; color:#111; }
-    .page{ border:2px solid #0d6b42; padding:10px; }
-    .hdr{ display:table; width:100%; border:2px solid #0d6b42; margin-bottom:8px;}
+    .page{ border:2px solid #000; padding:10px; }
+    .hdr{ display:table; width:100%; border:2px solid #000; margin-bottom:8px;}
     .hdr .title{ display:table-cell; background:#0E8A5D; color:#fff; text-align:center; font-weight:bold; padding:6px; font-size:14px; }
-    .hdr .nums{ display:table; width:100%; border-top:1px solid #0d6b42; }
-    .hdr .nums div{ display:table-cell; padding:6px 8px; border-left:1px solid #0d6b42; font-size:10px; }
+    .hdr .nums{ display:table; width:100%; border-top:1px solid #000; }
+    .hdr .nums div{ display:table-cell; padding:6px 8px; border-left:1px solid #000; font-size:10px; }
     .section{ border:1px solid #000; margin-bottom:8px; }
     .section .t{ background:#e8f3ed; border-bottom:1px solid #000; padding:5px 8px; font-weight:bold; }
     .section .c{ padding:8px; }

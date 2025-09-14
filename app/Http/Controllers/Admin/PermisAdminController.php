@@ -23,7 +23,7 @@ class PermisAdminController extends Controller
                     // ✅ formatage en français (ex: 14 septembre 2025)
                     'created_at'    => $p->created_at->translatedFormat('d F Y'),
                     'status'        => $p->status,
-                    'pdf_original'  => $p->pdf_original 
+                    'pdf_original'  => $p->pdf_signed 
                                         ? asset('storage/' . $p->pdf_original) 
                                         : null,
                 ];
