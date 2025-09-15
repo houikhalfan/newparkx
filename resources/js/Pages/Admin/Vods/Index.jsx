@@ -116,7 +116,7 @@ export default function AdminVodsIndex() {
             </motion.div>
             <div>
               <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 dark:from-white dark:via-blue-100 dark:to-indigo-100 bg-clip-text text-transparent">
-                VODs
+                VODS
               </h1>
               <p className="text-lg text-slate-600 dark:text-slate-300 mt-2">
                 Recherchez et visualisez les Visites d’Observation.
