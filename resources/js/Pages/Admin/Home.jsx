@@ -130,7 +130,34 @@ function AdminHome() {
                     bgColor="from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20"
                   />
                 </motion.div>
-                
+                <motion.div
+  initial={{ opacity: 0, y: 30, scale: 0.9 }}
+  animate={{ opacity: 1, y: 0, scale: 1 }}
+  transition={{ delay: 0.5, duration: 0.5, type: "spring", stiffness: 100 }}
+>
+  <EnhancedStatCard
+    title="Sites"
+    value={stats.sites ?? 0}
+    Icon={Target}
+    color="from-indigo-500 to-blue-500"
+    bgColor="from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20"
+  />
+</motion.div>
+
+<motion.div
+  initial={{ opacity: 0, y: 30, scale: 0.9 }}
+  animate={{ opacity: 1, y: 0, scale: 1 }}
+  transition={{ delay: 0.6, duration: 0.5, type: "spring", stiffness: 100 }}
+>
+  <EnhancedStatCard
+    title="Projets"
+    value={stats.projects ?? 0}
+    Icon={ClipboardList}
+    color="from-pink-500 to-rose-500"
+    bgColor="from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20"
+  />
+</motion.div>
+
                 <motion.div
                   initial={{ opacity: 0, y: 30, scale: 0.9 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}

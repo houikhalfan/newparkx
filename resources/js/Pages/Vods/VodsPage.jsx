@@ -17,7 +17,7 @@ import VodsHistory from './VodsHistory';
 import VodsNotifications from './VodsNotifications';
 
 export default function VodsPage() {
-  const { auth } = usePage().props || {};
+const { auth, projects = [] } = usePage().props || {};
   const { user } = auth || {};
   const [activeTab, setActiveTab] = useState('form');
 
@@ -215,7 +215,7 @@ export default function VodsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
           >
-            {activeTab === 'form' && <VodsForm />}
+            {activeTab === 'form' && <VodsForm projects={projects} />}
 
             {activeTab === 'history' && (
               <>

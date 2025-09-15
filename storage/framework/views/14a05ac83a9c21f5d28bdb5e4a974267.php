@@ -5,32 +5,160 @@
   <meta charset="UTF-8">
   <title>Permis d’excavation</title>
   <style>
-    body{ font-family: DejaVu Sans, Arial, Helvetica, sans-serif; font-size:11px; line-height:1.35; color:#111; }
-    .page{ border:2px solid #000; padding:10px; }
-    .hdr{ display:table; width:100%; border:2px solid #000; margin-bottom:8px;}
-    .hdr .title{ display:table-cell; background:#0E8A5D; color:#fff; text-align:center; font-weight:bold; padding:6px; font-size:14px; }
-    .hdr .nums{ display:table; width:100%; border-top:1px solid #000; }
-    .hdr .nums div{ display:table-cell; padding:6px 8px; border-left:1px solid #000; font-size:10px; }
-    .section{ border:1px solid #000; margin-bottom:8px; }
-    .section .t{ background:#e8f3ed; border-bottom:1px solid #000; padding:5px 8px; font-weight:bold; }
-    .section .c{ padding:8px; }
-    .row{ margin-bottom:4px; }
-    .label{ display:inline-block; width:200px; font-weight:bold; }
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 10pt; /* Default body */
+      line-height: 1.35;
+      color: #000;
+    }
 
-    .sq{ display:inline-block; width:10px; height:10px; border:1.2px solid #000; margin-right:5px; line-height:10px; text-align:center; font-weight:bold; font-size:9px; }
-    .on{ background:#0E8A5D; color:#fff; }
-    .muted{ color:#444; }
+    .page {
+      border: 2px solid #000;
+      padding: 10px;
+    }
 
-    table{ width:100%; border-collapse:collapse; }
-    .grid th{ background:#f2f6f4; border:1px solid #000; padding:5px 6px; text-align:left; font-size:10px; }
-    .grid td{ border:1px solid #000; vertical-align:top; padding:6px 8px; }
-    .item{ margin:2px 0; }
+    .hdr {
+      display: table;
+      width: 100%;
+      border: 2px solid #000;
+      margin-bottom: 8px;
+    }
 
-    .sign-img{ max-height:60px; border:1px solid #aaa; margin-top:4px; }
-    .flex2{ display:table; width:100%; }
-    .flex2 > div{ display:table-cell; width:50%; vertical-align:top; }
+    .hdr .logo {
+      display: table-cell;
+      width: 80px;
+      text-align: center;
+      vertical-align: middle;
+      padding: 6px;
+    }
 
-    .closing li{ margin:2px 0; }
+    .hdr .title {
+      display: table-cell;
+      text-align: center;
+      font-weight: bold;
+      font-size: 18pt; /* Main Title */
+      vertical-align: middle;
+    }
+
+    .hdr .nums {
+      display: table;
+      width: 100%;
+      border-top: 1px solid #000;
+    }
+
+    .hdr .nums div {
+      display: table-cell;
+      padding: 6px 8px;
+      border-left: 1px solid #000;
+      font-size: 9pt; /* Permit numbers */
+    }
+
+    .section {
+      border: 1px solid #000;
+      margin-bottom: 8px;
+      page-break-inside: avoid; /* prevent splitting */
+    }
+
+    .section .t {
+      border-bottom: 1px solid #000;
+      padding: 5px 8px;
+      font-weight: bold;
+      font-size: 11pt; /* Section Titles */
+    }
+
+    .section .c {
+      padding: 8px;
+      page-break-inside: avoid;
+    }
+
+    .row {
+      margin-bottom: 4px;
+    }
+
+    .label {
+      display: inline-block;
+      width: 200px;
+      font-weight: bold;
+      font-size: 9pt;
+    }
+
+    .sq {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border: 1.2px solid #000;
+      margin-right: 5px;
+      line-height: 10px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 9pt;
+    }
+
+    .on {
+      background: #000;
+      color: #fff;
+    }
+
+    .muted {
+      color: #000;
+      font-style: italic;
+      font-size: 8pt; /* Footer & Italic Note */
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      page-break-inside: avoid;
+    }
+
+    .grid th {
+      border: 1px solid #000;
+      padding: 5px 6px;
+      text-align: left;
+      font-size: 9pt;
+    }
+
+    .grid td {
+      border: 1px solid #000;
+      vertical-align: top;
+      padding: 6px 8px;
+      font-size: 9pt;
+    }
+
+    .item {
+      margin: 2px 0;
+      font-size: 9pt;
+    }
+
+    .sign-img {
+      max-height: 60px;
+      border: none; /* remove visible frame */
+      background: transparent; /* allow transparent PNGs */
+    }
+
+    .flex2 {
+      display: table;
+      width: 100%;
+      page-break-inside: avoid;
+    }
+
+    .flex2 > div {
+      display: table-cell;
+      width: 50%;
+      vertical-align: top;
+      font-size: 9pt;
+    }
+
+    .closing li {
+      margin: 2px 0;
+      font-size: 9pt;
+    }
+
+    .footer-note, footer div {
+      font-size: 8pt;
+      font-style: italic;
+      color: #000;
+    }
   </style>
 </head>
 <body>
@@ -38,11 +166,15 @@
 
   
   <div class="hdr">
-    <div class="title">PERMIS D’EXCAVATION — CONSTRUCTION</div>
-    <div class="nums">
-      <div><b>Numéro de permis général :</b> <?php echo e($permis->numero_permis_general); ?></div>
-      <div><b>Numéro de permis :</b> <?php echo e($permis->numero_permis); ?></div>
+    <div class="logo">
+      <img src="<?php echo e(public_path('images/logo.png')); ?>" alt="Logo" style="max-height:60px;">
     </div>
+    <div class="title">PERMIS D’EXCAVATION — CONSTRUCTION</div>
+  </div>
+
+  <div class="hdr nums">
+    <div><b>Numéro de permis général :</b> <?php echo e($permis->numero_permis_general); ?></div>
+    <div><b>Numéro de permis :</b> <?php echo e($permis->numero_permis); ?></div>
   </div>
 
   
@@ -50,7 +182,7 @@
     <div class="t">Identification</div>
     <div class="c">
       <div class="row"><span class="label">Endroit / Plan :</span> <?php echo e($permis->site->name ?? ''); ?></div>
-      <div class="row"><span class="label">Durée :</span> <?php echo e($permis->duree_de); ?> → <?php echo e($permis->duree_a); ?></div>
+      <div class="row"><span class="label">Durée :</span> <?php echo e($permis->duree_de); ?> - <?php echo e($permis->duree_a); ?></div>
       <div class="row"><span class="label">Description du travail :</span> <?php echo e($permis->description); ?></div>
       <div class="row"><span class="label">Analyse des risques réalisée par :</span> <?php echo e($permis->analyse_par); ?> &nbsp; <span class="muted">(<?php echo e($permis->date_analyse); ?>)</span></div>
       <div class="row"><span class="label">Demandeur du permis :</span> <?php echo e($permis->demandeur); ?></div>
@@ -182,19 +314,17 @@
         <div class="row"><?php echo e($permis->commentaires); ?></div>
       <?php endif; ?>
 
-  <div class="t">Propriétaire des lieux</div>
-  <div class="c">
-    <div class="row"><span class="label">Nom :</span> <?php echo e($permis->proprietaire_nom); ?></div>
-    <div class="row"><span class="label">Date :</span> <?php echo e($permis->proprietaire_date); ?></div>
-    <?php if($permis->proprietaire_signature): ?>
-      <div class="row">
-        <span class="label">Signature :</span><br>
-        <img class="sign-img" src="<?php echo e(public_path('storage/'.$permis->proprietaire_signature)); ?>">
+      <div class="t">Propriétaire des lieux</div>
+      <div class="c">
+        <div class="row"><span class="label">Nom :</span> <?php echo e($permis->proprietaire_nom); ?></div>
+        <div class="row"><span class="label">Date :</span> <?php echo e($permis->proprietaire_date); ?></div>
+        <?php if($permis->proprietaire_signature): ?>
+          <div class="row">
+            <span class="label">Signature :</span><br>
+            <img class="sign-img" src="<?php echo e(public_path('storage/'.$permis->proprietaire_signature)); ?>">
+          </div>
+        <?php endif; ?>
       </div>
-    <?php endif; ?>
-
-</div>
-
     </div>
   </div>
 
@@ -251,7 +381,7 @@
 
   
   <div class="section">
-    <div class="t">Fermeture du permis (à remplir physiquement)</div>
+    <div class="t">Fermeture du permis</div>
     <div class="c">
       <ul class="closing">
         <li><span class="sq">&nbsp;</span> Le personnel assigné a été avisé que le travail est complété.</li>
@@ -262,10 +392,10 @@
         <li><span class="sq">&nbsp;</span> Suivi additionnel requis (spécifier) : ................................................</li>
       </ul>
       <br>
-      <div class="row"><b>Responsable construction (Contractant)</b> — Nom : __________  Date : __________  Signature : __________</div>
-      <div class="row"><b>Responsable HSE (Contractant)</b> — Nom : __________  Date : __________  Signature : __________</div>
-      <div class="row"><b>Construction Manager ParkX</b> — Nom : __________  Date : __________  Signature : __________</div>
-      <div class="row"><b>HSE Manager ParkX</b> — Nom : __________  Date : __________  Signature : __________</div>
+      <div class="row"><b>Responsable construction (Contractant)</b> Nom : __________________  Date : ________________  Signature : </div>
+      <div class="row"><b>Responsable HSE (Contractant)</b> Nom : __________________  Date : ________________  Signature : </div>
+      <div class="row"><b>Construction Manager ParkX</b> Nom : __________________  Date : ________________  Signature : </div>
+      <div class="row"><b>HSE Manager ParkX         </b> Nom : __________________   Date : ________________  Signature : </div>
     </div>
   </div>
 

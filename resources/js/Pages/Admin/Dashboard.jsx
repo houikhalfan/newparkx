@@ -738,7 +738,7 @@ function AdminDashboard() {
                             title="Mettre à jour les VODs à rendre"
                           >
                                                                         <Save className="w-3 h-3" />
-                            Sauver
+                            Sauvegarder
                                                                     </motion.button>
                         </form>
                       </Td>

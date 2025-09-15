@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Project;
 
 use App\Models\Vod;
 use Illuminate\Http\Request;
@@ -10,11 +11,16 @@ use Illuminate\Support\Facades\Storage;
 
 class VodsController extends Controller
 {
-    public function show()
-    {
-        // Page avec onglets (Remplir / Historique / Notifications)
-        return Inertia::render('Vods/VodsPage');
-    }
+
+public function show()
+{
+    $projects = Project::orderBy('name')->get(['id','name']);
+
+    return Inertia::render('Vods/VodsPage', [
+        'projects' => $projects, // ✅ Pass to frontend
+    ]);
+}
+
 
     public function notifications()
     {
@@ -37,15 +43,21 @@ class VodsController extends Controller
             'daysLeft'       => $daysLeft,
         ]);
     }
+public function historyData()
+{
+    $user = auth()->user();
 
-    public function history()
-    {
-        $user = auth()->user();
+    $vods = $user->vods()
+        ->with('project:id,name') // 👈 ensure project relation is loaded
+        ->latest()
+        ->get();
 
-        return Inertia::render('Vods/VodsHistory', [
-            'vods' => $user->vods()->latest()->get(),
-        ]);
-    }
+    return response()->json([
+        'vods' => $vods,
+    ]);
+}
+
+
 
     public function store(Request $request)
     {
@@ -69,7 +81,7 @@ class VodsController extends Controller
 
         $data = $request->validate([
             'date'                  => ['required', 'date'],
-            'projet'                => ['required', 'string'],
+            'project_id' => ['required', 'exists:projects,id'],
             'activite'              => ['required', 'string'],
             'observateur'           => ['nullable', 'string'],
             'personnesObservees'    => ['required', 'array'],
@@ -141,7 +153,7 @@ class VodsController extends Controller
         $vod = Vod::create([
             'user_id'             => auth()->id(),
             'date'                => $data['date'],
-            'projet'              => $data['projet'],
+    'project_id' => (int) $data['project_id'], // 👈 ensure int
             'activite'            => $data['activite'],
             'observateur'         => $data['observateur'] ?? auth()->user()->name,
             'personnes_observees' => $data['personnesObservees'],
@@ -190,14 +202,7 @@ class VodsController extends Controller
             : response()->file(storage_path("app/public/{$vod->pdf_path}"));
     }
 
-    public function historyData()
-    {
-        $user = auth()->user();
-
-        return response()->json([
-            'vods' => $user->vods()->latest()->get(),
-        ]);
-    }
+ 
 
     public function notificationsData()
     {

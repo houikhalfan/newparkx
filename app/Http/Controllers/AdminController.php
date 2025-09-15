@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+  use App\Models\Project;
+use App\Models\Site;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -10,7 +11,6 @@ use App\Models\Admin;
 use App\Models\Contractor;
 use App\Models\User;
 use App\Models\Vod;
-use App\Models\Site;
 use Inertia\Inertia;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -216,43 +216,50 @@ class AdminController extends Controller
     /**
      * Admin Home
      */
-    public function home()
-    {
-        $totalUsers       = User::count();
-        $totalContractors = Contractor::count();
+ 
 
-        $vodsCompleted = Vod::whereYear('created_at', now()->year)
-            ->whereMonth('created_at', now()->month)
-            ->count();
+public function home()
+{
+    $totalUsers       = User::count();
+    $totalContractors = Contractor::count();
+    $totalSites       = Site::count();
+    $totalProjects    = Project::count();
 
-        $vodsDue = (int) User::sum('vods_quota');
+    $vodsCompleted = Vod::whereYear('created_at', now()->year)
+        ->whereMonth('created_at', now()->month)
+        ->count();
 
-        $recentLogins = User::whereNotNull('last_login_at')
-            ->orderByDesc('last_login_at')
-            ->limit(8)
-            ->get(['id','name','email','last_login_at']);
+    $vodsDue = (int) User::sum('vods_quota');
 
-        $pendingApprovals = Contractor::where('is_approved', false)
-            ->orderByDesc('created_at')
-            ->limit(3)
-            ->get(['id','name','email','company_name','created_at']);
+    $recentLogins = User::whereNotNull('last_login_at')
+        ->orderByDesc('last_login_at')
+        ->limit(8)
+        ->get(['id','name','email','last_login_at']);
 
-        $pendingCount = Contractor::where('is_approved', false)->count();
+    $pendingApprovals = Contractor::where('is_approved', false)
+        ->orderByDesc('created_at')
+        ->limit(3)
+        ->get(['id','name','email','company_name','created_at']);
 
-        $monthLabel = Carbon::now()->locale('fr')->isoFormat('MMMM YYYY');
+    $pendingCount = Contractor::where('is_approved', false)->count();
 
-        return Inertia::render('Admin/Home', [
-            'stats' => [
-                'users'        => $totalUsers,
-                'contractors'  => $totalContractors,
-                'vods_due'     => $vodsDue,
-                'vods_done'    => $vodsCompleted,
-                'month_label'  => $monthLabel,
-            ],
-            'recentLogins'     => $recentLogins,
-            'pendingApprovals' => $pendingApprovals,
-            'pendingCount'     => $pendingCount,
-            'csrf_token'       => csrf_token(),
-        ]);
-    }
+    $monthLabel = Carbon::now()->locale('fr')->isoFormat('MMMM YYYY');
+
+    return Inertia::render('Admin/Home', [
+        'stats' => [
+            'users'        => $totalUsers,
+            'contractors'  => $totalContractors,
+            'sites'        => $totalSites,
+            'projects'     => $totalProjects,
+            'vods_due'     => $vodsDue,
+            'vods_done'    => $vodsCompleted,
+            'month_label'  => $monthLabel,
+        ],
+        'recentLogins'     => $recentLogins,
+        'pendingApprovals' => $pendingApprovals,
+        'pendingCount'     => $pendingCount,
+        'csrf_token'       => csrf_token(),
+    ]);
+}
+
 }

@@ -143,8 +143,9 @@ class ContractantVodController extends Controller
             ]);
 
             /* ---------------- PDF GENERATION ---------------- */
-            $pdf  = Pdf::loadView('vods.pdf', ['vod' => $vod]);
-            $dir  = "contractant-vods/{$vod->id}";
+$pdf = Pdf::loadView('vods.pdf', [
+    'vod' => $vod->load('project') // 👈 ensures project->name is available
+]);            $dir  = "contractant-vods/{$vod->id}";
             $path = "$dir/vod.pdf";
 
             Storage::disk('public')->put($path, $pdf->output());

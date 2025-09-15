@@ -46,4 +46,12 @@ public function getPdfUrlAttribute()
         ? asset('storage/' . $this->pdf_path)
         : null;
 }
+public function project()
+{
+    // return nothing, just to avoid crash
+    return $this->belongsTo(Project::class, 'project_id')->withDefault([
+        'name' => $this->projet,
+    ]);
+}
+
 }
