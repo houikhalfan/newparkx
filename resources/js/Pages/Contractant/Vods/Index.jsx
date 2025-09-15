@@ -65,9 +65,9 @@ export default function ContractantVodsIndex({ contractor }) {
                 className="text-center mb-12"
               >
                 <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                  <span className="bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">VODs</span>
+                  <span className="bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">VODS</span>
                 </h1>
-                <p className="text-gray-300 text-lg">Gérez vos déclarations de VOD</p>
+                <p className="text-gray-300 text-lg">Gérez vos déclarations de VODS</p>
               </motion.div>
 
               {/* Navigation Tabs */}

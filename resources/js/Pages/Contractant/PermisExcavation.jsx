@@ -11,51 +11,41 @@ import { FileText, Calendar, Download, Search, X } from 'lucide-react';
 const BRAND = "#0E8A5D"; // ParkX green
 
 const FormCard = ({ title, children }) => (
-  <div className="rounded-2xl border border-white/20 bg-white/10 backdrop-blur-xl shadow-2xl overflow-hidden mb-6"
-    style={{
-      background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
-      backdropFilter: 'blur(20px)',
-      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)'
-    }}
-  >
-    <div className="px-6 py-3" style={{ 
-      background: 'linear-gradient(135deg, #0E8A5D 0%, #0a6e4a 100%)',
-      borderBottom: '1px solid rgba(255,255,255,0.1)'
-    }}>
-      <h2 className="text-sm font-semibold tracking-wide text-white uppercase">
+  <div className="rounded-2xl border border-gray-200 bg-white shadow-lg overflow-hidden mb-6">
+    <div className="px-6 py-3 bg-gray-50 border-b border-gray-200">
+      <h2 className="text-sm font-semibold tracking-wide text-gray-800 uppercase">
         {title}
       </h2>
     </div>
-    <div className="p-6 bg-white/5 backdrop-blur-sm">{children}</div>
+    <div className="p-6 bg-white">{children}</div>
   </div>
 );
 
 const Row = ({ label, children, className = "" }) => (
   <div
     className={[
-      "flex flex-col gap-3 py-4 border-b border-white/10 last:border-b-0 md:flex-row md:items-start",
+      "flex flex-col gap-3 py-4 border-b border-gray-100 last:border-b-0 md:flex-row md:items-start",
       className,
     ].join(" ")}
   >
     <div className="md:w-72 shrink-0 pt-1.5">
-      <label className="text-sm font-semibold text-white">{label}</label>
+      <label className="text-sm font-semibold text-gray-700">{label}</label>
     </div>
     <div className="md:flex-1">{children}</div>
   </div>
 );
 
 const inputBase =
-  "w-full rounded-lg px-4 py-2.5 text-sm outline-none transition-all duration-300 shadow-sm";
+  "w-full rounded-lg px-4 py-2.5 text-sm outline-none transition-all duration-300 shadow-sm border border-gray-300 text-gray-800 placeholder-gray-500";
 const inputActive =
-  "bg-white/5 border border-white/20 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50";
-const inputDisabled = "bg-white/5 text-gray-400 opacity-60";
+  "bg-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/30";
+const inputDisabled = "bg-gray-100 text-gray-500";
 
 const Text = ({ disabled, ...rest }) => (
   <input
     {...rest}
     disabled={disabled}
     className={[inputBase, disabled ? inputDisabled : inputActive].join(" ")}
-    style={{ "--brand": BRAND }}
   />
 );
 
@@ -65,12 +55,11 @@ const Area = ({ rows = 3, disabled, ...rest }) => (
     disabled={disabled}
     {...rest}
     className={[inputBase, disabled ? inputDisabled : inputActive].join(" ")}
-    style={{ "--brand": BRAND }}
   />
 );
 
 const FieldError = ({ children }) =>
-  children ? <p className="mt-1 text-xs text-rose-400">{children}</p> : null;
+  children ? <p className="mt-1 text-xs text-red-500">{children}</p> : null;
 
 const CheckLine = ({ children, checked, onChange, disabled }) => (
   <label
@@ -81,13 +70,12 @@ const CheckLine = ({ children, checked, onChange, disabled }) => (
   >
     <input
       type="checkbox"
-      className="mt-0.5 h-4 w-4 rounded border-white/20 bg-white/5 focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400"
-      style={{ accentColor: BRAND, "--tw-ring-color": BRAND }}
+      className="mt-0.5 h-4 w-4 rounded border-gray-300 text-cyan-600 focus:ring-cyan-500"
       checked={!!checked}
       onChange={(e) => onChange?.(e.target.checked)}
       disabled={disabled}
     />
-    <span className="text-sm text-gray-200 leading-5">{children}</span>
+    <span className="text-sm text-gray-700 leading-5">{children}</span>
   </label>
 );
 
@@ -103,7 +91,7 @@ function SignaturePicker({ id, label, value, onChange, disabled, error }) {
     <div>
       <label
         htmlFor={id}
-        className="block text-sm font-semibold text-white mb-2"
+        className="block text-sm font-semibold text-gray-700 mb-2"
       >
         {label}
       </label>
@@ -118,42 +106,15 @@ function SignaturePicker({ id, label, value, onChange, disabled, error }) {
           onChange?.(f);
           setPreview(f ? URL.createObjectURL(f) : null);
         }}
-        className="block w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:px-4 file:py-2.5 file:text-white transition-all duration-300"
-        style={{ 
-          ["--brand"]: BRAND, 
-          ["accentColor"]: BRAND,
-          background: 'rgba(255,255,255,0.05)',
-          border: '1px solid rgba(255,255,255,0.2)',
-          borderRadius: '0.5rem',
-          color: 'white'
-        }}
+        className="block w-full text-sm text-gray-700 file:mr-3 file:rounded-lg file:border-0 file:px-4 file:py-2.5 file:text-white file:bg-cyan-600 transition-all duration-300"
       />
-
-      <style>{`
-        #${id}::file-selector-button{
-          background: ${BRAND};
-          border: none;
-          color: white;
-          padding: 0.625rem 1rem;
-          border-radius: 0.5rem;
-          margin-right: 0.75rem;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-        #${id}:hover::file-selector-button{
-          filter: brightness(1.1);
-        }
-        #${id}:disabled::file-selector-button{
-          opacity:.6; cursor:not-allowed;
-        }
-      `}</style>
 
       {/* Live File preview */}
       {isFile && (
         <img
           src={preview || URL.createObjectURL(value)}
           alt="Signature"
-          className="mt-3 h-20 w-auto rounded-lg border border-white/20 bg-white/5 shadow-sm"
+          className="mt-3 h-20 w-auto rounded-lg border border-gray-300 bg-gray-50 shadow-sm"
         />
       )}
 
@@ -162,7 +123,7 @@ function SignaturePicker({ id, label, value, onChange, disabled, error }) {
         <img
           src={`/storage/${value}`}
           alt="Signature"
-          className="mt-3 h-20 w-auto rounded-lg border border-white/20 bg-white/5 shadow-sm"
+          className="mt-3 h-20 w-auto rounded-lg border border-gray-300 bg-gray-50 shadow-sm"
         />
       )}
 
@@ -478,21 +439,11 @@ export default function PermisExcavation() {
   /* ----------------------------------- UI ---------------------------------- */
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-cyan-900 to-emerald-900 relative overflow-hidden flex">
-      {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl animate-pulse" />
-      </div>
-
-      {/* Grid Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(6,182,212,0.3) 1px, transparent 0)`,
-          backgroundSize: '50px 50px'
-        }} />
-      </div>
-
+  <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 rounded-full blur-3xl animate-pulse" />
+  <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse" />
+  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl animate-pulse" />
+</div>
       {/* Sidebar */}
       <ContractantSidebar />
 
@@ -516,29 +467,36 @@ export default function PermisExcavation() {
               className="relative z-10 px-6 mb-6"
             >
               <div className="max-w-7xl mx-auto">
-                <div className="bg-green-500/20 backdrop-blur-sm border border-green-400/30 rounded-xl p-4 flex items-center space-x-3">
-                  <FileText className="w-5 h-5 text-green-400" />
-                  <p className="text-green-300 font-medium">{flash.success}</p>
+                <div className="bg-green-100 border border-green-400 rounded-xl p-4 flex items-center space-x-3">
+                  <FileText className="w-5 h-5 text-green-600" />
+                  <p className="text-green-700 font-medium">{flash.success}</p>
                 </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        <div className="relative z-10 px-6 pb-12 flex-1">
+        <div className="relative z-10 px-6 pb-12 flex-1" style={{
+  background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
+  backdropFilter: 'blur(20px)',
+  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+}}>
           <div className="max-w-7xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               className="text-center mb-8"
-            >
+           
+           >
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                <span className="bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
-                  Permis D'Excavation
-                </span>
-              </h1>
-              <p className="text-gray-300 text-lg">Remplissez et soumettez votre permis d'excavation</p>
+                  <span className="bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">Permis D'Excavation</span>
+                </h1>
+
+              <p className="text-gray-300 text-lg">
+Remplissez et soumettez votre permis d'excavation</p>
+
+
             </motion.div>
 
             {/* Header */}
@@ -546,30 +504,21 @@ export default function PermisExcavation() {
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="mb-8 rounded-3xl border border-white/20 bg-white/10 backdrop-blur-xl shadow-2xl overflow-hidden"
-              style={{
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
-                backdropFilter: 'blur(20px)',
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)'
-              }}
+              className="mb-8 rounded-3xl border border-gray-200 bg-white shadow-lg overflow-hidden"
             >
               <div
-                className="flex flex-col md:flex-row items-center justify-between px-6 py-4"
-                style={{ 
-                  background: 'linear-gradient(135deg, #0E8A5D 0%, #0a6e4a 100%)',
-                  borderBottom: '1px solid rgba(255,255,255,0.1)'
-                }}
+                className="flex flex-col md:flex-row items-center justify-between px-6 py-4 bg-gray-50 border-b border-gray-200"
               >
                 <div className="flex items-center gap-3 mb-4 md:mb-0">
                   <img src={logoSrc} alt="ParkX" className="h-8 w-auto" />
-                  <h1 className="text-white font-semibold tracking-wide uppercase text-lg">
+                  <h1 className="text-gray-800 font-semibold tracking-wide uppercase text-lg">
                     PERMIS D'EXCAVATION — CONSTRUCTION
                   </h1>
                 </div>
 
                 <div className="text-right">
                   {/* NUMÉRO DE PERMIS GÉNÉRAL (user enters manually) */}
-                  <div className="text-sm text-white/90">NUMÉRO DE PERMIS GÉNÉRAL</div>
+                  <div className="text-sm text-gray-700">NUMÉRO DE PERMIS GÉNÉRAL</div>
                   <div className="mt-1">
                     <Text
                       disabled={readonly}
@@ -582,7 +531,7 @@ export default function PermisExcavation() {
 
                   {/* NUMÉRO DE PERMIS (auto-generated) */}
                   <div className="mt-2">
-                    <div className="text-sm text-white/90">NUMÉRO DE PERMIS</div>
+                    <div className="text-sm text-gray-700">NUMÉRO DE PERMIS</div>
                     <Text
                       disabled
                       value={data.numero_permis || generatePermitNumber(contractorName)}
@@ -601,14 +550,13 @@ export default function PermisExcavation() {
                     value={data.site_id}
                     disabled={readonly}
                     onChange={(e) => setData("site_id", e.target.value)}
-                    className="w-full rounded-lg px-4 py-2.5 bg-white/5 border border-white/20 text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all duration-300 text-sm"
-                    style={{ ["--tw-ring-color"]: BRAND }}
+                    className="w-full rounded-lg px-4 py-2.5 bg-white border border-gray-300 text-gray-800 placeholder-gray-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/30 transition-all duration-300 text-sm"
                   >
-                    <option value="" disabled className="bg-gray-800 text-white">
+                    <option value="" disabled className="bg-gray-100 text-gray-800">
                       Choisir un site…
                     </option>
                     {sites.map((s) => (
-                      <option key={s.id} value={s.id} className="bg-gray-800 text-white">
+                      <option key={s.id} value={s.id} className="bg-white text-gray-800">
                         {s.name}
                       </option>
                     ))}
@@ -682,11 +630,10 @@ export default function PermisExcavation() {
                       value={data.contractant}
                       onChange={(e) => setData("contractant", e.target.value)}
                     />
-                    <label className="mt-3 flex items-center gap-2 text-sm text-gray-300">
+                    <label className="mt-3 flex items-center gap-2 text-sm text-gray-700">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 rounded border-white/20 bg-white/5 focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400"
-                        style={{ accentColor: BRAND, ["--tw-ring-color"]: BRAND }}
+                        className="h-4 w-4 rounded border-gray-300 text-cyan-600 focus:ring-cyan-500"
                         disabled={readonly}
                         checked={!!data.meme_que_demandeur}
                         onChange={(e) => {
@@ -715,7 +662,7 @@ export default function PermisExcavation() {
                 </Row>
 
                 <Row label="L'excavation est :">
-                  <div className="divide-y divide-white/10">
+                  <div className="divide-y divide-gray-100">
                     {optExcavationEst.map((o) => (
                       <div key={o.key} className="py-2 first:pt-0 last:pb-0">
                         <CheckLine
@@ -731,7 +678,7 @@ export default function PermisExcavation() {
                 </Row>
 
                 <Row label="Conduites / Tuyauterie souterraine">
-                  <div className="divide-y divide-white/10">
+                  <div className="divide-y divide-gray-100">
                     {optConduites.map((o) => (
                       <div key={o.key} className="py-2 first:pt-0 last:pb-0">
                         <CheckLine
@@ -747,7 +694,7 @@ export default function PermisExcavation() {
                 </Row>
 
                 <Row label="Situations dangereuses">
-                  <div className="divide-y divide-white/10">
+                  <div className="divide-y divide-gray-100">
                     {optSituations.map((o) => (
                       <div key={o.key} className="py-2 first:pt-0 last:pb-0">
                         <CheckLine
@@ -788,7 +735,7 @@ export default function PermisExcavation() {
                 </Row>
 
                 <Row label="Éléments">
-                  <div className="divide-y divide-white/10">
+                  <div className="divide-y divide-gray-100">
                     {optEpiSimples.map((o) => (
                       <div key={o.key} className="py-2 first:pt-0 last:pb-0">
                         <CheckLine
@@ -826,7 +773,7 @@ export default function PermisExcavation() {
 
                 <Row label="Mesures">
                   <div className={data.equip_non_requis ? "opacity-60" : ""}>
-                    <div className="divide-y divide-white/10">
+                    <div className="divide-y divide-gray-100">
                       {optEquip.map((o) => (
                         <div key={o.key} className="py-2 first:pt-0 last:pb-0">
                           <CheckLine
@@ -908,7 +855,7 @@ export default function PermisExcavation() {
               {/* SIGNATURES D'AUTORISATION */}
               <FormCard title="Signatures d'autorisation de permis">
                 <Row label="Vérifications">
-                  <div className="divide-y divide-white/10">
+                  <div className="divide-y divide-gray-100">
                     <div className="py-2 first:pt-0 last:pb-0">
                       <CheckLine
                         checked={!!data.autor_q1}
@@ -1057,7 +1004,7 @@ export default function PermisExcavation() {
               {showFermeture && (
                 <FormCard title="Fermeture du permis">
                   <Row label="Checklist de fermeture">
-                    <div className="divide-y divide-white/10">
+                    <div className="divide-y divide-gray-100">
                       <CheckLine
                         checked={!!data.ferm_q1}
                         onChange={(v) => setData("ferm_q1", v)}
@@ -1229,11 +1176,7 @@ export default function PermisExcavation() {
                     disabled={processing}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="rounded-lg px-6 py-3 text-sm font-semibold text-white shadow transition disabled:opacity-60"
-                    style={{ 
-                      background: 'linear-gradient(135deg, #0E8A5D 0%, #0a6e4a 100%)',
-                      boxShadow: '0 4px 15px rgba(14, 138, 93, 0.3)'
-                    }}
+                    className="rounded-lg px-6 py-3 text-sm font-semibold text-white bg-cyan-600 hover:bg-cyan-700 shadow transition disabled:opacity-60"
                   >
                     {processing ? "Envoi…" : "Soumettre"}
                   </motion.button>
