@@ -268,9 +268,7 @@ export default function Welcome() {
                   variants={iconVariants}
                   className="inline-flex items-center gap-3 mb-6"
                 >
-                  <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg">
-                    <Shield className="w-12 h-12 text-white" />
-                  </div>
+               
                   <h1 className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
                     HSE ParkX
                   </h1>
@@ -322,9 +320,7 @@ export default function Welcome() {
                   >
                     <div className="flex items-center justify-center gap-3 mb-4">
                       <img src="/images/logo.png" alt="logo" className="h-12 w-auto" />
-                      <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl">
-                        <Shield className="w-8 h-8 text-white" />
-                      </div>
+                     
                     </div>
                     <h2 className="text-3xl font-bold text-white mb-2">Connexion</h2>
                     <p className="text-blue-200">
