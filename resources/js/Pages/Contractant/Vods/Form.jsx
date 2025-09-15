@@ -284,7 +284,7 @@ const contractorProject = auth?.contractor?.project?.name || "";
       key={formVersion}
       onSubmit={handleSubmit}
       noValidate
-      className="p-4 sm:p-6 lg:p-8 bg-white shadow-xl rounded-lg max-w-3xl lg:max-w-6xl mx-auto space-y-6 sm:space-y-8 pb-28 md:pb-8"
+className="p-4 sm:p-6 lg:p-8 bg-slate-50 shadow-xl rounded-lg max-w-3xl lg:max-w-6xl mx-auto space-y-6 sm:space-y-8 pb-28 md:pb-8"
     >
       {/* Alerts */}
       {topAlert && (

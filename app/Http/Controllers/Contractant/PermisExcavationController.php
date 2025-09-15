@@ -28,16 +28,27 @@ class PermisExcavationController extends Controller
     /**
      * List all permits (suivi)
      */
-    public function index()
-    {
-        $permis = PermisExcavation::with('site')
-            ->orderByDesc('created_at')
-            ->get();
+ public function index()
+{
+    $permis = PermisExcavation::with('site')
+        ->orderByDesc('created_at')
+        ->get()
+        ->map(function ($p) {
+            return [
+                'id'            => $p->id,
+                'numero_permis' => $p->numero_permis,
+                'site'          => $p->site ? ['id' => $p->site->id, 'name' => $p->site->name] : null,
+                'status'        => $p->status,
+                'created_at'    => $p->created_at,
+                'pdf_signed'    => $p->pdf_signed,   // 👈 include this
+            ];
+        });
 
-        return Inertia::render('Contractant/SuiviPermis', [
-            'permis' => $permis,
-        ]);
-    }
+    return Inertia::render('Contractant/SuiviPermis', [
+        'permis' => $permis,
+    ]);
+}
+
 
     /**
      * Show a single permit (consultation only)

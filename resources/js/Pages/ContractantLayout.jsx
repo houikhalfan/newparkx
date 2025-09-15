@@ -8,8 +8,8 @@ export default function ContractantLayout({ children, contractor }) {
   const nav = [
     { href: '/contractant/documents',    label: 'Documents' },
     { href: '/contractant/hse-statistics', label: 'Statistiques' },
-    { href: '/contractant/vods',         label: 'VODs' },
-    { href: '/contractant/parapheur',    label: 'Papiers à signer' },
+    { href: '/contractant/vods',         label: 'VODS' },
+    { href: '/contractant/parapheur',    label: 'Permis' },
 
     // ✅ New: Ressources matériel
     { href: '/contractant/materiel',     label: 'Ressources Matérielles' },

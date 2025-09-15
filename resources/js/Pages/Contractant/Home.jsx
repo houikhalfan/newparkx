@@ -126,7 +126,7 @@ export default function ContractorHome() {
 
   const cards = [
     {
-      title: "VODs",
+      title: "VODS",
       desc: "Créer et suivre vos Visites Observation & Ronde.",
       href: "/contractant/vods",
       Icon: FolderOpen,
@@ -147,7 +147,7 @@ export default function ContractorHome() {
       color: "from-violet-500 to-purple-600",
     },
     {
-      title: "Paraphe & Signature",
+      title: "Permis",
       desc: "Déposez vos pièces pour signature par l'administration.",
       Icon: FileSignature,
       color: "from-pink-500 to-rose-600",

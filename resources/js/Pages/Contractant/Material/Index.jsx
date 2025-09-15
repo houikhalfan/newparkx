@@ -1,9 +1,21 @@
+// resources/js/Pages/Contractant/Material/Index.jsx
 import React, { useMemo, useState, useEffect } from "react";
-import { usePage, useForm } from "@inertiajs/react";
-import ContractantLayout from "@/Pages/ContractantLayout";
-import { Plus, Search, X, CheckCircle2, XCircle, Clock, QrCode, FileText } from "lucide-react";
+import { usePage, useForm, Head, router } from "@inertiajs/react";
+import { motion } from "framer-motion";
+import {
+  Plus,
+  Search,
+  X,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  QrCode,
+  FileText,
+} from "lucide-react";
+import ContractantSidebar from "@/Components/ContractantSidebar";
+import ContractantTopHeader from "@/Components/ContractantTopHeader";
 
-export default function MaterialIndex() {
+export default function MaterialIndex({ contractor }) {
   const {
     pending = [],
     accepted = [],
@@ -18,7 +30,12 @@ export default function MaterialIndex() {
     if (window?.Swal?.fire) {
       window.Swal.fire({
         icon: swal.type || "info",
-        title: swal.type === "success" ? "Succès" : swal.type === "error" ? "Erreur" : "Info",
+        title:
+          swal.type === "success"
+            ? "Succès"
+            : swal.type === "error"
+            ? "Erreur"
+            : "Info",
         text: swal.text || "",
         confirmButtonText: "OK",
       });
@@ -37,105 +54,222 @@ export default function MaterialIndex() {
     rejected: Array.isArray(rejected) ? rejected.length : 0,
   };
 
-  const source = active === "pending" ? pending : active === "accepted" ? accepted : rejected;
+  const source =
+    active === "pending" ? pending : active === "accepted" ? accepted : rejected;
 
   const filtered = useMemo(() => {
     if (!q.trim()) return source;
     const k = q.toLowerCase();
-    return source.filter((r) => (r.site?.name || "").toLowerCase().includes(k));
+    return source.filter((r) =>
+      (r.site?.name || "").toLowerCase().includes(k)
+    );
   }, [source, q]);
 
   return (
-    <ContractantLayout active="material" title="Ressources matériel">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="text-sm text-gray-500">Espace &gt; Ressources &gt; Ressources matériel</div>
-        <div className="mt-2 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Ressources matériel</h1>
-          <button
-            onClick={() => setShowUpload(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <Plus className="w-4 h-4" />
-            Nouvelle demande
-          </button>
-        </div>
-      </div>
+    <>
+      <Head title="Ressources matériel" />
 
-      {/* Tabs + Search */}
-      <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <Segmented active={active} onChange={setActive} counts={countsSafe} />
-        <div className="relative w-full md:w-80">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Rechercher (site)…"
-            className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-cyan-900 to-emerald-900 relative overflow-hidden flex">
+        {/* Animated Background */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl animate-pulse" />
+        </div>
+
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `radial-gradient(circle at 1px 1px, rgba(6,182,212,0.3) 1px, transparent 0)`,
+              backgroundSize: "50px 50px",
+            }}
           />
         </div>
-      </div>
 
-      {/* Summary */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
-        <SummaryCard icon={<Clock className="w-4 h-4" />} label="En attente" value={countsSafe.pending} />
-        <SummaryCard icon={<CheckCircle2 className="w-4 h-4" />} label="Acceptées" value={countsSafe.accepted} />
-        <SummaryCard icon={<XCircle className="w-4 h-4" />} label="Refusées" value={countsSafe.rejected} />
-      </div>
+        {/* Sidebar */}
+        <ContractantSidebar />
 
-      {/* Content */}
-      <div className="bg-white border rounded-xl">
-        {filtered.length === 0 ? (
-          <EmptyState
-            title={
-              active === "pending"
-                ? "Aucune demande en attente"
-                : active === "accepted"
-                ? "Aucune demande acceptée"
-                : "Aucune demande refusée"
-            }
-            hint={q ? `Aucun résultat pour « ${q} »` : "Les éléments apparaîtront ici."}
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col">
+          {/* Top Header */}
+          <ContractantTopHeader
+            contractor={contractor}
+            showBackButton={true}
+            backRoute={route("contractant.home")}
+            backLabel="Retour au tableau de bord"
           />
-        ) : (
-          <div className="p-4">
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((r) => (
-                <Card key={r.id} row={r} kind={active} />
-              ))}
+
+          {/* Content */}
+          <div className="relative z-10 px-6 pb-12 flex-1">
+            <div className="max-w-7xl mx-auto">
+              {/* Title */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="text-center mb-12"
+              >
+                <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+                  <span className="bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+                    Ressources matériel
+                  </span>
+                </h1>
+                <p className="text-gray-300 text-lg">
+                  Gérez vos demandes et ressources
+                </p>
+              </motion.div>
+
+              {/* Tabs + Search */}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="bg-cyan-950/30 backdrop-blur-xl border border-cyan-600/30 rounded-2xl p-4 shadow-2xl mb-8 max-w-3xl mx-auto"
+              >
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <Segmented
+                    active={active}
+                    onChange={setActive}
+                    counts={countsSafe}
+                  />
+                  <div className="relative w-full md:w-80">
+                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <input
+                      value={q}
+                      onChange={(e) => setQ(e.target.value)}
+                      placeholder="Rechercher (site)…"
+                      className="w-full pl-9 pr-3 py-2 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500"
+                    />
+                  </div>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setShowUpload(true)}
+                    className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-500 text-white font-medium shadow-lg"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Nouvelle demande
+                  </motion.button>
+                </div>
+              </motion.div>
+
+              {/* Summary */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <SummaryCard
+                  icon={<Clock className="w-4 h-4" />}
+                  label="En attente"
+                  value={countsSafe.pending}
+                />
+                <SummaryCard
+                  icon={<CheckCircle2 className="w-4 h-4" />}
+                  label="Acceptées"
+                  value={countsSafe.accepted}
+                />
+                <SummaryCard
+                  icon={<XCircle className="w-4 h-4" />}
+                  label="Refusées"
+                  value={countsSafe.rejected}
+                />
+              </div>
+
+              {/* Content */}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="bg-cyan-950/30 backdrop-blur-xl border border-cyan-600/30 rounded-3xl p-6 shadow-2xl"
+              >
+                {filtered.length === 0 ? (
+                  <EmptyState
+                    title={
+                      active === "pending"
+                        ? "Aucune demande en attente"
+                        : active === "accepted"
+                        ? "Aucune demande acceptée"
+                        : "Aucune demande refusée"
+                    }
+                    hint={
+                      q
+                        ? `Aucun résultat pour « ${q} »`
+                        : "Les éléments apparaîtront ici."
+                    }
+                  />
+                ) : (
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    {filtered.map((r) => (
+                      <Card key={r.id} row={r} kind={active} />
+                    ))}
+                  </div>
+                )}
+              </motion.div>
             </div>
           </div>
-        )}
+        </div>
       </div>
 
       {/* Upload Modal */}
-      {showUpload && <UploadModal csrf_token={csrf_token} sites={sites} onClose={() => setShowUpload(false)} />}
-    </ContractantLayout>
+      {showUpload && (
+        <UploadModal
+          csrf_token={csrf_token}
+          sites={sites}
+          onClose={() => setShowUpload(false)}
+        />
+      )}
+    </>
   );
 }
 
 /* ----------------------------- Subcomponents ----------------------------- */
 
 function Segmented({ active, onChange, counts }) {
-  const base = "text-sm inline-flex items-center gap-2 px-3 py-2 rounded-lg border transition focus:outline-none";
-  const activeCls = "bg-blue-600 text-white border-blue-600 shadow-sm focus:ring-2 focus:ring-blue-500";
-  const normal = "bg-white text-gray-800 border-gray-300 hover:bg-blue-50 hover:border-blue-400";
+  const base =
+    "text-sm inline-flex items-center gap-2 px-3 py-2 rounded-lg border transition-all duration-300 focus:outline-none";
+  
+  // Tous les onglets ont le même fond de base (le dégradé vert)
+  const baseBackground = "bg-gradient-to-r from-cyan-500 to-emerald-500";
+  
+  // Styles pour l'onglet actif
+  const activeCls = "text-white shadow-lg ring-2 ring-white/50 ring-offset-2 ring-offset-cyan-800 scale-105";
+  
+  // Styles pour les onglets inactifs
+  const inactiveCls = "text-white/80 bg-gradient-to-r from-cyan-500/60 to-emerald-500/60 hover:from-cyan-500/80 hover:to-emerald-500/80 hover:text-white";
 
   return (
-    <div className="inline-flex gap-2">
-      <button className={`${base} ${active === "pending" ? activeCls : normal}`} onClick={() => onChange("pending")} type="button">
+    <div className="inline-flex gap-2 p-1 bg-cyan-900/30 rounded-xl backdrop-blur-sm">
+      <button
+        className={`${base} ${baseBackground} ${active === "pending" ? activeCls : inactiveCls}`}
+        onClick={() => onChange("pending")}
+        type="button"
+      >
         <Clock className="w-4 h-4" />
         <span className="font-medium">En attente</span>
-        <Badge tone={active === "pending" ? "white" : "blue"}>{counts.pending}</Badge>
+        <Badge tone={active === "pending" ? "emerald" : "cyan"}>
+          {counts.pending}
+        </Badge>
       </button>
-      <button className={`${base} ${active === "accepted" ? activeCls : normal}`} onClick={() => onChange("accepted")} type="button">
+      <button
+        className={`${base} ${baseBackground} ${active === "accepted" ? activeCls : inactiveCls}`}
+        onClick={() => onChange("accepted")}
+        type="button"
+      >
         <CheckCircle2 className="w-4 h-4" />
         <span className="font-medium">Acceptées</span>
-        <Badge tone={active === "accepted" ? "white" : "green"}>{counts.accepted}</Badge>
+        <Badge tone={active === "accepted" ? "emerald" : "cyan"}>
+          {counts.accepted}
+        </Badge>
       </button>
-      <button className={`${base} ${active === "rejected" ? activeCls : normal}`} onClick={() => onChange("rejected")} type="button">
+      <button
+        className={`${base} ${baseBackground} ${active === "rejected" ? activeCls : inactiveCls}`}
+        onClick={() => onChange("rejected")}
+        type="button"
+      >
         <XCircle className="w-4 h-4" />
         <span className="font-medium">Refusées</span>
-        <Badge tone={active === "rejected" ? "white" : "red"}>{counts.rejected}</Badge>
+        <Badge tone={active === "rejected" ? "emerald" : "cyan"}>
+          {counts.rejected}
+        </Badge>
       </button>
     </div>
   );
@@ -148,19 +282,31 @@ function Badge({ children, tone = "gray" }) {
     green: "bg-green-100 text-green-700",
     red: "bg-red-100 text-red-700",
     white: "bg-white/20 text-white",
+    cyan: "bg-cyan-100/90 text-cyan-800",
+    emerald: "bg-emerald-100/90 text-emerald-800",
   };
-  return <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${map[tone] || map.gray}`}>{children}</span>;
+  return (
+    <span
+      className={`px-2 py-0.5 rounded-md text-xs font-medium ${
+        map[tone] || map.gray
+      }`}
+    >
+      {children}
+    </span>
+  );
 }
 
 function SummaryCard({ icon, label, value }) {
   return (
-    <div className="border rounded-xl bg-white p-4">
+    <div className="bg-cyan-900/30 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-4 shadow-lg">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-gray-600">
-          <span className="p-1.5 rounded-md bg-gray-100">{icon}</span>
-          <span className="text-sm">{label}</span>
+        <div className="flex items-center gap-2 text-cyan-200">
+          <span className="p-1.5 rounded-md bg-cyan-500/20 text-cyan-200">
+            {icon}
+          </span>
+          <span className="text-sm font-medium">{label}</span>
         </div>
-        <div className="text-lg font-semibold text-gray-900">{value}</div>
+        <div className="text-lg font-bold text-white">{value}</div>
       </div>
     </div>
   );
@@ -168,38 +314,55 @@ function SummaryCard({ icon, label, value }) {
 
 function EmptyState({ title, hint }) {
   return (
-    <div className="px-6 py-12 text-center">
-      <div className="text-base font-semibold text-gray-900">{title}</div>
-      <div className="text-sm text-gray-500 mt-1">{hint}</div>
+    <div className="px-6 py-12 text-center bg-cyan-900/20 border border-cyan-500/20 rounded-xl">
+      <div className="text-base font-semibold text-cyan-200">{title}</div>
+      <div className="text-sm text-gray-300 mt-1">{hint}</div>
     </div>
   );
 }
 
 function StatusBadge({ kind }) {
   const map = {
-    pending: { text: "En attente", cls: "bg-blue-50 text-blue-700" },
-    accepted: { text: "Acceptée", cls: "bg-green-50 text-green-700" },
-    rejected: { text: "Refusée", cls: "bg-red-50 text-red-700" },
+    pending: {
+      text: "En attente",
+      cls: "bg-blue-500/20 text-blue-200 border border-blue-400/30",
+    },
+    accepted: {
+      text: "Acceptée",
+      cls: "bg-green-500/20 text-green-200 border border-green-400/30",
+    },
+    rejected: {
+      text: "Refusée",
+      cls: "bg-red-500/20 text-red-200 border border-red-400/30",
+    },
   };
   const { text, cls } = map[kind] || map.pending;
-  return <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${cls}`}>{text}</span>;
+  return (
+    <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${cls}`}>
+      {text}
+    </span>
+  );
 }
 
 function Card({ row, kind }) {
-  const pngUrl = row.qr_png_url || (row.qrcode_path ? `/storage/${row.qrcode_path}` : null);
-  const qrText = row.qrcode_text || "Cet engin est conforme par l’administration.";
+  const pngUrl =
+    row.qr_png_url || (row.qrcode_path ? `/storage/${row.qrcode_path}` : null);
+  const qrText =
+    row.qrcode_text || "Cet engin est conforme par l’administration.";
 
   return (
-    <div className="border rounded-xl bg-white p-5 flex flex-col h-full">
+    <div className="bg-cyan-950/30 backdrop-blur-xl border border-cyan-600/30 rounded-2xl p-5 shadow-lg flex flex-col h-full">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="text-base font-semibold text-gray-900 truncate">
+          <div className="text-base font-semibold text-white truncate">
             {row.site?.name ? `Site : ${row.site.name}` : `Demande #${row.id}`}
           </div>
-          <div className="text-xs text-gray-500 mt-0.5">Créé le {formatDate(row.created_at)}</div>
+          <div className="text-xs text-gray-300 mt-0.5">
+            Créé le {formatDate(row.created_at)}
+          </div>
 
           {row.decision_comment && (
-            <p className="mt-2 text-xs text-gray-700">
+            <p className="mt-2 text-xs text-gray-200">
               <span className="font-medium">
                 Commentaire du responsable
                 {kind === "rejected" ? " (refus)" : ""}
@@ -213,8 +376,8 @@ function Card({ row, kind }) {
       </div>
 
       {kind === "accepted" && pngUrl && (
-        <div className="mt-4 border-t pt-3">
-          <div className="text-sm font-medium mb-2 flex items-center gap-2">
+        <div className="mt-4 border-t border-white/20 pt-3">
+          <div className="text-sm font-medium mb-2 flex items-center gap-2 text-white">
             <QrCode className="w-4 h-4" /> QR “Conforme”
           </div>
 
@@ -223,8 +386,10 @@ function Card({ row, kind }) {
           <div className="mt-2 flex items-center gap-2">
             <button
               type="button"
-              onClick={() => printQR(pngUrl, row.site?.name || `Demande #${row.id}`, qrText)}
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700"
+              onClick={() =>
+                printQR(pngUrl, row.site?.name || `Demande #${row.id}`, qrText)
+              }
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-cyan-500 to-emerald-500 text-white text-sm hover:opacity-90"
               title="Imprimer uniquement le QR"
             >
               <FileText className="w-4 h-4" />
@@ -232,7 +397,11 @@ function Card({ row, kind }) {
             </button>
           </div>
 
-          {qrText && <div className="text-xs text-gray-500 mt-2 whitespace-pre-line">{qrText}</div>}
+          {qrText && (
+            <div className="text-xs text-gray-300 mt-2 whitespace-pre-line">
+              {qrText}
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -247,7 +416,7 @@ function UploadModal({ csrf_token, sites = [], onClose }) {
     matricule: "",
     controle_reglementaire: null,
     assurance: null,
-    carte_grise: null, // ✅ new
+    carte_grise: null,
     habilitation_conducteur: null,
     rapports_conformite: null,
   });
@@ -261,12 +430,20 @@ function UploadModal({ csrf_token, sites = [], onClose }) {
       onSuccess: () => {
         reset();
         if (window?.Swal?.fire) {
-          window.Swal.fire({ icon: "success", title: "Envoyé", text: "Votre demande a été transmise." }).then(() => {
-            window.Inertia?.reload?.({ only: ["pending", "accepted", "rejected", "counts"] });
+          window.Swal.fire({
+            icon: "success",
+            title: "Envoyé",
+            text: "Votre demande a été transmise.",
+          }).then(() => {
+            window.Inertia?.reload?.({
+              only: ["pending", "accepted", "rejected", "counts"],
+            });
             onClose();
           });
         } else {
-          window.Inertia?.reload?.({ only: ["pending", "accepted", "rejected", "counts"] });
+          window.Inertia?.reload?.({
+            only: ["pending", "accepted", "rejected", "counts"],
+          });
           onClose();
         }
       },
@@ -275,72 +452,114 @@ function UploadModal({ csrf_token, sites = [], onClose }) {
 
   return (
     <div className="fixed inset-0 z-40 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
-      <div className="relative z-50 w-full max-w-3xl bg-white border rounded-xl shadow-lg">
-        <div className="px-5 py-4 border-b flex items-center justify-between">
-          <div className="font-semibold text-gray-900">Nouvelle demande — Ressources matériel</div>
-          <button onClick={onClose} className="p-1.5 rounded-md hover:bg-gray-100 text-gray-600" aria-label="Fermer">
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="relative z-50 w-full max-w-3xl bg-cyan-950/30 backdrop-blur-xl border border-cyan-600/30 rounded-2xl shadow-2xl">
+        <div className="px-5 py-4 border-b border-cyan-600/30 flex items-center justify-between text-white">
+          <div className="font-semibold">
+            Nouvelle demande — Ressources matériel
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-md hover:bg-cyan-900/40 text-gray-200"
+            aria-label="Fermer"
+          >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-5 grid gap-4 md:grid-cols-2">
+        <form
+          onSubmit={handleSubmit}
+          className="p-5 grid gap-4 md:grid-cols-2 text-white"
+        >
           <input type="hidden" name="_token" value={csrf_token} />
 
           {/* Site */}
           <div>
-            <label className="text-sm text-gray-700 font-medium">Site *</label>
+            <label className="text-sm font-medium">Site *</label>
             <select
               required
               value={data.site_id}
               onChange={(e) => setData("site_id", e.target.value)}
-              className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 w-full border border-cyan-600/30 
+               bg-gray-900 text-white 
+               rounded-lg px-3 py-2 
+               focus:outline-none focus:ring-2 focus:ring-cyan-500"
             >
-              <option value="" disabled>
+              <option value="" disabled className="bg-gray-900 text-gray-300">
                 Choisir un site…
               </option>
               {sites.map((s) => (
-                <option key={s.id} value={s.id}>
+                <option
+                  key={s.id}
+                  value={s.id}
+                  className="bg-gray-900 text-white hover:bg-cyan-600"
+                >
                   {s.name}
                 </option>
               ))}
             </select>
-            {errors.site_id && <div className="text-red-600 text-xs mt-1">{errors.site_id}</div>}
+            {errors.site_id && (
+              <div className="text-red-400 text-xs mt-1">{errors.site_id}</div>
+            )}
           </div>
 
           {/* Matricule */}
           <div>
-            <label className="text-sm text-gray-700 font-medium">Matricule / Numéro de série *</label>
+            <label className="text-sm font-medium">
+              Matricule / Numéro de série *
+            </label>
             <input
               type="text"
               required
               value={data.matricule}
               onChange={(e) => setData("matricule", e.target.value)}
-              className="mt-1 w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="mt-1 w-full border border-cyan-600/30 bg-white/10 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyan-500"
               placeholder="Entrez le matricule"
             />
-            {errors.matricule && <div className="text-red-600 text-xs mt-1">{errors.matricule}</div>}
+            {errors.matricule && (
+              <div className="text-red-400 text-xs mt-1">{errors.matricule}</div>
+            )}
           </div>
 
           {/* Files */}
-          <FileField label="Visite technique *" onChange={(f) => setData("controle_reglementaire", f)} error={errors.controle_reglementaire} />
-          <FileField label="Assurance *" onChange={(f) => setData("assurance", f)} error={errors.assurance} />
-          <FileField label="Carte grise *" onChange={(f) => setData("carte_grise", f)} error={errors.carte_grise} /> {/* ✅ new */}
-          <FileField label="Habilitation du conducteur *" onChange={(f) => setData("habilitation_conducteur", f)} error={errors.habilitation_conducteur} />
-          <FileField label="Checklist *" onChange={(f) => setData("rapports_conformite", f)} error={errors.rapports_conformite} />
+          <FileField
+            label="Visite technique *"
+            onChange={(f) => setData("controle_reglementaire", f)}
+            error={errors.controle_reglementaire}
+          />
+          <FileField
+            label="Assurance *"
+            onChange={(f) => setData("assurance", f)}
+            error={errors.assurance}
+          />
+          <FileField
+            label="Carte grise *"
+            onChange={(f) => setData("carte_grise", f)}
+            error={errors.carte_grise}
+          />
+          <FileField
+            label="Habilitation du conducteur *"
+            onChange={(f) => setData("habilitation_conducteur", f)}
+            error={errors.habilitation_conducteur}
+          />
+          <FileField
+            label="Checklist *"
+            onChange={(f) => setData("rapports_conformite", f)}
+            error={errors.rapports_conformite}
+          />
 
           <div className="md:col-span-2 flex items-center justify-end gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
-              className="px-3.5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50"
+              className="px-3.5 py-2 rounded-lg border border-cyan-600/30 text-gray-200 hover:bg-cyan-900/40"
             >
               Annuler
             </button>
             <button
               type="submit"
               disabled={processing}
-              className="px-3.5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3.5 py-2 rounded-lg bg-gradient-to-r from-cyan-500 to-emerald-500 text-white hover:opacity-90"
             >
               {processing ? "Envoi..." : "Envoyer"}
             </button>
@@ -354,16 +573,18 @@ function UploadModal({ csrf_token, sites = [], onClose }) {
 function FileField({ label, onChange, error }) {
   return (
     <div>
-      <label className="text-sm text-gray-700 font-medium">{label}</label>
+      <label className="text-sm font-medium">{label}</label>
       <input
         type="file"
         required
         onChange={(e) => onChange(e.target.files?.[0] ?? null)}
-        className="mt-1 w-full text-sm"
+        className="mt-1 w-full text-sm text-white"
         accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
       />
-      <p className="text-xs text-gray-500 mt-1">PDF, JPG/PNG, DOC/DOCX (max 10 Mo)</p>
-      {error && <div className="text-red-600 text-xs mt-1">{error}</div>}
+      <p className="text-xs text-gray-400 mt-1">
+        PDF, JPG/PNG, DOC/DOCX (max 10 Mo)
+      </p>
+      {error && <div className="text-red-400 text-xs mt-1">{error}</div>}
     </div>
   );
 }
@@ -415,5 +636,9 @@ function printQR(url, title, text) {
 
 function formatDate(d) {
   const date = new Date(d);
-  return date.toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" });
+  return date.toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
 }
