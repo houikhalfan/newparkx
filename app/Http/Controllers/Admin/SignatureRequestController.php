@@ -108,14 +108,14 @@ $events = \DB::table('signature_events')
             $path = $request->file('signed_file')->store('signatures/signed', 'public');
 
             // Replace original -> signed
-            $this->replaceOriginalWithSigned($req, $path, 'Admin', session('admin_id'));
+            $this->replaceOriginalWithSigned($req, $path, 'Admin', \Auth::guard('admin')->id());
 
             // Optional admin comment
             if ($request->filled('comment')) {
                 SignatureRequestComment::create([
                     'signature_request_id' => $req->id,
                     'author_type'          => \App\Models\Admin::class,
-                    'author_id'            => session('admin_id'),
+                    'author_id'            => \Auth::guard('admin')->id(),
                     'body'                 => (string) $request->string('comment'),
                 ]);
             }
@@ -134,15 +134,15 @@ $events = \DB::table('signature_events')
         DB::transaction(function () use ($request, $req) {
             $req->status      = 'rejected';
             $req->rejected_at = now();
-            $req->admin_id    = session('admin_id');
+            $req->admin_id    = \Auth::guard('admin')->id();
             $req->save();
 
-            $this->logEvent($req->id, 'rejected', 'Admin', session('admin_id'));
+            $this->logEvent($req->id, 'rejected', 'Admin', \Auth::guard('admin')->id());
 
             SignatureRequestComment::create([
                 'signature_request_id' => $req->id,
                 'author_type'          => \App\Models\Admin::class,
-                'author_id'            => session('admin_id'),
+                'author_id'            => \Auth::guard('admin')->id(),
                 'body'                 => (string) $request->string('reason'),
             ]);
         });
@@ -166,7 +166,7 @@ $events = \DB::table('signature_events')
         $req->status = 'assigned';
         $req->save();
 
-        $this->logEvent($req->id, 'assigned', 'Admin', session('admin_id'), [
+        $this->logEvent($req->id, 'assigned', 'Admin', \Auth::guard('admin')->id(), [
             'to_user_id' => $data['user_id'],
         ]);
 
@@ -197,7 +197,7 @@ $events = \DB::table('signature_events')
             $path = $request->file('signed_file')->store('signatures/signed', 'public');
 
             // Replace original -> signed
-            $this->replaceOriginalWithSigned($req, $path, 'Admin', session('admin_id'));
+            $this->replaceOriginalWithSigned($req, $path, 'Admin', \Auth::guard('admin')->id());
         });
 
         return redirect()->route('admin.signatures.show', $req->id)
@@ -231,7 +231,7 @@ $events = \DB::table('signature_events')
             'original_path'      => null,
             'deleted_original_at'=> now(),
             'assigned_user_id'   => null,
-            'admin_id'           => session('admin_id'),
+            'admin_id'           => \Auth::guard('admin')->id(),
         ]);
 
         $this->logEvent($req->id, 'replaced_original', $actorType, $actorId, [

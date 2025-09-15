@@ -24,7 +24,6 @@ import AdminLayout from '@/Layouts/AdminLayout';
 export default function HseStatisticsShow({ statistics, source }) {
     const fileFields = [
         { key: 'accident_report', label: 'Rapport d\'Accident', icon: AlertTriangle },
-        { key: 'inspection_report', label: 'Rapport d\'Inspection Général', icon: FileText },
         { key: 'inspection_generales_report', label: 'Rapport Inspections Générales', icon: BarChart3 },
         { key: 'inspection_engins_report', label: 'Rapport Inspections Engins', icon: Activity },
         { key: 'hygiene_base_vie_report', label: 'Rapport Hygiène Base de Vie', icon: Shield },

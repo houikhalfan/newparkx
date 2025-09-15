@@ -57,7 +57,7 @@ class DocumentController extends Controller
         \Log::info('Document upload request', [
             'data' => $request->all(),
             'files' => $request->files->all(),
-            'admin_id' => session('admin_id'),
+            'admin_id' => \Auth::guard('admin')->id(),
         ]);
 
         $request->validate([
@@ -68,10 +68,10 @@ class DocumentController extends Controller
             'file' => ['required', 'file', 'max:102400'], // 100MB max
         ]);
 
-        $admin = Admin::find(session('admin_id'));
+        $admin = \Auth::guard('admin')->user();
         
         if (!$admin) {
-            \Log::error('Admin not found', ['admin_id' => session('admin_id')]);
+            \Log::error('Admin not found', ['admin_id' => \Auth::guard('admin')->id()]);
             return redirect()->back()->withErrors(['error' => 'Admin not found']);
         }
 
@@ -219,7 +219,7 @@ class DocumentController extends Controller
      */
     private function getCurrentUserType(): string
     {
-        if (session('admin_id')) {
+        if (\Auth::guard('admin')->check()) {
             return 'admin';
         }
         

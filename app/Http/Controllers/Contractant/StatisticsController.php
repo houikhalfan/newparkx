@@ -51,7 +51,7 @@ class StatisticsController extends Controller
         }
 
         $request->validate([
-            'site' => ['required', 'string', 'max:255'],
+            'site_id' => ['required', 'exists:sites,id'],
             'date' => ['required', 'date'],
             'effectif_personnel' => ['required', 'numeric', 'min:0'],
             'heures_normales' => ['required', 'numeric', 'min:0'],
@@ -173,7 +173,7 @@ class StatisticsController extends Controller
         
         // Handle file uploads
         $fileFields = [
-            'accident_report', 'inspection_report', 'inspection_generales_report',
+            'accident_report', 'inspection_generales_report',
             'inspection_engins_report', 'hygiene_base_vie_report', 'outils_electroportatifs_report',
             'inspection_electriques_report', 'extincteurs_report', 'protections_collectives_report',
             'epi_inspections_report', 'observations_hse_report', 'actions_correctives_cloturees_report'
@@ -192,15 +192,36 @@ class StatisticsController extends Controller
         $data['user_id'] = Auth::guard('contractor')->id();
         $data['user_type'] = 'contractor';
 
+        // Get site name from site_id for backward compatibility
+        if (isset($data['site_id'])) {
+            $site = Site::find($data['site_id']);
+            $data['site'] = $site ? $site->name : '';
+        }
+
         // Create the record (calculations will be done automatically in the model)
         $hseStat = HseStat::create($data);
 
         // Send notification to all admins
-        $admins = Admin::all();
-        \Log::info('Sending notifications to ' . $admins->count() . ' admins');
-        foreach ($admins as $admin) {
-            \Log::info('Sending notification to admin: ' . $admin->email);
-            $admin->notify(new HseStatisticsSubmitted($hseStat));
+        try {
+            $admins = Admin::all();
+            \Log::info('Sending notifications to ' . $admins->count() . ' admins');
+            
+            if ($admins->count() > 0) {
+                foreach ($admins as $admin) {
+                    \Log::info('Sending notification to admin: ' . $admin->email);
+                    try {
+                        $admin->notify(new HseStatisticsSubmitted($hseStat));
+                        \Log::info('Notification sent successfully to: ' . $admin->email);
+                    } catch (\Exception $e) {
+                        \Log::error('Failed to send notification to ' . $admin->email . ': ' . $e->getMessage());
+                    }
+                }
+            } else {
+                \Log::warning('No admin users found to send notifications to');
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error in notification system: ' . $e->getMessage());
+            // Don't fail the submission if notifications fail
         }
 
         return redirect()->route('contractant.hse-statistics.history')->with('success', 'Statistiques HSE soumises avec succès!');
@@ -208,9 +229,17 @@ class StatisticsController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Debug: Log what we're receiving
+        \Log::info('HSE Statistics Update - Raw Request Data:', [
+            'id' => $id,
+            'has_files' => $request->hasFile('accident_report'),
+            'all_files' => $request->allFiles(),
+            'all_data' => $request->all(),
+            'method' => $request->method()
+        ]);
         
         $request->validate([
-            'site' => ['required', 'string', 'max:255'],
+            'site_id' => ['required', 'exists:sites,id'],
             'date' => ['required', 'date'],
             'effectif_personnel' => ['required', 'numeric', 'min:0'],
             'heures_normales' => ['required', 'numeric', 'min:0'],
@@ -334,32 +363,93 @@ class StatisticsController extends Controller
 
         $data = $request->all();
         
-        // Handle file uploads
+        // Handle file uploads - only update file fields when new files are uploaded
         $fileFields = [
-            'accident_report', 'inspection_report', 'inspection_generales_report',
+            'accident_report', 'inspection_generales_report',
             'inspection_engins_report', 'hygiene_base_vie_report', 'outils_electroportatifs_report',
             'inspection_electriques_report', 'extincteurs_report', 'protections_collectives_report',
             'epi_inspections_report', 'observations_hse_report', 'actions_correctives_cloturees_report'
         ];
 
+        // Debug: Log all request data
+        \Log::info('Update request data:', $request->all());
+
+        // Handle file deletions first - check for _delete_ prefix
+        $deletedFiles = [];
+        foreach ($fileFields as $field) {
+            if ($request->has("_delete_{$field}") && $request->input("_delete_{$field}") === true) {
+                $deletedFiles[] = $field;
+            }
+        }
+        
+        \Log::info('Files to be deleted:', $deletedFiles);
+        
+        foreach ($deletedFiles as $field) {
+            \Log::info("Processing deletion for field: {$field}");
+            if ($hseStat->$field) {
+                // Delete the physical file
+                $filePath = storage_path('app/public/' . $hseStat->$field);
+                \Log::info("Attempting to delete file: {$filePath}");
+                
+                if (file_exists($filePath)) {
+                    unlink($filePath);
+                    \Log::info("File deleted successfully for {$field}: {$filePath}");
+                } else {
+                    \Log::warning("File does not exist for deletion: {$filePath}");
+                }
+                // Set field to null in database
+                $data[$field] = null;
+                \Log::info("Set {$field} to null in database");
+            } else {
+                \Log::warning("No existing file to delete for field: {$field}");
+            }
+        }
+
+        // Handle file uploads
         foreach ($fileFields as $field) {
             if ($request->hasFile($field)) {
+                // New file uploaded
                 $file = $request->file($field);
                 $filename = time() . '_' . $field . '.' . $file->getClientOriginalExtension();
                 $path = $file->storeAs('reports', $filename, 'public');
                 $data[$field] = $path;
+                \Log::info("New file uploaded for {$field}: {$path}");
+            } else {
+                // No change to this field, remove from data to preserve existing value
+                unset($data[$field]);
             }
+        }
+
+        // Get site name from site_id for backward compatibility
+        if (isset($data['site_id'])) {
+            $site = Site::find($data['site_id']);
+            $data['site'] = $site ? $site->name : '';
         }
 
         // Update the record (calculations will be done automatically in the model)
         $hseStat->update($data);
 
         // Send notification to all admins about the modification
-        $admins = Admin::all();
-        \Log::info('Sending modification notifications to ' . $admins->count() . ' admins');
-        foreach ($admins as $admin) {
-            \Log::info('Sending modification notification to admin: ' . $admin->email);
-            $admin->notify(new HseStatisticsSubmitted($hseStat, 'modified'));
+        try {
+            $admins = Admin::all();
+            \Log::info('Sending modification notifications to ' . $admins->count() . ' admins');
+            
+            if ($admins->count() > 0) {
+                foreach ($admins as $admin) {
+                    \Log::info('Sending modification notification to admin: ' . $admin->email);
+                    try {
+                        $admin->notify(new HseStatisticsSubmitted($hseStat, 'modified'));
+                        \Log::info('Modification notification sent successfully to: ' . $admin->email);
+                    } catch (\Exception $e) {
+                        \Log::error('Failed to send modification notification to ' . $admin->email . ': ' . $e->getMessage());
+                    }
+                }
+            } else {
+                \Log::warning('No admin users found to send modification notifications to');
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error in modification notification system: ' . $e->getMessage());
+            // Don't fail the update if notifications fail
         }
 
         return redirect()->route('contractant.hse-statistics.history')->with('success', 'Statistiques HSE modifiées avec succès!');
@@ -368,9 +458,18 @@ class StatisticsController extends Controller
     public function show($id)
     {
         $contractor = Auth::guard('contractor')->user();
-        $statistic = HseStat::where('user_id', $contractor->id)
+        $statistic = HseStat::with('siteRelation')->where('user_id', $contractor->id)
             ->where('id', $id)
             ->firstOrFail();
+
+        // Debug: Log the site information
+        \Log::info('HSE Stat Show - Site Debug:', [
+            'id' => $statistic->id,
+            'site_id' => $statistic->site_id,
+            'site_field' => $statistic->site,
+            'site_relationship' => $statistic->siteRelation ? get_class($statistic->siteRelation) : 'null',
+            'site_name' => $statistic->siteRelation ? $statistic->siteRelation->name : 'null'
+        ]);
 
         return Inertia::render('Contractant/HseStatistics/Show', [
             'statistic' => $statistic,
@@ -382,12 +481,20 @@ class StatisticsController extends Controller
     {
         $contractor = Auth::guard('contractor')->user();
         $sites = Site::all();
-        $hseStat = HseStat::where('user_id', $contractor->id)
+        $hseStat = HseStat::with('siteRelation')->where('user_id', $contractor->id)
             ->where('id', $id)
             ->firstOrFail();
             
         // Ensure date is properly formatted for the frontend
         $hseStat->date = $hseStat->date->format('Y-m-d');
+        
+        // Debug: Log sites being passed
+        \Log::info('Sites being passed to edit form:', [
+            'count' => $sites->count(),
+            'sites' => $sites->pluck('name')->toArray(),
+            'hseStat_site_id' => $hseStat->site_id,
+            'hseStat_site_name' => $hseStat->siteRelation?->name
+        ]);
             
         return Inertia::render('Contractant/HseStatistics/Edit', [
             'sites' => $sites,
@@ -403,12 +510,14 @@ class StatisticsController extends Controller
 
         return Inertia::render('Contractant/HseStatistics/History', [
             'records' => HseStat::query()
+                ->with('siteRelation')
                 ->where('user_id', $uid) // Show only own statistics
                 ->latest('date')->latest('id')
                 ->select([
-                    'id', 'site', 'date', 'created_at', 'effectif_personnel',
-                    'total_heures', 'trir', 'ltir', 'dart',
-                    'permis_total', 'inspections_total_hse'
+                    'id', 'site_id', 'site', 'date', 'created_at', 'effectif_personnel',
+                    'heures_normales', 'heures_supplementaires', 'total_heures', 
+                    'trir', 'ltir', 'dart', 'permis_total', 
+                    'inspections_generales', 'inspections_engins', 'inspections_total_hse'
                 ])
                 ->limit(200)
                 ->get(),
@@ -419,6 +528,13 @@ class StatisticsController extends Controller
     public function download(Request $request, $id, $field)
     {
         $contractor = Auth::guard('contractor')->user();
+        
+        // Debug: Log download request
+        \Log::info('Download request:', [
+            'id' => $id,
+            'field' => $field,
+            'contractor_id' => $contractor->id
+        ]);
         
         // Security check: ensure contractor can only download their own files
         $statistics = HseStat::where('user_id', $contractor->id)->where('id', $id)->firstOrFail();
@@ -439,14 +555,25 @@ class StatisticsController extends Controller
         // Get the file path from the statistics record
         $filePath = $statistics->$field;
         
+        \Log::info('File path info:', [
+            'field' => $field,
+            'filePath' => $filePath,
+            'statistics_id' => $statistics->id
+        ]);
+        
         if (!$filePath) {
+            \Log::warning('File path is empty for field: ' . $field);
             abort(404, 'Fichier non trouvé');
         }
 
         // Build the full file path
         $fullPath = storage_path('app/public/' . $filePath);
         
+        \Log::info('Full file path: ' . $fullPath);
+        \Log::info('File exists: ' . (file_exists($fullPath) ? 'yes' : 'no'));
+        
         if (!file_exists($fullPath)) {
+            \Log::warning('File does not exist: ' . $fullPath);
             abort(404, 'Fichier non trouvé');
         }
 

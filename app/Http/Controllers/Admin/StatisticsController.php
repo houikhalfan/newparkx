@@ -358,7 +358,7 @@ class StatisticsController extends Controller
         
         // Define the allowed file fields
         $allowedFields = [
-            'accident_report', 'inspection_report', 'inspection_generales_report',
+            'accident_report', 'inspection_generales_report',
             'inspection_engins_report', 'hygiene_base_vie_report', 'outils_electroportatifs_report',
             'inspection_electriques_report', 'extincteurs_report', 'protections_collectives_report',
             'epi_inspections_report', 'observations_hse_report', 'actions_correctives_cloturees_report'

@@ -252,10 +252,10 @@ Route::get('/permis', [PermisAdminController::class, 'index'])
         // Debug route to check admin session
         Route::get('/debug-admin', function() {
             return response()->json([
-                'admin_id' => session('admin_id'),
-                'admin' => \App\Models\Admin::find(session('admin_id')),
+                'admin_id' => \Auth::guard('admin')->id(),
+                'admin' => \Auth::guard('admin')->user(),
                 'session_all' => session()->all(),
-                'is_authenticated' => session()->has('admin_id'),
+                'is_authenticated' => \Auth::guard('admin')->check(),
             ]);
         });
         
@@ -295,10 +295,7 @@ Route::get('/permis', [PermisAdminController::class, 'index'])
         Route::get ('/notifications/all',                     [App\Http\Controllers\Admin\NotificationController::class, 'all'])->name('notifications.all');
 
         // Admin logout
-        Route::post('/logout', function () {
-            session()->forget('admin_id');
-            return redirect()->route('admin.login');
-        })->name('logout');
+        Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
     });
 });
 
@@ -321,6 +318,9 @@ Route::prefix('contractant')->name('contractant.')->group(function () {
 
     Route::middleware('auth:contractor')->group(function () {
         Route::get('/',                 [ContractantController::class, 'home'])->name('home');
+        Route::get('/profile',          [ContractantController::class, 'profile'])->name('profile');
+        Route::post('/profile',         [ContractantController::class, 'updateProfile'])->name('profile.update');
+        Route::post('/password/change', [ContractantController::class, 'updatePassword'])->name('password.change');
         Route::get('/documents',        [ContractantController::class, 'documents'])->name('documents');
         Route::get('/documents/{document}/download', [ContractantController::class, 'downloadDocument'])->whereNumber('document')->name('documents.download');
         Route::get('/depot-signatures', [ContractantController::class, 'depot'])->name('depot');
@@ -372,7 +372,9 @@ Route::get('/permis-excavation/{permisExcavation}', [PermisExcavationController:
         Route::post('/hse-statistics', [ContractantStatsController::class, 'store'])->name('hse-statistics.store');
         Route::get('/hse-statistics/{id}/edit', [ContractantStatsController::class, 'edit'])->whereNumber('id')->name('hse-statistics.edit');
         Route::put('/hse-statistics/{id}', [ContractantStatsController::class, 'update'])->whereNumber('id')->name('hse-statistics.update');
+        Route::post('/hse-statistics/{id}', [ContractantStatsController::class, 'update'])->whereNumber('id')->name('hse-statistics.update.post');
         Route::get('/hse-statistics/{id}', [ContractantStatsController::class, 'show'])->whereNumber('id')->name('hse-statistics.show');
+        Route::get('/hse-statistics/{id}/download/{field}', [ContractantStatsController::class, 'download'])->whereNumber('id')->name('hse-statistics.download');
         Route::get('/hse-statistics/history', [ContractantStatsController::class, 'history'])->name('hse-statistics.history');
     });
 });

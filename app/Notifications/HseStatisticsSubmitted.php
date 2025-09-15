@@ -31,7 +31,7 @@ class HseStatisticsSubmitted extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        return ['database']; // Use only database notifications for now to avoid email delays
     }
 
     /**

@@ -36,9 +36,6 @@ class AdminController extends Controller
 
         $request->session()->regenerate();
 
-        // ✅ Keep your AdminAuth middleware behavior
-        session(['admin_id' => \Auth::guard('admin')->id()]);
-
         return \Inertia\Inertia::location(route('admin.home'));
     }
 
