@@ -129,8 +129,8 @@ const hseResponsableCards = useMemo(
   const responsableCards = useMemo(
     () => [
      {
-  title: 'Papiers assignés',
-  description: 'Suivez les documents à signer',
+title: 'Gestion des Permis',
+description: 'Consultez et signez les documents rapidement',
   icon: FileSignature,
   href: '/responsible-site/suivi-permis',   // 👈 new route
   badge: assignedPending,

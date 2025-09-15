@@ -128,11 +128,9 @@ const contractorProject = auth?.contractor?.project?.name || "";
   const validateForm = () => {
     const newErrors = {};
     if (!header.date) newErrors.date = "La date est requise.";
-    if (!header.projet) newErrors.projet = "Le projet est requis.";
     if (!header.activite) newErrors.activite = "L'activité est requise.";
 
     if (header.projet && !onlyLetters(header.projet))
-      newErrors.projet = "Le projet ne doit contenir que des lettres et des espaces.";
     if (header.activite && !onlyLetters(header.activite))
       newErrors.activite =
         "L’activité ne doit contenir que des lettres et des espaces.";

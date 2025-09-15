@@ -26,7 +26,7 @@ class Vod extends Model
     protected $fillable = [
         'user_id',
         'date',
-        'projet',
+        'project_id',
         'activite',
         'observateur',
         'personnes_observees',
@@ -178,5 +178,11 @@ public function getDownloadUrlAttribute(): string
 {
     return route('vods.pdf', ['vod' => $this->id, 'download' => 1]);
 }
+// app/Models/Vod.php
+public function project()
+{
+    return $this->belongsTo(Project::class);
+}
+
 
 }

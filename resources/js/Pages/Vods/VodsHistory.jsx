@@ -8,11 +8,7 @@ import {
   User, 
   Building, 
   Eye,
-  Filter,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-  Sparkles
+  Filter
 } from 'lucide-react';
 
 export default function VodsHistory({ vods = [] }) {
@@ -23,10 +19,19 @@ export default function VodsHistory({ vods = [] }) {
     const s = q.toLowerCase();
     return vods.filter(v => {
       const date = (v.date || v.created_at || '').toString().toLowerCase();
-      const projet = (v.projet || '').toString().toLowerCase();
+      const projectName = (
+        v.project?.name || 
+        v.project_name || 
+        ''
+      ).toString().toLowerCase();
       const activite = (v.activite || '').toString().toLowerCase();
-      const obs = (v.observateur || v.observer || '').toString().toLowerCase();
-      return date.includes(s) || projet.includes(s) || activite.includes(s) || obs.includes(s);
+      const obs = (v.observateur || '').toString().toLowerCase();
+      return (
+        date.includes(s) ||
+        projectName.includes(s) ||
+        activite.includes(s) ||
+        obs.includes(s)
+      );
     });
   }, [q, vods]);
 
@@ -82,9 +87,10 @@ export default function VodsHistory({ vods = [] }) {
           {filtered.map((v, index) => {
             const pdf = pdfHref(v);
             const dl = downloadHref(v);
+            const projectName = v.project?.name || v.project_name || '—';
             return (
               <motion.div
-                key={v.id ?? `${v.date}-${v.projet}-${v.activite}-${Math.random()}`}
+                key={v.id ?? `${v.date}-${v.project_id}-${Math.random()}`}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.5 }}
@@ -96,7 +102,7 @@ export default function VodsHistory({ vods = [] }) {
                       <Calendar className="w-4 h-4 text-slate-400" />
                       <span className="text-sm text-slate-500">{fmtDate(v.date || v.created_at)}</span>
                     </div>
-                    <h3 className="text-lg font-bold text-slate-800 mb-1">{v.projet || 'Projet —'}</h3>
+                    <h3 className="text-lg font-bold text-slate-800 mb-1">{projectName}</h3>
                     <p className="text-slate-600 mb-2">{v.activite || 'Activité —'}</p>
                     <div className="flex items-center space-x-2">
                       <User className="w-4 h-4 text-slate-400" />
@@ -195,9 +201,10 @@ export default function VodsHistory({ vods = [] }) {
               {filtered.map((v, index) => {
                 const pdf = pdfHref(v);
                 const dl = downloadHref(v);
+                const projectName = v.project?.name || v.project_name || '—';
                 return (
                   <motion.tr
-                    key={v.id ?? `${v.date}-${v.projet}-${v.activite}-${Math.random()}`}
+                    key={v.id ?? `${v.date}-${v.project_id}-${Math.random()}`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05, duration: 0.5 }}
@@ -212,7 +219,9 @@ export default function VodsHistory({ vods = [] }) {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-semibold text-slate-800">{v.projet || '—'}</span>
+                      <span className="font-semibold text-slate-800">
+                        {projectName}
+                      </span>
                     </td>
                     <td className="px-6 py-4">
                       <span className="text-slate-600">{v.activite || '—'}</span>
@@ -272,7 +281,6 @@ export default function VodsHistory({ vods = [] }) {
 }
 
 /* Helpers */
-
 function fmtDate(d) {
   if (!d) return '—';
   try {
@@ -283,7 +291,6 @@ function fmtDate(d) {
   }
 }
 
-// Prefer URLs provided by the backend; otherwise fall back to REST-style paths
 function pdfHref(v) {
   if (v?.pdf_url) return v.pdf_url;
   if (v?.urls?.pdf) return v.urls.pdf;

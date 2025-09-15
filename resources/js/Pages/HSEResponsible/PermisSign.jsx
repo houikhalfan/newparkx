@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useForm, Link } from "@inertiajs/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -20,6 +20,154 @@ import {
 /* --------------------------- UI building blocks --------------------------- */
 const BRAND = "#0E8A5D"; // ParkX green
 
+// Fixed Text component with forwardRef
+const Text = React.forwardRef(({ disabled, ...rest }, ref) => (
+  <input
+    ref={ref}
+    {...rest}
+    disabled={disabled}
+    className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition-all duration-200 ${
+      disabled 
+        ? "bg-gray-100 text-gray-500" 
+        : "bg-white border-gray-300 focus:ring-2 focus:border-indigo-500 focus:ring-indigo-200"
+    }`}
+  />
+));
+
+const Area = ({ rows = 3, disabled, ...rest }) => (
+  <textarea
+    rows={rows}
+    disabled={disabled}
+    {...rest}
+    className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition-all duration-200 ${
+      disabled 
+        ? "bg-gray-100 text-gray-500" 
+        : "bg-white border-gray-300 focus:ring-2 focus:border-indigo-500 focus:ring-indigo-200"
+    }`}
+  />
+);
+
+const FieldError = ({ children }) =>
+  children ? <p className="mt-1 text-xs text-rose-600">{children}</p> : null;
+
+const CheckLine = ({ children, checked, onChange, disabled }) => (
+  <label
+    className={`flex items-start gap-3 py-2 ${
+      disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer"
+    }`}
+  >
+    <input
+      type="checkbox"
+      className="mt-0.5 h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+      checked={!!checked}
+      onChange={(e) => onChange?.(e.target.checked)}
+      disabled={disabled}
+    />
+    <span className="text-sm text-gray-700 leading-5">{children}</span>
+  </label>
+);
+
+/** Signature picker that also previews stored string paths in readonly mode */
+function SignaturePicker({ id, label, value, onChange, disabled, error }) {
+  const [preview, setPreview] = useState(null);
+  useEffect(() => () => preview && URL.revokeObjectURL(preview), [preview]);
+
+  const isFile = value instanceof File;
+  const isStoredPath = typeof value === "string" && value.trim().length > 0;
+
+  return (
+    <div>
+      <label
+        htmlFor={id}
+        className="block text-sm font-semibold text-gray-700 mb-2"
+      >
+        {label}
+      </label>
+
+      <div className="flex items-center">
+        <label
+          htmlFor={id}
+          className="px-4 py-2 bg-indigo-600 text-white rounded-xl cursor-pointer hover:bg-indigo-700 transition-colors duration-200"
+        >
+          Choisir un fichier
+        </label>
+        <input
+          id={id}
+          type="file"
+          accept="image/png,image/jpeg"
+          disabled={disabled}
+          onChange={(e) => {
+            const f = e.target.files?.[0] || null;
+            onChange?.(f);
+            setPreview(f ? URL.createObjectURL(f) : null);
+          }}
+          className="hidden"
+        />
+        <span className="ml-3 text-sm text-gray-500">
+          {isFile ? value.name : isStoredPath ? "Signature déjà uploadée" : "Aucun fichier choisi"}
+        </span>
+      </div>
+
+      {/* Live File preview */}
+      {isFile && (
+        <img
+          src={preview || URL.createObjectURL(value)}
+          alt="Signature"
+          className="mt-3 h-24 w-auto rounded-xl border border-gray-200 bg-white shadow-sm"
+        />
+      )}
+
+      {/* Stored path preview in readonly */}
+      {!isFile && isStoredPath && (
+        <img
+          src={`/storage/${value}`}
+          alt="Signature"
+          className="mt-3 h-24 w-auto rounded-xl border border-gray-200 bg-white shadow-sm"
+        />
+      )}
+
+      <FieldError>{error}</FieldError>
+    </div>
+  );
+}
+
+const FormCard = ({ title, children }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+    className="rounded-2xl bg-white/80 backdrop-blur-sm shadow-xl border border-white/20 overflow-hidden mb-6"
+  >
+    <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-5">
+      <h2 className="text-lg font-bold text-white">{title}</h2>
+    </div>
+    <div className="p-6">{children}</div>
+  </motion.div>
+);
+
+const Row = ({ label, children, className = "" }) => (
+  <div
+    className={[
+      "flex flex-col gap-3 py-4 border-b border-gray-200 last:border-b-0 md:flex-row md:items-start",
+      className,
+    ].join(" ")}
+  >
+    <div className="md:w-72 shrink-0">
+      <label className="text-sm font-semibold text-gray-700">{label}</label>
+    </div>
+    <div className="md:flex-1">{children}</div>
+  </div>
+);
+
+// Background blobs for visual appeal
+const BackgroundBlobs = () => (
+  <div className="fixed inset-0 overflow-hidden pointer-events-none">
+    <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse" />
+    <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse" />
+  </div>
+);
+
+/* ================================= PAGE ================================== */
 export default function PermisSign({
   permis,
   sites = [],
@@ -31,150 +179,20 @@ export default function PermisSign({
 }) {
   const { user } = auth || {};
   const contractorName = permis?.contractant || "GENERIC";
+  const hseParkxNomRef = useRef(null);
+  const hseParkxDateRef = useRef(null);
 
-  // Background blobs for visual appeal
-  const BackgroundBlobs = () => (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none">
-      <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-indigo-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse" />
-    </div>
-  );
-
-  const FormCard = ({ title, children }) => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="rounded-2xl bg-white/80 backdrop-blur-sm shadow-xl border border-white/20 overflow-hidden mb-6"
-    >
-      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-5">
-        <h2 className="text-lg font-bold text-white">{title}</h2>
-      </div>
-      <div className="p-6">{children}</div>
-    </motion.div>
-  );
-
-  const Row = ({ label, children, className = "" }) => (
-    <div
-      className={[
-        "flex flex-col gap-3 py-4 border-b border-gray-200 last:border-b-0 md:flex-row md:items-start",
-        className,
-      ].join(" ")}
-    >
-      <div className="md:w-72 shrink-0">
-        <label className="text-sm font-semibold text-gray-700">{label}</label>
-      </div>
-      <div className="md:flex-1">{children}</div>
-    </div>
-  );
-
-  const inputBase = "w-full rounded-xl border px-4 py-3 text-sm outline-none transition-all duration-200";
-  const inputActive = "bg-white border-gray-300 focus:ring-2 focus:border-indigo-500 focus:ring-indigo-200";
-  const inputDisabled = "bg-gray-100 text-gray-500";
-
-  const Text = ({ disabled, ...rest }) => (
-    <input
-      {...rest}
-      disabled={disabled}
-      className={[inputBase, disabled ? inputDisabled : inputActive].join(" ")}
-    />
-  );
-
-  const Area = ({ rows = 3, disabled, ...rest }) => (
-    <textarea
-      rows={rows}
-      disabled={disabled}
-      {...rest}
-      className={[inputBase, disabled ? inputDisabled : inputActive].join(" ")}
-    />
-  );
-
-  const FieldError = ({ children }) =>
-    children ? <p className="mt-1 text-xs text-rose-600">{children}</p> : null;
-
-  const CheckLine = ({ children, checked, onChange, disabled }) => (
-    <label
-      className={[
-        "flex items-start gap-3 py-2",
-        disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer",
-      ].join(" ")}
-    >
-      <input
-        type="checkbox"
-        className="mt-0.5 h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-        checked={!!checked}
-        onChange={(e) => onChange?.(e.target.checked)}
-        disabled={disabled}
-      />
-      <span className="text-sm text-gray-700 leading-5">{children}</span>
-    </label>
-  );
-
-  /** Signature picker that also previews stored string paths in readonly mode */
-  function SignaturePicker({ id, label, value, onChange, disabled, error }) {
-    const [preview, setPreview] = useState(null);
-    useEffect(() => () => preview && URL.revokeObjectURL(preview), [preview]);
-
-    const isFile = value instanceof File;
-    const isStoredPath = typeof value === "string" && value.trim().length > 0;
-
-    return (
-      <div>
-        <label
-          htmlFor={id}
-          className="block text-sm font-semibold text-gray-700 mb-2"
-        >
-          {label}
-        </label>
-
-        <div className="flex items-center">
-          <label
-            htmlFor={id}
-            className="px-4 py-2 bg-indigo-600 text-white rounded-xl cursor-pointer hover:bg-indigo-700 transition-colors duration-200"
-          >
-            Choisir un fichier
-          </label>
-          <input
-            id={id}
-            type="file"
-            accept="image/png,image/jpeg"
-            disabled={disabled}
-            onChange={(e) => {
-              const f = e.target.files?.[0] || null;
-              onChange?.(f);
-              setPreview(f ? URL.createObjectURL(f) : null);
-            }}
-            className="hidden"
-          />
-          <span className="ml-3 text-sm text-gray-500">
-            {isFile ? value.name : isStoredPath ? "Signature déjà uploadée" : "Aucun fichier choisi"}
-          </span>
-        </div>
-
-        {/* Live File preview */}
-        {isFile && (
-          <img
-            src={preview || URL.createObjectURL(value)}
-            alt="Signature"
-            className="mt-3 h-24 w-auto rounded-xl border border-gray-200 bg-white shadow-sm"
-          />
-        )}
-
-        {/* Stored path preview in readonly */}
-        {!isFile && isStoredPath && (
-          <img
-            src={`/storage/${value}`}
-            alt="Signature"
-            className="mt-3 h-24 w-auto rounded-xl border border-gray-200 bg-white shadow-sm"
-          />
-        )}
-
-        <FieldError>{error}</FieldError>
-      </div>
-    );
-  }
-
-  /* ================================= PAGE ================================== */
+  // Fix cursor focus issue - simpler approach
+  useEffect(() => {
+    // Focus on name field when component mounts
+    const timer = setTimeout(() => {
+      if (hseParkxNomRef.current) {
+        hseParkxNomRef.current.focus();
+      }
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   /* ------------------------------ Options ------------------------------ */
   const optExcavationEst = useMemo(
@@ -255,7 +273,6 @@ export default function PermisSign({
   );
 
   /* ------------------------------ Helpers ------------------------------ */
-
   function generatePermitNumber(contractorName = "GENERIC") {
     const date = new Date();
     const yyyyMMdd = date.toISOString().slice(0, 10).replace(/-/g, "");
@@ -264,164 +281,86 @@ export default function PermisSign({
     return `PX-${slug}-${yyyyMMdd}-${rand}`;
   }
 
-  const generatedPermitNumber = useMemo(
-    () => generatePermitNumber(contractorName),
-    [contractorName]
-  );
   const normalizeArray = (val) =>
     Array.isArray(val) ? val : val ? [val] : [];
 
-  // Pre-fill from permis (read or edit context)
-  const initialState = useMemo(() => {
-    return permis
-      ? {
-          // HEADER
-          numero_permis_general: permis.numero_permis_general || "",
-          numero_permis: generatedPermitNumber,   // ✅ use memoized value
+  // Simplified state initialization without complex memoization
+  const initialState = {
+    // HEADER
+    numero_permis_general: permis?.numero_permis_general || "",
+    numero_permis: permis?.numero_permis || generatePermitNumber(contractorName),
 
-          // IDENTIFICATION
-          site_id: permis.site_id || "",
-          duree_de: permis.duree_de || "",
-          duree_a: permis.duree_a || "",
-          description: permis.description || "",
-          analyse_par: permis.analyse_par || "",
-          date_analyse: permis.date_analyse || "",
-          demandeur: permis.demandeur || "",
-          contractant: permis.contractant || "",
-          meme_que_demandeur: !!permis.meme_que_demandeur,
+    // IDENTIFICATION
+    site_id: permis?.site_id || "",
+    duree_de: permis?.duree_de || "",
+    duree_a: permis?.duree_a || "",
+    description: permis?.description || "",
+    analyse_par: permis?.analyse_par || "",
+    date_analyse: permis?.date_analyse || "",
+    demandeur: permis?.demandeur || "",
+    contractant: permis?.contractant || "",
+    meme_que_demandeur: !!permis?.meme_que_demandeur,
 
-          // DANGERS
-          danger_aucun: !!permis.danger_aucun,
-          excavation_est: normalizeArray(permis.excavation_est),
-          conduites: normalizeArray(permis.conduites),
-          situations: normalizeArray(permis.situations),
-          situation_autre: permis.situation_autre || "",
+    // DANGERS
+    danger_aucun: !!permis?.danger_aucun,
+    excavation_est: Array.isArray(permis?.excavation_est) ? permis.excavation_est : permis?.excavation_est ? [permis.excavation_est] : [],
+    conduites: Array.isArray(permis?.conduites) ? permis.conduites : permis?.conduites ? [permis.conduites] : [],
+    situations: Array.isArray(permis?.situations) ? permis.situations : permis?.situations ? [permis.situations] : [],
+    situation_autre: permis?.situation_autre || "",
 
-          // EPI
-          epi_sans_additionnel: !!permis.epi_sans_additionnel,
-          epi_simples: normalizeArray(permis.epi_simples),
-          epi_autre: permis.epi_autre || "",
+    // EPI
+    epi_sans_additionnel: !!permis?.epi_sans_additionnel,
+    epi_simples: Array.isArray(permis?.epi_simples) ? permis.epi_simples : permis?.epi_simples ? [permis.epi_simples] : [],
+    epi_autre: permis?.epi_autre || "",
 
-          // ÉQUIPEMENT
-          equip_non_requis: !!permis.equip_non_requis,
-          equip_checks: normalizeArray(permis.equip_checks),
-          equip_autre: permis.equip_autre || "",
+    // ÉQUIPEMENT
+    equip_non_requis: !!permis?.equip_non_requis,
+    equip_checks: Array.isArray(permis?.equip_checks) ? permis.equip_checks : permis?.equip_checks ? [permis.equip_checks] : [],
+    equip_autre: permis?.equip_autre || "",
 
-          // COMMENTAIRES & PROPRIÉTAIRE
-          aucun_commentaire: !!permis.aucun_commentaire,
-          commentaires: permis.commentaires || "",
-          proprietaire_nom: permis.proprietaire_nom || "",
-          proprietaire_signature: permis.proprietaire_signature || null,
-          proprietaire_date: permis.proprietaire_date || "",
+    // COMMENTAIRES & PROPRIÉTAIRE
+    aucun_commentaire: !!permis?.aucun_commentaire,
+    commentaires: permis?.commentaires || "",
+    proprietaire_nom: permis?.proprietaire_nom || "",
+    proprietaire_signature: permis?.proprietaire_signature || null,
+    proprietaire_date: permis?.proprietaire_date || "",
 
-          // AUTORISATION
-          autor_q1: !!permis.autor_q1,
-          autor_q2: !!permis.autor_q2,
-          autor_q3: !!permis.autor_q3,
+    // AUTORISATION
+    autor_q1: !!permis?.autor_q1,
+    autor_q2: !!permis?.autor_q2,
+    autor_q3: !!permis?.autor_q3,
 
-          sig_resp_construction_nom: permis.sig_resp_construction_nom || "",
-          sig_resp_construction_date: permis.sig_resp_construction_date || "",
-          sig_resp_construction_file: permis.sig_resp_construction_file || null,
+    sig_resp_construction_nom: permis?.sig_resp_construction_nom || "",
+    sig_resp_construction_date: permis?.sig_resp_construction_date || "",
+    sig_resp_construction_file: permis?.sig_resp_construction_file || null,
 
-          sig_resp_hse_nom: permis.sig_resp_hse_nom || "",
-          sig_resp_hse_date: permis.sig_resp_hse_date || "",
-          sig_resp_hse_file: permis.sig_resp_hse_file || null,
-          cm_parkx_nom: permis.cm_parkx_nom || "",
-          cm_parkx_date: permis.cm_parkx_date || "",
-          cm_parkx_file: permis.cm_parkx_file || null,
+    sig_resp_hse_nom: permis?.sig_resp_hse_nom || "",
+    sig_resp_hse_date: permis?.sig_resp_hse_date || "",
+    sig_resp_hse_file: permis?.sig_resp_hse_file || null,
+    
+    cm_parkx_nom: permis?.cm_parkx_nom || "",
+    cm_parkx_date: permis?.cm_parkx_date || "",
+    cm_parkx_file: permis?.cm_parkx_file || null,
 
-          hse_parkx_nom: permis.hse_parkx_nom || "",
-          hse_parkx_date: permis.hse_parkx_date || "",
-          hse_parkx_file: permis.hse_parkx_file || null,
-          // FERMETURE (kept in state but not shown for contractant)
-          ferm_q1: !!permis.ferm_q1,
-          ferm_q2: !!permis.ferm_q2,
-          ferm_q3: !!permis.ferm_q3,
-          ferm_q4: !!permis.ferm_q4,
-          ferm_q5: !!permis.ferm_q5,
-          ferm_q6: !!permis.ferm_q6,
-          ferm_suivi_detail: permis.ferm_suivi_detail || "",
-          ferm_resp_construction_nom: permis.ferm_resp_construction_nom || "",
-          ferm_resp_construction_date: permis.ferm_resp_construction_date || "",
-          ferm_resp_construction_file: permis.ferm_resp_construction_file || null,
-          ferm_resp_hse_nom: permis.ferm_resp_hse_nom || "",
-          ferm_resp_hse_date: permis.ferm_resp_hse_date || "",
-          ferm_resp_hse_file: permis.ferm_resp_hse_file || null,
-        }
-      : {
-          // HEADER
-          numero_permis_general: "",   // 👈 empty so user can type manually
-          numero_permis: generatedPermitNumber,   // ✅ use memoized value
-          // IDENTIFICATION
-          site_id: "",
-          duree_de: "",
-          duree_a: "",
-          description: "",
-          analyse_par: "",
-          date_analyse: "",
-          demandeur: "",
-          contractant: "",
-          meme_que_demandeur: false,
+    hse_parkx_nom: permis?.hse_parkx_nom || "",
+    hse_parkx_date: permis?.hse_parkx_date || "",
+    hse_parkx_file: permis?.hse_parkx_file || null,
 
-          // DANGERS
-          danger_aucun: false,
-          excavation_est: [],
-          conduites: [],
-          situations: [],
-          situation_autre: "",
-
-          // EPI
-          epi_sans_additionnel: false,
-          epi_simples: [],
-          epi_autre: "",
-
-          // ÉQUIPEMENT
-          equip_non_requis: false,
-          equip_checks: [],
-          equip_autre: "",
-
-          // COMMENTAIRES & PROPRIÉTAIRE
-          aucun_commentaire: false,
-          commentaires: "",
-          proprietaire_nom: "",
-          proprietaire_signature: null,
-          proprietaire_date: "",
-
-          // AUTORISATION
-          autor_q1: false,
-          autor_q2: false,
-          autor_q3: false,
-
-          sig_resp_construction_nom: "",
-          sig_resp_construction_date: "",
-          sig_resp_construction_file: null,
-
-          sig_resp_hse_nom: "",
-          sig_resp_hse_date: "",
-          sig_resp_hse_file: null,
-          cm_parkx_nom: "",
-          cm_parkx_date: "",
-          cm_parkx_file: null,
-
-          hse_parkx_nom: "",
-          hse_parkx_date: "",
-          hse_parkx_file: null,
-          // FERMETURE (hidden now)
-          ferm_q1: false,
-          ferm_q2: false,
-          ferm_q3: false,
-          ferm_q4: false,
-          ferm_q5: false,
-          ferm_q6: false,
-          ferm_suivi_detail: "",
-          ferm_resp_construction_nom: "",
-          ferm_resp_construction_date: "",
-          ferm_resp_construction_file: null,
-          ferm_resp_hse_nom: "",
-          ferm_resp_hse_date: "",
-          ferm_resp_hse_file: null,
-        };
-  }, []);
+    // FERMETURE (kept in state but not shown for contractant)
+    ferm_q1: !!permis?.ferm_q1,
+    ferm_q2: !!permis?.ferm_q2,
+    ferm_q3: !!permis?.ferm_q3,
+    ferm_q4: !!permis?.ferm_q4,
+    ferm_q5: !!permis?.ferm_q5,
+    ferm_q6: !!permis?.ferm_q6,
+    ferm_suivi_detail: permis?.ferm_suivi_detail || "",
+    ferm_resp_construction_nom: permis?.ferm_resp_construction_nom || "",
+    ferm_resp_construction_date: permis?.ferm_resp_construction_date || "",
+    ferm_resp_construction_file: permis?.ferm_resp_construction_file || null,
+    ferm_resp_hse_nom: permis?.ferm_resp_hse_nom || "",
+    ferm_resp_hse_date: permis?.ferm_resp_hse_date || "",
+    ferm_resp_hse_file: permis?.ferm_resp_hse_file || null,
+  };
 
   const { data, setData, post, processing, errors } = useForm(initialState);
 
@@ -433,11 +372,7 @@ export default function PermisSign({
 
   const validateForm = () => {
     const requiredFields = [
-      "site_id", "duree_de", "duree_a", "description",
-      "analyse_par", "date_analyse", "demandeur", "contractant",
-      "proprietaire_nom", "proprietaire_signature", "proprietaire_date",
-      "sig_resp_construction_nom", "sig_resp_construction_date", "sig_resp_construction_file",
-      "sig_resp_hse_nom", "sig_resp_hse_date", "sig_resp_hse_file"
+      "hse_parkx_nom", "hse_parkx_date", "hse_parkx_file"
     ];
 
     for (let f of requiredFields) {
@@ -445,19 +380,6 @@ export default function PermisSign({
         alert(`Veuillez remplir le champ requis: ${f}`);
         return false;
       }
-    }
-
-    if (!data.danger_aucun && data.excavation_est.length === 0 && data.conduites.length === 0 && data.situations.length === 0) {
-      alert("Veuillez sélectionner au moins un danger particulier ou cocher 'Aucun'");
-      return false;
-    }
-    if (!data.epi_sans_additionnel && data.epi_simples.length === 0 && !data.epi_autre) {
-      alert("Veuillez sélectionner au moins un EPI ou cocher 'Sans EPI additionnel'");
-      return false;
-    }
-    if (!data.equip_non_requis && data.equip_checks.length === 0 && !data.equip_autre) {
-      alert("Veuillez sélectionner au moins une mesure d'équipement ou cocher 'non requis'");
-      return false;
     }
 
     return true;
@@ -501,7 +423,7 @@ export default function PermisSign({
                   Permis d'excavation
                 </h1>
                 <p className="text-sm text-slate-500 font-medium">
-                  Formulaire de demande et d'autorisation
+                  Validation HSE Manager ParkX
                 </p>
               </div>
             </div>
@@ -531,7 +453,7 @@ export default function PermisSign({
                 </div>
                 <div>
                   <p className="text-sm font-medium">{user?.name || "Utilisateur"}</p>
-                  <p className="text-xs text-slate-600">ParkX</p>
+                  <p className="text-xs text-slate-600">HSE Manager ParkX</p>
                 </div>
               </div>
             </div>
@@ -561,7 +483,7 @@ export default function PermisSign({
             Formulaire de Permis d'Excavation
           </h2>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-            Remplissez et signez votre permis d'excavation
+            Validation HSE Manager ParkX
           </p>
         </motion.div>
 
@@ -590,35 +512,32 @@ export default function PermisSign({
                 Numéro de Permis Général
               </label>
               <Text
+                disabled
                 value={data.numero_permis_general}
-                onChange={(e) => setData("numero_permis_general", e.target.value)}
-                placeholder="Saisir le numéro de permis général"
               />
-              <FieldError>{errors.numero_permis_general}</FieldError>
             </div>
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Numéro de Permis (Auto-généré)
+                Numéro de Permis
               </label>
               <Text
                 disabled
-                value={data.numero_permis || generatedPermitNumber}
+                value={data.numero_permis}
               />
-              <FieldError>{errors.numero_permis}</FieldError>
             </div>
           </div>
         </motion.div>
 
         <form onSubmit={onSubmit} className="space-y-6">
-          <fieldset disabled={readonly}>
+          {/* All sections are disabled except HSE Manager ParkX */}
+          <fieldset disabled={true}>
             {/* IDENTIFICATION */}
             <FormCard title="Identification">
               <Row label="Endroit / Plan">
                 <select
                   value={data.site_id}
-                  onChange={(e) => setData("site_id", e.target.value)}
-                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm outline-none transition-all duration-200 shadow-sm focus:ring-2 focus:border-indigo-500 focus:ring-indigo-200"
+                  className="w-full rounded-xl border border-gray-300 bg-gray-100 px-4 py-3 text-sm text-gray-500"
                 >
                   <option value="" disabled>
                     Choisir un site…
@@ -629,7 +548,6 @@ export default function PermisSign({
                     </option>
                   ))}
                 </select>
-                <FieldError>{errors.site_id}</FieldError>
               </Row>
 
               <Row label="Durée">
@@ -639,18 +557,14 @@ export default function PermisSign({
                     <Text
                       type="date"
                       value={data.duree_de}
-                      onChange={(e) => setData("duree_de", e.target.value)}
                     />
-                    <FieldError>{errors.duree_de}</FieldError>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">À</label>
                     <Text
                       type="date"
                       value={data.duree_a}
-                      onChange={(e) => setData("duree_a", e.target.value)}
                     />
-                    <FieldError>{errors.duree_a}</FieldError>
                   </div>
                 </div>
               </Row>
@@ -658,10 +572,8 @@ export default function PermisSign({
               <Row label="Description du travail">
                 <Area
                   value={data.description}
-                  onChange={(e) => setData("description", e.target.value)}
                   placeholder="Décrivez les travaux à réaliser..."
                 />
-                <FieldError>{errors.description}</FieldError>
               </Row>
 
               <Row label="Analyse des risques réalisée par">
@@ -670,18 +582,14 @@ export default function PermisSign({
                     <label className="block text-sm font-medium text-gray-700 mb-2">Nom</label>
                     <Text
                       value={data.analyse_par}
-                      onChange={(e) => setData("analyse_par", e.target.value)}
                     />
-                    <FieldError>{errors.analyse_par}</FieldError>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
                     <Text
                       type="date"
                       value={data.date_analyse}
-                      onChange={(e) => setData("date_analyse", e.target.value)}
                     />
-                    <FieldError>{errors.date_analyse}</FieldError>
                   </div>
                 </div>
               </Row>
@@ -689,42 +597,33 @@ export default function PermisSign({
               <Row label="Demandeur du permis">
                 <Text
                   value={data.demandeur}
-                  onChange={(e) => setData("demandeur", e.target.value)}
                 />
-                <FieldError>{errors.demandeur}</FieldError>
               </Row>
 
               <Row label="Contractant effectuant le travail">
                 <div>
                   <Text
                     value={data.contractant}
-                    onChange={(e) => setData("contractant", e.target.value)}
                   />
-                  <label className="mt-3 flex items-center gap-2 text-sm text-gray-700">
+                  <label className="mt-3 flex items-center gap-2 text-sm text-gray-500">
                     <input
                       type="checkbox"
-                      className="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                      className="h-5 w-5 rounded border-gray-300 text-gray-400"
                       checked={!!data.meme_que_demandeur}
-                      onChange={(e) => {
-                        const checked = e.target.checked;
-                        setData("meme_que_demandeur", checked);
-                        if (checked) setData("contractant", data.demandeur || "");
-                      }}
+                      readOnly
                     />
                     Même que demandeur
                   </label>
                 </div>
-                <FieldError>{errors.contractant}</FieldError>
               </Row>
             </FormCard>
 
-            {/* Rest of the form sections would follow the same pattern */}
             {/* DANGERS PARTICULIERS */}
             <FormCard title="Dangers particuliers">
               <Row label="Aucun">
                 <CheckLine
                   checked={!!data.danger_aucun}
-                  onChange={(v) => setData("danger_aucun", v)}
+                  disabled={true}
                 >
                   Aucun
                 </CheckLine>
@@ -736,8 +635,7 @@ export default function PermisSign({
                     <CheckLine
                       key={o.key}
                       checked={Array.isArray(data.excavation_est) && data.excavation_est.includes(o.key)}
-                      onChange={() => toggleArray("excavation_est", o.key)}
-                      disabled={data.danger_aucun}
+                      disabled={true}
                     >
                       {o.label}
                     </CheckLine>
@@ -751,8 +649,7 @@ export default function PermisSign({
                     <CheckLine
                       key={o.key}
                       checked={Array.isArray(data.conduites) && data.conduites.includes(o.key)}
-                      onChange={() => toggleArray("conduites", o.key)}
-                      disabled={data.danger_aucun}
+                      disabled={true}
                     >
                       {o.label}
                     </CheckLine>
@@ -766,20 +663,18 @@ export default function PermisSign({
                     <CheckLine
                       key={o.key}
                       checked={Array.isArray(data.situations) && data.situations.includes(o.key)}
-                      onChange={() => toggleArray("situations", o.key)}
-                      disabled={data.danger_aucun}
+                      disabled={true}
                     >
                       {o.label}
                     </CheckLine>
                   ))}
                   {Array.isArray(data.situations) &&
-                    data.situations.includes("autre") &&
-                    !data.danger_aucun && (
+                    data.situations.includes("autre") && (
                       <div className="pt-2">
                         <Text
                           placeholder="Autre (préciser)"
                           value={data.situation_autre}
-                          onChange={(e) => setData("situation_autre", e.target.value)}
+                          disabled={true}
                         />
                       </div>
                     )}
@@ -792,7 +687,7 @@ export default function PermisSign({
               <Row label="Sans ÉPI additionnel">
                 <CheckLine
                   checked={!!data.epi_sans_additionnel}
-                  onChange={(v) => setData("epi_sans_additionnel", v)}
+                  disabled={true}
                 >
                   Sans ÉPI additionnel
                 </CheckLine>
@@ -804,8 +699,7 @@ export default function PermisSign({
                     <CheckLine
                       key={o.key}
                       checked={Array.isArray(data.epi_simples) && data.epi_simples.includes(o.key)}
-                      onChange={() => toggleArray("epi_simples", o.key)}
-                      disabled={data.epi_sans_additionnel}
+                      disabled={true}
                     >
                       {o.label}
                     </CheckLine>
@@ -813,9 +707,8 @@ export default function PermisSign({
                   <div className="pt-2">
                     <Text
                       placeholder="Autre"
-                      disabled={data.epi_sans_additionnel}
                       value={data.epi_autre}
-                      onChange={(e) => setData("epi_autre", e.target.value)}
+                      disabled={true}
                     />
                   </div>
                 </div>
@@ -827,34 +720,30 @@ export default function PermisSign({
               <Row label="Équipement de protection additionnel non requis">
                 <CheckLine
                   checked={!!data.equip_non_requis}
-                  onChange={(v) => setData("equip_non_requis", v)}
+                  disabled={true}
                 >
                   Équipement de protection additionnel non requis
                 </CheckLine>
               </Row>
 
               <Row label="Mesures">
-                <div className={data.equip_non_requis ? "opacity-60" : ""}>
-                  <div className="space-y-2">
-                    {optEquip.map((o) => (
-                      <CheckLine
-                        key={o.key}
-                        checked={Array.isArray(data.equip_checks) && data.equip_checks.includes(o.key)}
-                        onChange={() => toggleArray("equip_checks", o.key)}
-                        disabled={data.equip_non_requis}
-                      >
-                        {o.label}
-                      </CheckLine>
-                    ))}
-                  </div>
+                <div className="space-y-2">
+                  {optEquip.map((o) => (
+                    <CheckLine
+                      key={o.key}
+                      checked={Array.isArray(data.equip_checks) && data.equip_checks.includes(o.key)}
+                      disabled={true}
+                    >
+                      {o.label}
+                    </CheckLine>
+                  ))}
                   <div className="pt-2">
                     <Text
                       placeholder="Autre"
-                      disabled={data.equip_non_requis}
                       value={data.equip_autre}
-                      onChange={(e) => setData("equip_autre", e.target.value)}
+                      disabled={true}
                     />
-                  </div>
+                    </div>
                 </div>
               </Row>
             </FormCard>
@@ -864,7 +753,7 @@ export default function PermisSign({
               <Row label="Aucun commentaire">
                 <CheckLine
                   checked={!!data.aucun_commentaire}
-                  onChange={(v) => setData("aucun_commentaire", v)}
+                  disabled={true}
                 >
                   Aucun commentaire additionnel ou recommandation
                 </CheckLine>
@@ -873,9 +762,8 @@ export default function PermisSign({
               <Row label="Commentaires">
                 <Area
                   rows={3}
-                  disabled={data.aucun_commentaire}
                   value={data.commentaires}
-                  onChange={(e) => setData("commentaires", e.target.value)}
+                  disabled={true}
                   placeholder="Ajoutez des commentaires ou recommandations..."
                 />
               </Row>
@@ -886,19 +774,20 @@ export default function PermisSign({
                     <label className="block text-sm font-medium text-gray-700 mb-2">Nom</label>
                     <Text
                       value={data.proprietaire_nom}
-                      onChange={(e) => setData("proprietaire_nom", e.target.value)}
+                      disabled={true}
                     />
-                    <FieldError>{errors.proprietaire_nom}</FieldError>
                   </div>
 
                   <div>
-                    <SignaturePicker
-                      id="prop_sig"
-                      label="Signature"
-                      value={data.proprietaire_signature}
-                      onChange={(f) => setData("proprietaire_signature", f)}
-                      error={errors.proprietaire_signature}
-                    />
+                    {data.proprietaire_signature && (
+                      <img
+                        src={data.proprietaire_signature instanceof File 
+                          ? URL.createObjectURL(data.proprietaire_signature) 
+                          : `/storage/${data.proprietaire_signature}`}
+                        alt="Signature propriétaire"
+                        className="h-24 w-auto rounded-xl border border-gray-200 bg-white shadow-sm"
+                      />
+                    )}
                   </div>
 
                   <div>
@@ -906,9 +795,8 @@ export default function PermisSign({
                     <Text
                       type="date"
                       value={data.proprietaire_date}
-                      onChange={(e) => setData("proprietaire_date", e.target.value)}
+                      disabled={true}
                     />
-                    <FieldError>{errors.proprietaire_date}</FieldError>
                   </div>
                 </div>
               </Row>
@@ -920,19 +808,19 @@ export default function PermisSign({
                 <div className="space-y-3">
                   <CheckLine
                     checked={!!data.autor_q1}
-                    onChange={(v) => setData("autor_q1", v)}
+                    disabled={true}
                   >
                     Les infrastructures souterraines sont identifiées et marquées sur le terrain.
                   </CheckLine>
                   <CheckLine
                     checked={!!data.autor_q2}
-                    onChange={(v) => setData("autor_q2", v)}
+                    disabled={true}
                   >
                     Les mesures temporaires (barricades, signaux…) sont installées pour protéger la zone.
                   </CheckLine>
                   <CheckLine
                     checked={!!data.autor_q3}
-                    onChange={(v) => setData("autor_q3", v)}
+                    disabled={true}
                   >
                     L'impact sur la circulation a été évalué et les permis requis ont été demandés.
                   </CheckLine>
@@ -945,30 +833,29 @@ export default function PermisSign({
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Nom</label>
                       <Text
-                        placeholder="Nom"
                         value={data.sig_resp_construction_nom}
-                        onChange={(e) => setData("sig_resp_construction_nom", e.target.value)}
+                        disabled={true}
                       />
-                      <FieldError>{errors.sig_resp_construction_nom}</FieldError>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
                       <Text
                         type="date"
                         value={data.sig_resp_construction_date}
-                        onChange={(e) => setData("sig_resp_construction_date", e.target.value)}
+                        disabled={true}
                       />
-                      <FieldError>{errors.sig_resp_construction_date}</FieldError>
                     </div>
                   </div>
 
-                  <SignaturePicker
-                    id="sig_resp_construction"
-                    label="Signature"
-                    value={data.sig_resp_construction_file}
-                    onChange={(f) => setData("sig_resp_construction_file", f)}
-                    error={errors.sig_resp_construction_file}
-                  />
+                  {data.sig_resp_construction_file && (
+                    <img
+                      src={data.sig_resp_construction_file instanceof File 
+                        ? URL.createObjectURL(data.sig_resp_construction_file) 
+                        : `/storage/${data.sig_resp_construction_file}`}
+                      alt="Signature responsable construction"
+                      className="h-24 w-auto rounded-xl border border-gray-200 bg-white shadow-sm"
+                    />
+                  )}
                 </div>
               </Row>
 
@@ -978,85 +865,95 @@ export default function PermisSign({
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Nom</label>
                       <Text
-                        placeholder="Nom"
                         value={data.sig_resp_hse_nom}
-                        onChange={(e) => setData("sig_resp_hse_nom", e.target.value)}
+                        disabled={true}
                       />
-                      <FieldError>{errors.sig_resp_hse_nom}</FieldError>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
                       <Text
                         type="date"
                         value={data.sig_resp_hse_date}
-                        onChange={(e) => setData("sig_resp_hse_date", e.target.value)}
+                        disabled={true}
                       />
-                      <FieldError>{errors.sig_resp_hse_date}</FieldError>
                     </div>
                   </div>
 
-                  <SignaturePicker
-                    id="sig_resp_hse"
-                    label="Signature"
-                    value={data.sig_resp_hse_file}
-                    onChange={(f) => setData("sig_resp_hse_file", f)}
-                    error={errors.sig_resp_hse_file}
-                  />
+                  {data.sig_resp_hse_file && (
+                    <img
+                      src={data.sig_resp_hse_file instanceof File 
+                        ? URL.createObjectURL(data.sig_resp_hse_file) 
+                        : `/storage/${data.sig_resp_hse_file}`}
+                      alt="Signature responsable HSE"
+                      className="h-24 w-auto rounded-xl border border-gray-200 bg-white shadow-sm"
+                    />
+                  )}
+                </div>
+              </Row>
+            </FormCard>
+
+            {/* Construction Manager ParkX - Disabled */}
+            <FormCard title="Validation ParkX">
+              <Row label="Construction manager ParkX">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 opacity-60">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Nom</label>
+                      <Text
+                        placeholder="Nom (à compléter par ParkX)"
+                        value={data.cm_parkx_nom || ""}
+                        disabled={true}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                      <Text
+                        type="date"
+                        value={data.cm_parkx_date || ""}
+                        disabled={true}
+                      />
+                    </div>
+                  </div>
+                  {data.cm_parkx_file && (
+                    <img
+                      src={data.cm_parkx_file instanceof File 
+                        ? URL.createObjectURL(data.cm_parkx_file) 
+                        : `/storage/${data.cm_parkx_file}`}
+                      alt="Signature CM ParkX"
+                      className="h-24 w-auto rounded-xl border border-gray-200 bg-white shadow-sm"
+                    />
+                  )}
                 </div>
               </Row>
             </FormCard>
           </fieldset>
 
-          {/* ParkX Signatures */}
-          <FormCard title="Validation ParkX">
-            <Row label="Construction manager ParkX">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Nom</label>
-                    <Text
-                      placeholder="Nom (à compléter par ParkX)"
-                      value={data.cm_parkx_nom || ""}
-                      onChange={(e) => setData("cm_parkx_nom", e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
-                    <Text
-                      type="date"
-                      value={data.cm_parkx_date || ""}
-                      onChange={(e) => setData("cm_parkx_date", e.target.value)}
-                    />
-                  </div>
-                </div>
-                <SignaturePicker
-                  id="sig_cm_parkx"
-                  label="Signature"
-                  value={data.cm_parkx_file}
-                  onChange={(f) => setData("cm_parkx_file", f)}
-                  error={errors.cm_parkx_file}
-                />
-              </div>
-            </Row>
-
+          {/* HSE Manager ParkX - Editable */}
+          <FormCard title="Validation HSE Manager ParkX">
             <Row label="HSE Manager ParkX">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Nom</label>
                     <Text
+                      ref={hseParkxNomRef}
                       placeholder="Nom (à compléter par ParkX)"
                       value={data.hse_parkx_nom || ""}
                       onChange={(e) => setData("hse_parkx_nom", e.target.value)}
+                      onFocus={(e) => e.target.select()}
                     />
+                    <FieldError>{errors.hse_parkx_nom}</FieldError>
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Date</label>
                     <Text
                       type="date"
+                      ref={hseParkxDateRef}
                       value={data.hse_parkx_date || ""}
                       onChange={(e) => setData("hse_parkx_date", e.target.value)}
+                      onFocus={(e) => e.target.select()}
                     />
+                    <FieldError>{errors.hse_parkx_date}</FieldError>
                   </div>
                 </div>
                 <SignaturePicker

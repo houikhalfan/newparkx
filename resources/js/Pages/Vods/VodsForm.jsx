@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import Swal from 'sweetalert2';
 
-export default function VodsForm() {
+export default function VodsForm( {projects = [] }) {
   const { auth, flash: _flash } = usePage().props;
   const flash = _flash || {};
 
@@ -52,7 +52,7 @@ export default function VodsForm() {
 
   const [header, setHeader] = useState({
     date: '', // set on mount
-    projet: '',
+ project_id: '',
     activite: '',
     observateur: auth?.user?.name || '',
     personnesObservees: [''],
@@ -130,10 +130,9 @@ export default function VodsForm() {
   const validateForm = () => {
     const newErrors = {};
     if (!header.date) newErrors.date = "La date est requise.";
-    if (!header.projet) newErrors.projet = "Le projet est requis.";
+if (!header.project_id) newErrors.project_id = "Le projet est requis.";
     if (!header.activite) newErrors.activite = "L\'activité est requise.";
 
-    if (header.projet && !onlyLetters(header.projet)) newErrors.projet = "Le projet ne doit contenir que des lettres et des espaces.";
     if (header.activite && !onlyLetters(header.activite)) newErrors.activite = "L\'activité ne doit contenir que des lettres et des espaces.";
 
     if (!header.personnesObservees[0]) newErrors.personnesObservees = "Au moins une personne observée est requise.";
@@ -177,10 +176,18 @@ export default function VodsForm() {
 
     const formData = new FormData();
 
-    Object.entries(header).forEach(([key, val]) => {
-      if (Array.isArray(val)) val.forEach((v, i) => formData.append(`${key}[${i}]`, v));
-      else formData.append(key, val);
-    });
+  Object.entries(header).forEach(([key, val]) => {
+  if (key === "project_id") {
+    formData.append(key, parseInt(val, 10)); // force int
+  } else if (Array.isArray(val)) {
+    val.forEach((v, i) => formData.append(`${key}[${i}]`, v));
+  } else {
+    formData.append(key, val);
+  }
+});
+
+
+
 
     pratiques.forEach((p, i) => {
       formData.append(`pratiques[${i}][text]`, p.text || '');
@@ -216,7 +223,7 @@ export default function VodsForm() {
       onSuccess: async () => {
         setHeader({
           date: todayIso,
-          projet: '',
+          project_id: '',
           activite: '',
           observateur: auth?.user?.name || '',
           personnesObservees: [''],
@@ -376,35 +383,38 @@ export default function VodsForm() {
               error={errors.date}
               input={
                 <div className="relative">
-                  <input
-                    type="date"
-                    value={header.date}
-                    onChange={(e) => setHeader({ ...header, date: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300"
-                    required
-                    aria-invalid={!!errors.date}
-                  />
-                  <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <input
+  type="date"
+  value={header.date}
+  onChange={(e) => setHeader({ ...header, date: e.target.value })}
+  className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300"
+  required
+/>
+
+<Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
                 </div>
               }
             />
 
-            <Field
-              label="Projet"
-              error={errors.projet}
-              input={
-                <input
-                  type="text"
-                  placeholder="Projet"
-                  value={header.projet}
-                  onChange={(e) => setHeader({ ...header, projet: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300"
-                  {...lettersOnlyProps}
-                  required
-                  aria-invalid={!!errors.projet}
-                />
-              }
-            />
+         <Field
+  label="Projet"
+  error={errors.project_id}
+  input={
+    <select
+      value={header.project_id || ""}
+      onChange={(e) => setHeader({ ...header, project_id: e.target.value })}
+      className="w-full px-4 py-3 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300"
+      required
+      aria-invalid={!!errors.project_id}
+    >
+      <option value="">-- Sélectionner un projet --</option>
+      {projects?.map((p) => (
+        <option key={p.id} value={p.id}>{p.name}</option>
+      ))}
+    </select>
+  }
+/>
+
 
             <Field
               label="Activité"

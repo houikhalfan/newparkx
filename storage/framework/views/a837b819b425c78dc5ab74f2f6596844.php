@@ -1,9 +1,9 @@
-{{-- resources/views/pdf/vod.blade.php --}}
+
 <!doctype html>
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <title>VOD #{{ $vod->id }}</title>
+  <title>VOD #<?php echo e($vod->id); ?></title>
   <style>
     body { font-family: Arial, sans-serif; font-size: 10pt; color:#000; line-height:1.4; }
 
@@ -74,7 +74,7 @@
   </style>
 </head>
 <body>
-@php
+<?php
     // Date d’émission (création du VOD) ou aujourd’hui
     $emission = $vod->created_at
         ? \Carbon\Carbon::parse($vod->created_at)->format('d/m/Y')
@@ -89,20 +89,20 @@
         try { $dateVisite = \Carbon\Carbon::parse($d)->format('d/m/Y'); }
         catch (\Throwable $e) { $dateVisite = (string)$d; }
     }
-@endphp
+?>
 
 <!-- Bandeau top -->
 <table class="topbar">
   <tr>
     <td class="logo">
-      <img src="{{ public_path('images/logo.png') }}" alt="Logo" style="max-height:50px; border:none;">
+      <img src="<?php echo e(public_path('images/logo.png')); ?>" alt="Logo" style="max-height:50px; border:none;">
     </td>
     <td class="title">
       <div class="title-main">Formulaire</div>
       <div>« Visites Observation et ronde HSE »</div>
     </td>
     <td class="meta">
-      <div>Date d’émission<br><strong>{{ $emission }}</strong></div>
+      <div>Date d’émission<br><strong><?php echo e($emission); ?></strong></div>
     </td>
   </tr>
 </table>
@@ -113,29 +113,30 @@
 <div class="section-bar">Informations</div>
 <table class="info-grid">
   <tr>
-    <td class="w-33"><strong>Date :</strong> {{ $dateVisite }}</td>
+    <td class="w-33"><strong>Date :</strong> <?php echo e($dateVisite); ?></td>
 <td class="w-33">
   <strong>Projet :</strong>
-  {{ $vod->project->name ?? '—' }}
+  <?php echo e($vod->project->name ?? '—'); ?>
+
 </td>
-    <td class="w-33"><strong>Activité :</strong> {{ $vod->activite }}</td>
+    <td class="w-33"><strong>Activité :</strong> <?php echo e($vod->activite); ?></td>
   </tr>
   <tr>
-    <td class="w-33"><strong>Observateur :</strong> {{ $vod->observateur }}</td>
+    <td class="w-33"><strong>Observateur :</strong> <?php echo e($vod->observateur); ?></td>
     <td class="w-33">
       <strong>Personnes observées :</strong><br>
       <div class="muted">
-        @foreach ($vod->personnes_observees ?? [] as $p)
-          • {{ $p }}<br>
-        @endforeach
+        <?php $__currentLoopData = $vod->personnes_observees ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+          • <?php echo e($p); ?><br>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
       </div>
     </td>
     <td class="w-33">
       <strong>Entreprise observée :</strong><br>
       <div class="muted">
-        @foreach ($vod->entreprise_observee ?? [] as $e)
-          • {{ $e }}<br>
-        @endforeach
+        <?php $__currentLoopData = $vod->entreprise_observee ?? []; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $e): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+          • <?php echo e($e); ?><br>
+        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
       </div>
     </td>
   </tr>
@@ -143,96 +144,97 @@
 
 <!-- Bonnes pratiques -->
 <div class="section-bar">Bonnes pratiques</div>
-@if (!empty($vod->pratiques))
+<?php if(!empty($vod->pratiques)): ?>
   <table class="hlist">
     <tbody>
-      @foreach ($vod->pratiques as $p)
+      <?php $__currentLoopData = $vod->pratiques; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $p): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <tr>
           <td class="label">Description</td>
-          <td>{{ $p['text'] ?? '' }}</td>
+          <td><?php echo e($p['text'] ?? ''); ?></td>
         </tr>
-        @if (!empty($p['photo']))
+        <?php if(!empty($p['photo'])): ?>
           <tr>
             <td colspan="2">
-              <img class="photo-wide" src="{{ public_path('storage/' . $p['photo']) }}" alt="">
+              <img class="photo-wide" src="<?php echo e(public_path('storage/' . $p['photo'])); ?>" alt="">
             </td>
           </tr>
-        @endif
-        @if (!$loop->last)
+        <?php endif; ?>
+        <?php if(!$loop->last): ?>
           <tr><td class="spacer" colspan="2" style="padding:4px 0;"></td></tr>
-        @endif
-      @endforeach
+        <?php endif; ?>
+      <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     </tbody>
   </table>
-@else
+<?php else: ?>
   <div class="muted">Aucune.</div>
-@endif
+<?php endif; ?>
 
 <!-- Comportements dangereux -->
 <div class="section-bar">Comportements dangereux</div>
-@if (!empty($vod->comportements))
+<?php if(!empty($vod->comportements)): ?>
   <table class="hlist">
     <tbody>
-      @foreach ($vod->comportements as $c)
+      <?php $__currentLoopData = $vod->comportements; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $c): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
         <tr>
           <td class="label">Type</td>
-          <td>{{ $c['type'] ?? '' }}</td>
+          <td><?php echo e($c['type'] ?? ''); ?></td>
         </tr>
         <tr>
           <td class="label">Description</td>
-          <td>{{ $c['description'] ?? '' }}</td>
+          <td><?php echo e($c['description'] ?? ''); ?></td>
         </tr>
-        @if (!empty($c['photo']))
+        <?php if(!empty($c['photo'])): ?>
           <tr>
             <td colspan="2">
-              <img class="photo-wide" src="{{ public_path('storage/' . $c['photo']) }}" alt="">
+              <img class="photo-wide" src="<?php echo e(public_path('storage/' . $c['photo'])); ?>" alt="">
             </td>
           </tr>
-        @endif
-        @if (!$loop->last)
+        <?php endif; ?>
+        <?php if(!$loop->last): ?>
           <tr><td class="spacer" colspan="2" style="padding:4px 0;"></td></tr>
-        @endif
-      @endforeach
+        <?php endif; ?>
+      <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
     </tbody>
   </table>
-@else
+<?php else: ?>
   <div class="muted">Aucun.</div>
-@endif
+<?php endif; ?>
 
 <!-- Conditions dangereuses -->
 <div class="section-bar">
   Conditions dangereuses
   <br><small>Cocher en cas de détection d'une ou plusieurs anomalies.</small>
 </div>
-@php $conds = $vod->conditions ?? []; @endphp
-@if (!empty($conds))
+<?php $conds = $vod->conditions ?? []; ?>
+<?php if(!empty($conds)): ?>
   <ul>
-    @foreach ($conds as $k => $v)
-      @if ($v) <li>{{ $k }}</li> @endif
-    @endforeach
+    <?php $__currentLoopData = $conds; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $k => $v): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+      <?php if($v): ?> <li><?php echo e($k); ?></li> <?php endif; ?>
+    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
   </ul>
-@else
+<?php else: ?>
   <div class="muted">Aucune.</div>
-@endif
+<?php endif; ?>
 
 <!-- Actions correctives -->
 <div class="section-bar">Actions correctives</div>
-@php $corr = $vod->correctives ?? []; @endphp
-@if (!empty($corr))
-  @foreach ($corr as $k => $fields)
+<?php $corr = $vod->correctives ?? []; ?>
+<?php if(!empty($corr)): ?>
+  <?php $__currentLoopData = $corr; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $k => $fields): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
     <div class="box">
-      <strong>{{ $k }}</strong><br>
-      @if (!empty($fields['action'])) Action : {{ $fields['action'] }}<br>@endif
-      @if (!empty($fields['responsable'])) Responsable : {{ $fields['responsable'] }}<br>@endif
-      @if (!empty($fields['statut'])) Statut : {{ $fields['statut'] }}<br>@endif
-      @if (!empty($fields['photo']))
-        <img src="{{ public_path('storage/' . $fields['photo']) }}" class="photo-wide">
-      @endif
+      <strong><?php echo e($k); ?></strong><br>
+      <?php if(!empty($fields['action'])): ?> Action : <?php echo e($fields['action']); ?><br><?php endif; ?>
+      <?php if(!empty($fields['responsable'])): ?> Responsable : <?php echo e($fields['responsable']); ?><br><?php endif; ?>
+      <?php if(!empty($fields['statut'])): ?> Statut : <?php echo e($fields['statut']); ?><br><?php endif; ?>
+      <?php if(!empty($fields['photo'])): ?>
+        <img src="<?php echo e(public_path('storage/' . $fields['photo'])); ?>" class="photo-wide">
+      <?php endif; ?>
     </div>
-  @endforeach
-@else
+  <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+<?php else: ?>
   <div class="muted">Aucune.</div>
-@endif
+<?php endif; ?>
 
 </body>
 </html>
+<?php /**PATH C:\Users\ADMIN\Pictures\newparkx\resources\views/vods/pdf.blade.php ENDPATH**/ ?>

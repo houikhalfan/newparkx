@@ -311,21 +311,22 @@ export default function SuiviPermisSite() {
                       </span>
                     </td>
 
-                    <td className="px-6 py-4">
-                      {p.pdf_signed ? (
-                        <a
-                          href={p.pdf_signed}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center px-4 py-2 rounded-xl text-white font-semibold transition-all duration-300 shadow-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:scale-105"
-                        >
-                          <Eye className="w-4 h-4 mr-2" />
-                          Voir PDF
-                        </a>
-                      ) : (
-                        <span className="text-slate-400">Non disponible</span>
-                      )}
-                    </td>
+                   <td className="px-6 py-4">
+  {p.status === "signe" && p.pdf_signed ? (
+    <a
+      href={p.pdf_signed}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center px-4 py-2 rounded-xl text-white font-semibold transition-all duration-300 shadow-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:scale-105"
+    >
+      <Eye className="w-4 h-4 mr-2" />
+      Voir PDF
+    </a>
+  ) : (
+    <span className="text-slate-400">Non disponible</span>
+  )}
+</td>
+
 
                     <td className="px-6 py-4 text-right">
                       {p.status === "en_attente" ? (
