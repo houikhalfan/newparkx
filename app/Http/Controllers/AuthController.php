@@ -119,12 +119,24 @@ class AuthController extends Controller
             'is_approved'  => false,
         ]);
 
-        // Send notification to all admins
-        $admins = \App\Models\Admin::all();
-        \Log::info('Sending contractor registration notifications to ' . $admins->count() . ' admins');
-        foreach ($admins as $admin) {
-            \Log::info('Sending contractor registration notification to admin: ' . $admin->email);
-            $admin->notify(new \App\Notifications\ContractorRegistrationNotification($contractor));
+        // Send notification to all admins (with error handling)
+        try {
+            $admins = \App\Models\Admin::all();
+            \Log::info('Sending contractor registration notifications to ' . $admins->count() . ' admins');
+            
+            foreach ($admins as $admin) {
+                try {
+                    \Log::info('Sending contractor registration notification to admin: ' . $admin->email);
+                    $admin->notify(new \App\Notifications\ContractorRegistrationNotification($contractor));
+                    \Log::info('Notification sent successfully to admin: ' . $admin->email);
+                } catch (\Exception $e) {
+                    \Log::error('Failed to send notification to admin ' . $admin->email . ': ' . $e->getMessage());
+                    // Continue with other admins even if one fails
+                }
+            }
+        } catch (\Exception $e) {
+            \Log::error('Failed to send contractor registration notifications: ' . $e->getMessage());
+            // Don't fail the registration if notifications fail
         }
 
         return back()->with('message', 'Registration submitted. Admin approval is required.');

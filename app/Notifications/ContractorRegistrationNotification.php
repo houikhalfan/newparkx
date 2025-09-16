@@ -13,6 +13,16 @@ class ContractorRegistrationNotification extends Notification
     use Queueable;
 
     protected $contractor;
+    
+    /**
+     * The number of times the job may be attempted.
+     */
+    public $tries = 3;
+    
+    /**
+     * The number of seconds the job can run before timing out.
+     */
+    public $timeout = 30;
 
     /**
      * Create a new notification instance.
@@ -54,7 +64,7 @@ class ContractorRegistrationNotification extends Notification
             ->line('- Entreprise: ' . $companyName)
             ->line('- Rôle: ' . $role)
             ->line('- Date de demande: ' . $this->contractor->created_at->format('d/m/Y à H:i'))
-            ->action('Approuver la demande', route('admin.dashboard'))
+            ->action('Approuver la demande', route('contractor.approve.public', $this->contractor->id))
             ->line('Merci d\'utiliser ParkX!');
     }
 

@@ -1,0 +1,31 @@
+[33mcommit 988d5955b8e272a9f1e502f125e4f2546cd0e9ba[m
+Author: MohammedLabtaini <mohammed.labtaini@emsi-edu.ma>
+Date:   Mon Sep 15 05:13:43 2025 +0100
+
+    Front of Contractor (Dashboard-Doc_Stats) & Profil & Repport Removed
+
+app/Http/Controllers/Admin/DocumentController.php
+app/Http/Controllers/Admin/SignatureRequestController.php
+app/Http/Controllers/Admin/StatisticsController.php
+app/Http/Controllers/AdminController.php
+app/Http/Controllers/Contractant/StatisticsController.php
+app/Http/Controllers/ContractantController.php
+app/Http/Middleware/AdminAuth.php
+app/Models/HseStat.php
+app/Notifications/HseStatisticsSubmitted.php
+database/migrations/2025_09_15_000000_add_youssoufia_site_and_fix_site_linking.php
+database/migrations/2025_09_15_040314_remove_inspection_report_from_hse_stats_table.php
+database/seeders/AdminSeeder.php
+resources/js/Components/ContractantSidebar.jsx
+resources/js/Components/ContractantTopHeader.jsx
+resources/js/Pages/Admin/HseStatistics/Show.jsx
+resources/js/Pages/Contractant/Documents/Index.jsx
+resources/js/Pages/Contractant/Home.jsx
+resources/js/Pages/Contractant/HseStatistics/Edit.jsx
+resources/js/Pages/Contractant/HseStatistics/History.jsx
+resources/js/Pages/Contractant/HseStatistics/Index.jsx
+resources/js/Pages/Contractant/HseStatistics/Show.jsx
+resources/js/Pages/Contractant/Profile.jsx
+resources/js/Pages/ContractantLayout.jsx
+resources/js/ziggy.js
+routes/web.php

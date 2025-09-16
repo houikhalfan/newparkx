@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contractor;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -12,7 +13,10 @@ class ContractorAuthController extends Controller
 {
     // Optional: if you want a dedicated contractor login page
     public function showLogin() {
-        return Inertia::render('Welcome'); // you already show both tabs there
+        $projects = Project::with('site')->get();
+        return Inertia::render('Welcome', [
+            'projects' => $projects
+        ]); // you already show both tabs there
     }
 
     // POST /contractant/login

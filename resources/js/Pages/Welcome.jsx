@@ -101,6 +101,10 @@ export default function Welcome() {
   const { props } = usePage();
   const flashMessage = props?.flash?.message || props?.flash?.success || props?.flash?.info;
   const projects = props?.projects || [];
+  
+  // Debug logging
+  console.log('Welcome page - Projects received:', projects);
+  console.log('Welcome page - Projects count:', projects.length);
 
   // Forms
   const loginForm = useForm({ email: '', password: '' });
@@ -571,11 +575,15 @@ export default function Welcome() {
                               className="mt-2 w-full px-4 py-4 bg-white/15 backdrop-blur-sm border-2 border-white/30 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all font-medium"
                             >
                               <option value="" className="bg-slate-800">Sélectionner un projet</option>
-                              {projects.map((project) => (
-                                <option key={project.id} value={project.id} className="bg-slate-800">
-                                  {project.name} - {project.site?.name || 'Site non spécifié'}
-                                </option>
-                              ))}
+                              {projects.length > 0 ? (
+                                projects.map((project) => (
+                                  <option key={project.id} value={project.id} className="bg-slate-800">
+                                    {project.name} - {project.site?.name || 'Site non spécifié'}
+                                  </option>
+                                ))
+                              ) : (
+                                <option value="" className="bg-slate-800" disabled>Aucun projet disponible</option>
+                              )}
                             </select>
                             {signupForm.errors?.project_id && (
                               <motion.p

@@ -52,7 +52,7 @@ use App\Http\Controllers\Admin\StatisticsController as AdminStatsController;
 |--------------------------------------------------------------------------
 */
 Route::get('/', [AuthController::class, 'welcome'])->name('home');
-Route::get('/login', fn () => Inertia::render('Welcome'))->name('login');
+Route::get('/login', [AuthController::class, 'welcome'])->name('login');
 
 Route::post('/login', [AuthController::class, 'login'])->name('login.attempt');
 Route::post('/contractor/register', [AuthController::class, 'contractorRegister'])->name('contractor.register');
@@ -178,6 +178,9 @@ $isHseResponsible = \App\Models\Site::where('responsible_hse_id', $user->id)->ex
 // Public QR verification
 Route::get('/verify/material/{token}', [\App\Http\Controllers\QrVerifyController::class, 'material'])->name('qr.material');
 
+// Public contractor approval route (for email links)
+Route::post('/contractor/{id}/approve', [AdminController::class, 'approveContractorPublic'])->whereNumber('id')->name('contractor.approve.public');
+
 /*
 |--------------------------------------------------------------------------
 | ADMIN ROUTES
@@ -230,6 +233,11 @@ Route::get('/permis', [PermisAdminController::class, 'index'])
         Route::post('/contractors/{id}/approve', [AdminController::class, 'approveContractor'])->whereNumber('id')->name('contractors.approve');
         Route::post('/contractors/{id}/reject',  [AdminController::class, 'rejectContractor'])->whereNumber('id')->name('contractors.reject');
         Route::post('/contractors/{id}/delete',  [AdminController::class, 'deleteApprovedContractor'])->whereNumber('id')->name('contractors.delete');
+
+        // Notifications
+        Route::get('/notifications', [AdminController::class, 'getNotifications'])->name('notifications.index');
+        Route::post('/notifications/{id}/read', [AdminController::class, 'markNotificationAsRead'])->whereNumber('id')->name('notifications.read');
+        Route::post('/notifications/mark-all-read', [AdminController::class, 'markAllNotificationsAsRead'])->name('notifications.mark-all-read');
 
         // Admin signatures
         Route::get ('/signatures',                        [AdminSignCtrl::class, 'index'])->name('signatures.index');

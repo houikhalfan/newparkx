@@ -259,4 +259,58 @@ public function home()
     ]);
 }
 
+    /**
+     * Get admin notifications
+     */
+    public function getNotifications()
+    {
+        $admin = Auth::guard('admin')->user();
+        if (!$admin) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $notifications = $admin->notifications()
+            ->orderBy('created_at', 'desc')
+            ->limit(50)
+            ->get();
+
+        $unreadCount = $admin->unreadNotifications()->count();
+
+        return response()->json([
+            'notifications' => $notifications,
+            'unread_count' => $unreadCount
+        ]);
+    }
+
+    /**
+     * Mark notification as read
+     */
+    public function markNotificationAsRead($id)
+    {
+        $admin = Auth::guard('admin')->user();
+        if (!$admin) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $notification = $admin->notifications()->findOrFail($id);
+        $notification->markAsRead();
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * Mark all notifications as read
+     */
+    public function markAllNotificationsAsRead()
+    {
+        $admin = Auth::guard('admin')->user();
+        if (!$admin) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $admin->unreadNotifications()->update(['read_at' => now()]);
+
+        return response()->json(['success' => true]);
+    }
+
 }
