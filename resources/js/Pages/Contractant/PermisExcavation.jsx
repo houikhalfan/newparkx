@@ -11,13 +11,13 @@ import { FileText, Calendar, Download, Search, X } from 'lucide-react';
 const BRAND = "#0E8A5D"; // ParkX green
 
 const FormCard = ({ title, children }) => (
-  <div className="rounded-2xl border border-gray-200 bg-white shadow-lg overflow-hidden mb-6">
-    <div className="px-6 py-3 bg-gray-50 border-b border-gray-200">
-      <h2 className="text-sm font-semibold tracking-wide text-gray-800 uppercase">
+  <div className="rounded-3xl border border-blue-200/50 bg-white/90 backdrop-blur-xl shadow-2xl overflow-hidden mb-8">
+    <div className="px-6 py-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-b border-blue-200/50">
+      <h2 className="text-sm font-bold tracking-wide text-gray-800 uppercase">
         {title}
       </h2>
     </div>
-    <div className="p-6 bg-white">{children}</div>
+    <div className="p-8 bg-white/95">{children}</div>
   </div>
 );
 
@@ -36,9 +36,9 @@ const Row = ({ label, children, className = "" }) => (
 );
 
 const inputBase =
-  "w-full rounded-lg px-4 py-2.5 text-sm outline-none transition-all duration-300 shadow-sm border border-gray-300 text-gray-800 placeholder-gray-500";
+  "w-full rounded-xl px-4 py-3 text-sm outline-none transition-all duration-300 shadow-sm border border-gray-300 text-gray-800 placeholder-gray-500";
 const inputActive =
-  "bg-white focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/30";
+  "bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50";
 const inputDisabled = "bg-gray-100 text-gray-500";
 
 const Text = ({ disabled, ...rest }) => (
@@ -70,7 +70,7 @@ const CheckLine = ({ children, checked, onChange, disabled }) => (
   >
     <input
       type="checkbox"
-      className="mt-0.5 h-4 w-4 rounded border-gray-300 text-cyan-600 focus:ring-cyan-500"
+      className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
       checked={!!checked}
       onChange={(e) => onChange?.(e.target.checked)}
       disabled={disabled}
@@ -438,12 +438,20 @@ export default function PermisExcavation() {
 
   /* ----------------------------------- UI ---------------------------------- */
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-cyan-900 to-emerald-900 relative overflow-hidden flex">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden flex">
       <div className="absolute inset-0 overflow-hidden">
-  <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 rounded-full blur-3xl animate-pulse" />
-  <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse" />
-  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl animate-pulse" />
+  <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl animate-pulse" />
+  <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-200/30 to-pink-200/30 rounded-full blur-3xl animate-pulse" />
+  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-cyan-200/20 to-blue-200/20 rounded-full blur-3xl animate-pulse" />
 </div>
+
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(59,130,246,0.2) 1px, transparent 0)`,
+            backgroundSize: '50px 50px'
+          }} />
+        </div>
       {/* Sidebar */}
       <ContractantSidebar />
 
@@ -467,7 +475,7 @@ export default function PermisExcavation() {
               className="relative z-10 px-6 mb-6"
             >
               <div className="max-w-7xl mx-auto">
-                <div className="bg-green-100 border border-green-400 rounded-xl p-4 flex items-center space-x-3">
+                <div className="bg-green-50 backdrop-blur-sm border border-green-200 rounded-xl p-4 flex items-center space-x-3 shadow-lg">
                   <FileText className="w-5 h-5 text-green-600" />
                   <p className="text-green-700 font-medium">{flash.success}</p>
                 </div>
@@ -476,25 +484,20 @@ export default function PermisExcavation() {
           )}
         </AnimatePresence>
 
-        <div className="relative z-10 px-6 pb-12 flex-1" style={{
-  background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
-  backdropFilter: 'blur(20px)',
-  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)'
-}}>
+        <div className="relative z-10 px-6 pb-12 flex-1 pt-8">
           <div className="max-w-7xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-center mb-8"
-           
-           >
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                  <span className="bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">Permis D'Excavation</span>
-                </h1>
-
-              <p className="text-gray-300 text-lg">
-Remplissez et soumettez votre permis d'excavation</p>
+              className="text-center mb-12"
+            >
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Permis D'Excavation</span>
+              </h1>
+              <p className="text-gray-600 text-lg">
+                Remplissez et soumettez votre permis d'excavation
+              </p>
 
 
             </motion.div>
@@ -1174,9 +1177,9 @@ Remplissez et soumettez votre permis d'excavation</p>
                   <motion.button
                     type="submit"
                     disabled={processing}
-                    whileHover={{ scale: 1.05 }}
+                    whileHover={{ scale: 1.05, y: -2 }}
                     whileTap={{ scale: 0.95 }}
-                    className="rounded-lg px-6 py-3 text-sm font-semibold text-white bg-cyan-600 hover:bg-cyan-700 shadow transition disabled:opacity-60"
+                    className="rounded-xl px-8 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-60"
                   >
                     {processing ? "Envoi…" : "Soumettre"}
                   </motion.button>

@@ -352,6 +352,11 @@ Route::prefix('contractant')->name('contractant.')->group(function () {
         Route::get('/documents/{document}/download', [ContractantController::class, 'downloadDocument'])->whereNumber('document')->name('documents.download');
         Route::get('/depot-signatures', [ContractantController::class, 'depot'])->name('depot');
 
+        // ✅ Permis index (selection page)
+        Route::get('/permis', function () {
+            return Inertia::render('Contractant/Permis/Index');
+        })->name('permis.selection');
+
 // ✅ Suivi des permis
 Route::get('/suivi-permis', [PermisExcavationController::class, 'index'])
     ->name('suivi-permis.index');

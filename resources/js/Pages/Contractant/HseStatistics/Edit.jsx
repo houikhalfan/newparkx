@@ -330,18 +330,18 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
         <>
             <Head title="Modifier Statistiques HSE" />
 
-            <div className="min-h-screen bg-gradient-to-br from-gray-900 via-cyan-900 to-emerald-900 relative overflow-hidden flex">
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden flex">
                 {/* Animated Background */}
                 <div className="absolute inset-0 overflow-hidden">
-                    <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 rounded-full blur-3xl animate-pulse" />
-                    <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse" />
-                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl animate-pulse" />
+                    <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse" />
+                    <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse" />
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-indigo-500/10 to-blue-500/10 rounded-full blur-3xl animate-pulse" />
                 </div>
 
                 {/* Grid Pattern */}
                 <div className="absolute inset-0 opacity-10">
                     <div className="absolute inset-0" style={{
-                        backgroundImage: `radial-gradient(circle at 1px 1px, rgba(6,182,212,0.3) 1px, transparent 0)`,
+                        backgroundImage: `radial-gradient(circle at 1px 1px, rgba(59,130,246,0.3) 1px, transparent 0)`,
                         backgroundSize: '50px 50px'
                     }} />
                 </div>
@@ -369,12 +369,12 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                 transition={{ duration: 0.8 }}
                                 className="text-center mb-12"
                             >
-                                <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                                    <span className="bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+                                <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+                                    <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                                         Modifier Statistiques HSE
                                     </span>
                                 </h1>
-                                <p className="text-gray-300 text-lg">
+                                <p className="text-gray-600 text-lg">
                                     Modifiez vos statistiques de santé, sécurité et environnement
                                 </p>
                             </motion.div>
@@ -386,7 +386,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 0.2 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl"
+                                    className="bg-white/80 backdrop-blur-xl border border-blue-200/50 rounded-2xl p-6 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -394,11 +394,11 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                 >
                                     <div className="flex items-center justify-between">
                                     <div>
-                                            <p className="text-sm font-medium text-gray-300 mb-1">Total Heures</p>
-                                            <p className="text-3xl font-bold text-cyan-300">{totalHeures.toFixed(2)}</p>
+                                            <p className="text-sm font-medium text-gray-600 mb-1">Total Heures</p>
+                                            <p className="text-3xl font-bold text-gray-800">{totalHeures.toFixed(2)}</p>
                                     </div>
                                         <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center">
-                                            <Clock className="w-6 h-6 text-white" />
+                                            <Clock className="w-6 h-6 text-gray-800" />
                                         </div>
                                     </div>
                                 </motion.div>
@@ -408,7 +408,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 0.3 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl"
+                                    className="bg-white/80 backdrop-blur-xl border border-blue-200/50 rounded-2xl p-6 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -416,11 +416,11 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                 >
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-sm font-medium text-gray-300 mb-1">Total Accidents</p>
-                                            <p className="text-3xl font-bold text-red-300">{totalAccidents}</p>
+                                            <p className="text-sm font-medium text-gray-600 mb-1">Total Accidents</p>
+                                            <p className="text-3xl font-bold text-red-600">{totalAccidents}</p>
                                     </div>
                                         <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
-                                            <AlertTriangle className="w-6 h-6 text-white" />
+                                            <AlertTriangle className="w-6 h-6 text-gray-800" />
                                 </div>
                             </div>
                                 </motion.div>
@@ -430,7 +430,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 0.4 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl"
+                                    className="bg-white/80 backdrop-blur-xl border border-blue-200/50 rounded-2xl p-6 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -438,11 +438,11 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                 >
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-sm font-medium text-gray-300 mb-1">Formations</p>
-                                            <p className="text-3xl font-bold text-emerald-300">{totalFormations}</p>
+                                            <p className="text-sm font-medium text-gray-600 mb-1">Formations</p>
+                                            <p className="text-3xl font-bold text-green-600">{totalFormations}</p>
                                         </div>
                                         <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
-                                            <Users className="w-6 h-6 text-white" />
+                                            <Users className="w-6 h-6 text-gray-800" />
                                         </div>
                                     </div>
                                 </motion.div>
@@ -452,7 +452,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 0.5 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl"
+                                    className="bg-white/80 backdrop-blur-xl border border-blue-200/50 rounded-2xl p-6 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -460,11 +460,11 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                 >
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-sm font-medium text-gray-300 mb-1">Inspections</p>
-                                            <p className="text-3xl font-bold text-purple-300">{totalInspectionsHse}</p>
+                                            <p className="text-sm font-medium text-gray-600 mb-1">Inspections</p>
+                                            <p className="text-3xl font-bold text-purple-600">{totalInspectionsHse}</p>
                                         </div>
                                         <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
-                                            <Shield className="w-6 h-6 text-white" />
+                                            <Shield className="w-6 h-6 text-gray-800" />
                                         </div>
                                     </div>
                                 </motion.div>
@@ -477,7 +477,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 0.6 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl"
+                                    className="bg-white/90 backdrop-blur-xl border border-blue-200/50 rounded-3xl p-8 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -485,89 +485,89 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                 >
                                     <div className="flex items-center space-x-3 mb-6">
                                         <div className="p-2 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-lg">
-                                            <Clock className="w-6 h-6 text-cyan-400" />
+                                            <Clock className="w-6 h-6 text-blue-600" />
                                         </div>
-                                        <h2 className="text-2xl font-bold text-white">1) Période & Heures</h2>
+                                        <h2 className="text-2xl font-bold text-gray-800">1) Période & Heures</h2>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Site</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Site</label>
                                             <select
                                                 value={data.site_id}
                                                 onChange={(e) => setData('site_id', e.target.value)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all duration-300"
-                                                style={{ colorScheme: 'dark' }}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
+                                                style={{ colorScheme: 'light' }}
                                                 required
                                             >
-                                                <option value="" className="bg-gray-800 text-white">Sélectionner un site</option>
+                                                <option value="" className="bg-white text-gray-800">Sélectionner un site</option>
                                                 {sites.map(site => (
-                                                    <option key={site.id} value={site.id} className="bg-gray-800 text-white">{site.name}</option>
+                                                    <option key={site.id} value={site.id} className="bg-white text-gray-800">{site.name}</option>
                                                 ))}
                                             </select>
-                                            {errors.site_id && <p className="text-red-400 text-sm mt-1">{errors.site_id}</p>}
+                                            {errors.site_id && <p className="text-red-600 text-sm mt-1">{errors.site_id}</p>}
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Date</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Date</label>
                                             <input
                                                 type="date"
                                                 value={data.date}
                                                 onChange={(e) => setData('date', e.target.value)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
                                                 required
                                             />
-                                            {errors.date && <p className="text-red-400 text-sm mt-1">{errors.date}</p>}
+                                            {errors.date && <p className="text-red-600 text-sm mt-1">{errors.date}</p>}
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Effectif du personnel</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Effectif du personnel</label>
                                             <input
                                                 type="number"
                                                 value={data.effectif_personnel}
                                                 onChange={(e) => setData('effectif_personnel', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Heures normales</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Heures normales</label>
                                             <input
                                                 type="number"
                                                 step="0.01"
                                                 value={data.heures_normales}
                                                 onChange={(e) => setData('heures_normales', parseFloat(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Heures supplémentaires</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Heures supplémentaires</label>
                                             <input
                                                 type="number"
                                                 step="0.01"
                                                 value={data.heures_supplementaires}
                                                 onChange={(e) => setData('heures_supplementaires', parseFloat(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Effectif passant l'horaire normal</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Effectif passant l'horaire normal</label>
                                             <input
                                                 type="number"
                                                 value={data.effectif_passant_horaire_normal}
                                                 onChange={(e) => setData('effectif_passant_horaire_normal', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                     </div>
                                     
-                                    <div className="mt-4 p-4 bg-gradient-to-r from-cyan-500/10 to-emerald-500/10 border border-cyan-500/20 rounded-xl">
-                                        <div className="text-lg font-semibold text-cyan-300">
+                                    <div className="mt-4 p-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-xl">
+                                        <div className="text-lg font-semibold text-gray-800">
                                             Total heures: {totalHeures.toFixed(2)} heures
                                         </div>
                                     </div>
@@ -578,7 +578,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 0.7 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl"
+                                    className="bg-white/90 backdrop-blur-xl border border-blue-200/50 rounded-3xl p-8 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -586,109 +586,109 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                 >
                                     <div className="flex items-center space-x-3 mb-6">
                                         <div className="p-2 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-lg">
-                                            <AlertTriangle className="w-6 h-6 text-red-400" />
+                                            <AlertTriangle className="w-6 h-6 text-red-600" />
                                         </div>
-                                        <h2 className="text-2xl font-bold text-white">3) Accidents / Incidents</h2>
+                                        <h2 className="text-2xl font-bold text-gray-800">3) Accidents / Incidents</h2>
                                         </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Accidents mortels</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Accidents mortels</label>
                                             <input
                                                 type="number"
                                                 value={data.acc_mortel}
                                                 onChange={(e) => setData('acc_mortel', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-red-400 focus:ring-1 focus:ring-red-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-red-500 focus:ring-1 focus:ring-red-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Accidents avec arrêt</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Accidents avec arrêt</label>
                                             <input
                                                 type="number"
                                                 value={data.acc_arret}
                                                 onChange={(e) => setData('acc_arret', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-red-400 focus:ring-1 focus:ring-red-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-red-500 focus:ring-1 focus:ring-red-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Soins médicaux</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Soins médicaux</label>
                                             <input
                                                 type="number"
                                                 value={data.acc_soins_medicaux}
                                                 onChange={(e) => setData('acc_soins_medicaux', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-red-400 focus:ring-1 focus:ring-red-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-red-500 focus:ring-1 focus:ring-red-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Restriction temporaire</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Restriction temporaire</label>
                                             <input
                                                 type="number"
                                                 value={data.acc_restriction_temporaire}
                                                 onChange={(e) => setData('acc_restriction_temporaire', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-red-400 focus:ring-1 focus:ring-red-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-red-500 focus:ring-1 focus:ring-red-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Premier soin</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Premier soin</label>
                                             <input
                                                 type="number"
                                                 value={data.premier_soin}
                                                 onChange={(e) => setData('premier_soin', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-red-400 focus:ring-1 focus:ring-red-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-red-500 focus:ring-1 focus:ring-red-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Presque accidents</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Presque accidents</label>
                                             <input
                                                 type="number"
                                                 value={data.presque_accident}
                                                 onChange={(e) => setData('presque_accident', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-red-400 focus:ring-1 focus:ring-red-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-red-500 focus:ring-1 focus:ring-red-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Dommages matériels</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Dommages matériels</label>
                                             <input
                                                 type="number"
                                                 value={data.dommage_materiel}
                                                 onChange={(e) => setData('dommage_materiel', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-red-400 focus:ring-1 focus:ring-red-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-red-500 focus:ring-1 focus:ring-red-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Incidents environnementaux</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Incidents environnementaux</label>
                                             <input
                                                 type="number"
                                                 value={data.incident_environnemental}
                                                 onChange={(e) => setData('incident_environnemental', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-red-400 focus:ring-1 focus:ring-red-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-red-500 focus:ring-1 focus:ring-red-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                     </div>
                                     
                                     <div className="mt-4 p-4 bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-red-500/20 rounded-xl">
-                                        <div className="text-lg font-semibold text-red-300">
+                                        <div className="text-lg font-semibold text-red-600">
                                             Total accidents: {totalAccidents}
                                         </div>
                                     </div>
 
                                     {/* File Upload for Accident Report */}
                                     <div className="mt-6">
-                                        <label className="block text-sm font-medium text-gray-300 mb-2">Rapport d'accident</label>
+                                        <label className="block text-sm font-medium text-gray-600 mb-2">Rapport d'accident</label>
                                         <div className="relative">
                                         <input
                                             type="file"
@@ -702,7 +702,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                             />
                                             <label
                                                 htmlFor="accident_report"
-                                                className="group relative inline-flex items-center space-x-2 px-4 py-3 bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-red-500/30 rounded-xl text-red-300 hover:from-red-500/20 hover:to-orange-500/20 hover:border-red-400/50 hover:text-red-200 transition-all duration-300 text-sm font-medium backdrop-blur-sm shadow-lg hover:shadow-red-500/25 cursor-pointer"
+                                                className="group relative inline-flex items-center space-x-2 px-4 py-3 bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-red-500/30 rounded-xl text-red-600 hover:from-red-500/20 hover:to-orange-500/20 hover:border-red-400/50 hover:text-red-400 transition-all duration-300 text-sm font-medium backdrop-blur-sm shadow-lg hover:shadow-red-500/25 cursor-pointer"
                                                 style={{
                                                     background: 'linear-gradient(135deg, rgba(239,68,68,0.1) 0%, rgba(249,115,22,0.1) 100%)',
                                                     backdropFilter: 'blur(10px)',
@@ -724,8 +724,8 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                 <div className="flex items-center space-x-2">
                                                     <span className="text-2xl">{getFileIcon(uploadedFiles.accident_report.type)}</span>
                                                     <div>
-                                                        <p className="text-red-300 font-medium text-sm">{uploadedFiles.accident_report.name}</p>
-                                                        <p className="text-red-400 text-xs">
+                                                        <p className="text-red-600 font-medium text-sm">{uploadedFiles.accident_report.name}</p>
+                                                        <p className="text-red-600 text-xs">
                                                             {uploadedFiles.accident_report.size > 0 
                                                                 ? `${(uploadedFiles.accident_report.size / 1024).toFixed(1)} KB`
                                                                 : 'Fichier existant'
@@ -739,7 +739,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                             href={`/storage/${hseStat.accident_report}`}
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="p-1 text-red-300 hover:text-red-200 transition-colors duration-200"
+                                                            className="p-1 text-red-600 hover:text-red-400 transition-colors duration-200"
                                                             title="Télécharger le fichier"
                                                         >
                                                             <Download className="w-4 h-4" />
@@ -748,7 +748,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                     <button
                                                         type="button"
                                                         onClick={() => handleFileDelete('accident_report')}
-                                                        className="p-1 text-red-400 hover:text-red-300 transition-colors duration-200"
+                                                        className="p-1 text-red-600 hover:text-red-600 transition-colors duration-200"
                                                         title="Supprimer le fichier"
                                                     >
                                                         <X className="w-4 h-4" />
@@ -765,7 +765,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 0.8 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl"
+                                    className="bg-white/90 backdrop-blur-xl border border-blue-200/50 rounded-3xl p-8 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -773,29 +773,29 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                 >
                                     <div className="flex items-center space-x-3 mb-6">
                                         <div className="p-2 bg-gradient-to-br from-blue-500/20 to-indigo-500/20 rounded-lg">
-                                            <Users className="w-6 h-6 text-blue-400" />
+                                            <Users className="w-6 h-6 text-blue-600" />
                                         </div>
-                                        <h2 className="text-2xl font-bold text-white">4) Personnel & Sensibilisation</h2>
+                                        <h2 className="text-2xl font-bold text-gray-800">4) Personnel & Sensibilisation</h2>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Nombre de sensibilisations</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Nombre de sensibilisations</label>
                                             <input
                                                 type="number"
                                                 value={data.nb_sensibilisations}
                                                 onChange={(e) => setData('nb_sensibilisations', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-blue-400 focus:ring-1 focus:ring-blue-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Personnes sensibilisées</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Personnes sensibilisées</label>
                                             <input
                                                 type="number"
                                                 value={data.personnes_sensibilisees}
                                                 onChange={(e) => setData('personnes_sensibilisees', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-blue-400 focus:ring-1 focus:ring-blue-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
@@ -807,7 +807,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 0.9 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl"
+                                    className="bg-white/90 backdrop-blur-xl border border-blue-200/50 rounded-3xl p-8 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -815,41 +815,41 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                 >
                                     <div className="flex items-center space-x-3 mb-6">
                                         <div className="p-2 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-lg">
-                                            <Award className="w-6 h-6 text-emerald-400" />
+                                            <Award className="w-6 h-6 text-green-600" />
                                         </div>
-                                        <h2 className="text-2xl font-bold text-white">5) Formations & Inductions (Totaux)</h2>
+                                        <h2 className="text-2xl font-bold text-gray-800">5) Formations & Inductions (Totaux)</h2>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Inductions - Total personnes</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Inductions - Total personnes</label>
                                             <input
                                                 type="number"
                                                 value={data.inductions_total_personnes}
                                                 onChange={(e) => setData('inductions_total_personnes', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-green-500 focus:ring-1 focus:ring-green-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Formations - Total personnes</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Formations - Total personnes</label>
                                             <input
                                                 type="number"
                                                 value={data.formes_total_personnes}
                                                 onChange={(e) => setData('formes_total_personnes', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-green-500 focus:ring-1 focus:ring-green-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Inductions - Volume heures</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Inductions - Volume heures</label>
                                             <input
                                                 type="number"
                                                 step="0.01"
                                                 value={data.inductions_volume_heures}
                                                 onChange={(e) => setData('inductions_volume_heures', parseFloat(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-green-500 focus:ring-1 focus:ring-green-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
@@ -861,7 +861,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 1.0 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl"
+                                    className="bg-white/90 backdrop-blur-xl border border-blue-200/50 rounded-3xl p-8 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -869,43 +869,43 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                 >
                                     <div className="flex items-center space-x-3 mb-6">
                                         <div className="p-2 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-lg">
-                                            <BarChart3 className="w-6 h-6 text-purple-400" />
+                                            <BarChart3 className="w-6 h-6 text-purple-600" />
                                             </div>
-                                        <h2 className="text-2xl font-bold text-white">6) Formations par thème</h2>
+                                        <h2 className="text-2xl font-bold text-gray-800">6) Formations par thème</h2>
                                     </div>
 
                                     {/* Travail en hauteur */}
                                     <div className="mb-6">
-                                        <h3 className="text-lg font-semibold text-cyan-300 mb-4">Travail en hauteur</h3>
+                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">Travail en hauteur</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Sessions</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Sessions</label>
                                                 <input
                                                     type="number"
                                                     value={data.travail_hauteur_sessions}
                                                     onChange={(e) => setData('travail_hauteur_sessions', parseInt(e.target.value) || 0)}
-                                                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all duration-300"
+                                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Participants</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Participants</label>
                                                 <input
                                                     type="number"
                                                     value={data.travail_hauteur_participants}
                                                     onChange={(e) => setData('travail_hauteur_participants', parseInt(e.target.value) || 0)}
-                                                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all duration-300"
+                                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Durée (h)</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Durée (h)</label>
                                                 <input
                                                     type="number"
                                                     step="0.01"
                                                     value={data.travail_hauteur_duree_h}
                                                     onChange={(e) => setData('travail_hauteur_duree_h', parseFloat(e.target.value) || 0)}
-                                                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all duration-300"
+                                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
@@ -914,36 +914,36 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
 
                                     {/* SST */}
                                     <div className="mb-6">
-                                        <h3 className="text-lg font-semibold text-cyan-300 mb-4">SST</h3>
+                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">SST</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Sessions</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Sessions</label>
                                                 <input
                                                     type="number"
                                                     value={data.sst_sessions}
                                                     onChange={(e) => setData('sst_sessions', parseInt(e.target.value) || 0)}
-                                                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all duration-300"
+                                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Participants</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Participants</label>
                                                 <input
                                                     type="number"
                                                     value={data.sst_participants}
                                                     onChange={(e) => setData('sst_participants', parseInt(e.target.value) || 0)}
-                                                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all duration-300"
+                                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Durée (h)</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Durée (h)</label>
                                                 <input
                                                     type="number"
                                                     step="0.01"
                                                     value={data.sst_duree_h}
                                                     onChange={(e) => setData('sst_duree_h', parseFloat(e.target.value) || 0)}
-                                                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all duration-300"
+                                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
@@ -952,52 +952,319 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
 
                                     {/* EPI */}
                                     <div className="mb-6">
-                                        <h3 className="text-lg font-semibold text-cyan-300 mb-4">EPI</h3>
+                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">EPI</h3>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Sessions</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Sessions</label>
                                                 <input
                                                     type="number"
                                                     value={data.epi_sessions}
                                                     onChange={(e) => setData('epi_sessions', parseInt(e.target.value) || 0)}
-                                                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all duration-300"
+                                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Participants</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Participants</label>
                                                 <input
                                                     type="number"
                                                     value={data.epi_participants}
                                                     onChange={(e) => setData('epi_participants', parseInt(e.target.value) || 0)}
-                                                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all duration-300"
+                                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Durée (h)</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Durée (h)</label>
                                                 <input
                                                     type="number"
                                                     step="0.01"
                                                     value={data.epi_duree_h}
                                                     onChange={(e) => setData('epi_duree_h', parseFloat(e.target.value) || 0)}
-                                                    className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all duration-300"
+                                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         </div>
                                     </div>
 
+                                    {/* Points chauds */}
+                                    <div className="mb-6">
+                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">Points chauds</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Sessions</label>
+                                            <input
+                                                type="number"
+                                                value={data.points_chauds_sessions}
+                                                onChange={(e) => setData('points_chauds_sessions', parseInt(e.target.value) || 0)}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-red-500 focus:ring-1 focus:ring-red-500/50 transition-all duration-300"
+                                                min="0"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Participants</label>
+                                            <input
+                                                type="number"
+                                                value={data.points_chauds_participants}
+                                                onChange={(e) => setData('points_chauds_participants', parseInt(e.target.value) || 0)}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-red-500 focus:ring-1 focus:ring-red-500/50 transition-all duration-300"
+                                                min="0"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Durée (h)</label>
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                value={data.points_chauds_duree_h}
+                                                onChange={(e) => setData('points_chauds_duree_h', parseFloat(e.target.value) || 0)}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-red-500 focus:ring-1 focus:ring-red-500/50 transition-all duration-300"
+                                                min="0"
+                                            />
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                    {/* Espace confiné */}
+                                    <div className="mb-6">
+                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">Espace confiné</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Sessions</label>
+                                            <input
+                                                type="number"
+                                                value={data.espace_confine_sessions}
+                                                onChange={(e) => setData('espace_confine_sessions', parseInt(e.target.value) || 0)}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 transition-all duration-300"
+                                                min="0"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Participants</label>
+                                            <input
+                                                type="number"
+                                                value={data.espace_confine_participants}
+                                                onChange={(e) => setData('espace_confine_participants', parseInt(e.target.value) || 0)}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 transition-all duration-300"
+                                                min="0"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Durée (h)</label>
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                value={data.espace_confine_duree_h}
+                                                onChange={(e) => setData('espace_confine_duree_h', parseFloat(e.target.value) || 0)}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 transition-all duration-300"
+                                                min="0"
+                                            />
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                    {/* Levage */}
+                                    <div className="mb-6">
+                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">Levage</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Sessions</label>
+                                            <input
+                                                type="number"
+                                                value={data.levage_sessions}
+                                                onChange={(e) => setData('levage_sessions', parseInt(e.target.value) || 0)}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-green-500 focus:ring-1 focus:ring-green-500/50 transition-all duration-300"
+                                                min="0"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Participants</label>
+                                            <input
+                                                type="number"
+                                                value={data.levage_participants}
+                                                onChange={(e) => setData('levage_participants', parseInt(e.target.value) || 0)}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-green-500 focus:ring-1 focus:ring-green-500/50 transition-all duration-300"
+                                                min="0"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Durée (h)</label>
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                value={data.levage_duree_h}
+                                                onChange={(e) => setData('levage_duree_h', parseFloat(e.target.value) || 0)}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-green-500 focus:ring-1 focus:ring-green-500/50 transition-all duration-300"
+                                                min="0"
+                                            />
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                    {/* Modes opératoires */}
+                                    <div className="mb-6">
+                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">Modes opératoires</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Sessions</label>
+                                            <input
+                                                type="number"
+                                                value={data.modes_operatoires_sessions}
+                                                onChange={(e) => setData('modes_operatoires_sessions', parseInt(e.target.value) || 0)}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all duration-300"
+                                                min="0"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Participants</label>
+                                            <input
+                                                type="number"
+                                                value={data.modes_operatoires_participants}
+                                                onChange={(e) => setData('modes_operatoires_participants', parseInt(e.target.value) || 0)}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all duration-300"
+                                                min="0"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Durée (h)</label>
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                value={data.modes_operatoires_duree_h}
+                                                onChange={(e) => setData('modes_operatoires_duree_h', parseFloat(e.target.value) || 0)}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all duration-300"
+                                                min="0"
+                                            />
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                    {/* Permis SPA */}
+                                    <div className="mb-6">
+                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">Permis SPA</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Sessions</label>
+                                            <input
+                                                type="number"
+                                                value={data.permis_spa_sessions}
+                                                onChange={(e) => setData('permis_spa_sessions', parseInt(e.target.value) || 0)}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 transition-all duration-300"
+                                                min="0"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Participants</label>
+                                            <input
+                                                type="number"
+                                                value={data.permis_spa_participants}
+                                                onChange={(e) => setData('permis_spa_participants', parseInt(e.target.value) || 0)}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 transition-all duration-300"
+                                                min="0"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Durée (h)</label>
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                value={data.permis_spa_duree_h}
+                                                onChange={(e) => setData('permis_spa_duree_h', parseFloat(e.target.value) || 0)}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 transition-all duration-300"
+                                                min="0"
+                                            />
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                    {/* Outils électroportatifs */}
+                                    <div className="mb-6">
+                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">Outils électroportatifs</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Sessions</label>
+                                            <input
+                                                type="number"
+                                                value={data.outils_electroportatifs_sessions}
+                                                onChange={(e) => setData('outils_electroportatifs_sessions', parseInt(e.target.value) || 0)}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
+                                                min="0"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Participants</label>
+                                            <input
+                                                type="number"
+                                                value={data.outils_electroportatifs_participants}
+                                                onChange={(e) => setData('outils_electroportatifs_participants', parseInt(e.target.value) || 0)}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
+                                                min="0"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Durée (h)</label>
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                value={data.outils_electroportatifs_duree_h}
+                                                onChange={(e) => setData('outils_electroportatifs_duree_h', parseFloat(e.target.value) || 0)}
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
+                                                min="0"
+                                            />
+                                        </div>
+                                    </div>
+                                    </div>
+
+                                    {/* Excavation */}
+                                    <div className="mb-6">
+                                        <h3 className="text-lg font-semibold text-gray-800 mb-4">Excavation</h3>
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Sessions</label>
+                                                <input
+                                                    type="number"
+                                                    value={data.excavation_sessions}
+                                                    onChange={(e) => setData('excavation_sessions', parseInt(e.target.value) || 0)}
+                                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
+                                                    min="0"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Participants</label>
+                                                <input
+                                                    type="number"
+                                                    value={data.excavation_participants}
+                                                    onChange={(e) => setData('excavation_participants', parseInt(e.target.value) || 0)}
+                                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
+                                                    min="0"
+                                                />
+                                            </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Durée (h)</label>
+                                                <input
+                                                    type="number"
+                                                    step="0.01"
+                                                    value={data.excavation_duree_h}
+                                                    onChange={(e) => setData('excavation_duree_h', parseFloat(e.target.value) || 0)}
+                                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300"
+                                                    min="0"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Summary Totals */}
                                     <div className="mt-6 p-4 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-xl">
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
                                             <div>
-                                                <div className="text-lg font-semibold text-purple-300">Total Sessions: {totalFormations}</div>
+                                                <div className="text-lg font-semibold text-purple-600">Total Sessions: {totalFormations}</div>
                                             </div>
                                             <div>
-                                                <div className="text-lg font-semibold text-purple-300">Total Participants: {totalParticipants}</div>
+                                                <div className="text-lg font-semibold text-purple-600">Total Participants: {totalParticipants}</div>
                                             </div>
                                             <div>
-                                                <div className="text-lg font-semibold text-purple-300">Total Heures: {totalHeuresFormations.toFixed(2)}h</div>
+                                                <div className="text-lg font-semibold text-purple-600">Total Heures: {totalHeuresFormations.toFixed(2)}h</div>
                                             </div>
                                         </div>
                                     </div>
@@ -1008,7 +1275,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 1.1 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl"
+                                    className="bg-white/90 backdrop-blur-xl border border-blue-200/50 rounded-3xl p-8 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -1016,117 +1283,117 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                 >
                                     <div className="flex items-center space-x-3 mb-6">
                                         <div className="p-2 bg-gradient-to-br from-orange-500/20 to-yellow-500/20 rounded-lg">
-                                            <Shield className="w-6 h-6 text-orange-400" />
+                                            <Shield className="w-6 h-6 text-orange-600" />
                                             </div>
-                                        <h2 className="text-2xl font-bold text-white">7) Permis & PTSR</h2>
+                                        <h2 className="text-2xl font-bold text-gray-800">7) Permis & PTSR</h2>
                                             </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Permis général</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Permis général</label>
                                                 <input
                                                     type="number"
                                                     value={data.permis_general}
                                                     onChange={(e) => setData('permis_general', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-orange-400 focus:ring-1 focus:ring-orange-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Excavation</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Excavation</label>
                                                 <input
                                                     type="number"
                                                     value={data.permis_excavation}
                                                     onChange={(e) => setData('permis_excavation', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-orange-400 focus:ring-1 focus:ring-orange-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Point chaud</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Point chaud</label>
                                                 <input
                                                     type="number"
                                                     value={data.permis_point_chaud}
                                                     onChange={(e) => setData('permis_point_chaud', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-orange-400 focus:ring-1 focus:ring-orange-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Espace confiné</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Espace confiné</label>
                                                 <input
                                                     type="number"
                                                     value={data.permis_espace_confine}
                                                     onChange={(e) => setData('permis_espace_confine', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-orange-400 focus:ring-1 focus:ring-orange-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Travail en hauteur</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Travail en hauteur</label>
                                                 <input
                                                     type="number"
                                                     value={data.permis_travail_hauteur}
                                                     onChange={(e) => setData('permis_travail_hauteur', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-orange-400 focus:ring-1 focus:ring-orange-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Levage</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Levage</label>
                                                 <input
                                                     type="number"
                                                     value={data.permis_levage}
                                                     onChange={(e) => setData('permis_levage', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-orange-400 focus:ring-1 focus:ring-orange-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Consignation</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Consignation</label>
                                                 <input
                                                     type="number"
                                                     value={data.permis_consignation}
                                                     onChange={(e) => setData('permis_consignation', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-orange-400 focus:ring-1 focus:ring-orange-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Électrique tension</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Électrique tension</label>
                                                 <input
                                                     type="number"
                                                     value={data.permis_electrique_tension}
                                                     onChange={(e) => setData('permis_electrique_tension', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-orange-400 focus:ring-1 focus:ring-orange-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                         </div>
                                         
                                     <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">PTSR Total</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">PTSR Total</label>
                                                 <input
                                                     type="number"
                                                     value={data.ptsr_total}
                                                     onChange={(e) => setData('ptsr_total', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-orange-400 focus:ring-1 focus:ring-orange-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">PTSR Contrôlés</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">PTSR Contrôlés</label>
                                                 <input
                                                     type="number"
                                                     value={data.ptsr_controles}
                                                     onChange={(e) => setData('ptsr_controles', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-orange-400 focus:ring-1 focus:ring-orange-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-orange-500 focus:ring-1 focus:ring-orange-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
@@ -1144,7 +1411,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 1.2 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl"
+                                    className="bg-white/90 backdrop-blur-xl border border-blue-200/50 rounded-3xl p-8 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -1152,216 +1419,216 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                 >
                                     <div className="flex items-center space-x-3 mb-6">
                                         <div className="p-2 bg-gradient-to-br from-gray-500/20 to-slate-500/20 rounded-lg">
-                                            <Truck className="w-6 h-6 text-gray-400" />
+                                            <Truck className="w-6 h-6 text-gray-600" />
                                         </div>
-                                        <h2 className="text-2xl font-bold text-white">8) Engins & Matériels</h2>
+                                        <h2 className="text-2xl font-bold text-gray-800">8) Engins & Matériels</h2>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Grue</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Grue</label>
                                                 <input
                                                     type="number"
                                                     value={data.grue}
                                                     onChange={(e) => setData('grue', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Niveleuse</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Niveleuse</label>
                                                 <input
                                                     type="number"
                                                     value={data.niveleuse}
                                                     onChange={(e) => setData('niveleuse', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Pelle hydraulique</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Pelle hydraulique</label>
                                                 <input
                                                     type="number"
                                                     value={data.pelle_hydraulique}
                                                     onChange={(e) => setData('pelle_hydraulique', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Tractopelle</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Tractopelle</label>
                                                 <input
                                                     type="number"
                                                     value={data.tractopelle}
                                                     onChange={(e) => setData('tractopelle', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Chargeuse</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Chargeuse</label>
                                                 <input
                                                     type="number"
                                                     value={data.chargeuse}
                                                     onChange={(e) => setData('chargeuse', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Camion citerne</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Camion citerne</label>
                                                 <input
                                                     type="number"
                                                     value={data.camion_citerne}
                                                     onChange={(e) => setData('camion_citerne', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Camion 8x4</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Camion 8x4</label>
                                                 <input
                                                     type="number"
                                                     value={data.camion_8x4}
                                                     onChange={(e) => setData('camion_8x4', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Camion remorque</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Camion remorque</label>
                                                 <input
                                                     type="number"
                                                     value={data.camion_remorque}
                                                     onChange={(e) => setData('camion_remorque', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Grue mobile</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Grue mobile</label>
                                                 <input
                                                     type="number"
                                                     value={data.grue_mobile}
                                                     onChange={(e) => setData('grue_mobile', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Grue tour</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Grue tour</label>
                                                 <input
                                                     type="number"
                                                     value={data.grue_tour}
                                                     onChange={(e) => setData('grue_tour', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Compacteur</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Compacteur</label>
                                                 <input
                                                     type="number"
                                                     value={data.compacteur}
                                                     onChange={(e) => setData('compacteur', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Finisseur enrobés</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Finisseur enrobés</label>
                                                 <input
                                                     type="number"
                                                     value={data.finisseur_enrobes}
                                                     onChange={(e) => setData('finisseur_enrobes', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Chariot élévateur</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Chariot élévateur</label>
                                                 <input
                                                     type="number"
                                                     value={data.chariot_elevateur}
                                                     onChange={(e) => setData('chariot_elevateur', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Foreuse sondeuse</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Foreuse sondeuse</label>
                                                 <input
                                                     type="number"
                                                     value={data.foreuse_sondeuse}
                                                     onChange={(e) => setData('foreuse_sondeuse', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Brise roche hydraulique</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Brise roche hydraulique</label>
                                                 <input
                                                     type="number"
                                                     value={data.brise_roche_hydraulique}
                                                     onChange={(e) => setData('brise_roche_hydraulique', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Pompe béton</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Pompe béton</label>
                                                 <input
                                                     type="number"
                                                     value={data.pompe_beton}
                                                     onChange={(e) => setData('pompe_beton', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Nacelle ciseaux</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Nacelle ciseaux</label>
                                                 <input
                                                     type="number"
                                                     value={data.nacelle_ciseaux}
                                                     onChange={(e) => setData('nacelle_ciseaux', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                     </div>
 
                                     <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Compresseur air</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Compresseur air</label>
                                                 <input
                                                     type="number"
                                                     value={data.compresseur_air}
                                                     onChange={(e) => setData('compresseur_air', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
                                         
                                             <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Groupe électrogène mobile</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Groupe électrogène mobile</label>
                                                 <input
                                                     type="number"
                                                     value={data.groupe_electrogene_mobile}
                                                     onChange={(e) => setData('groupe_electrogene_mobile', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-gray-400 focus:ring-1 focus:ring-gray-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/50 transition-all duration-300"
                                                     min="0"
                                                 />
                                             </div>
@@ -1373,7 +1640,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 1.3 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl"
+                                    className="bg-white/90 backdrop-blur-xl border border-blue-200/50 rounded-3xl p-8 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -1383,134 +1650,134 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                         <div className="p-2 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-lg">
                                             <Wrench className="w-6 h-6 text-indigo-400" />
                                         </div>
-                                        <h2 className="text-2xl font-bold text-white">9) Inspections & Observations</h2>
+                                        <h2 className="text-2xl font-bold text-gray-800">9) Inspections & Observations</h2>
                                     </div>
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Inspections générales</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Inspections générales</label>
                                             <input
                                                 type="number"
                                                 value={data.inspections_generales}
                                                 onChange={(e) => setData('inspections_generales', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Inspections engins</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Inspections engins</label>
                                             <input
                                                 type="number"
                                                 value={data.inspections_engins}
                                                 onChange={(e) => setData('inspections_engins', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Hygiène base de vie</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Hygiène base de vie</label>
                                             <input
                                                 type="number"
                                                 value={data.hygiene_base_vie}
                                                 onChange={(e) => setData('hygiene_base_vie', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Outils électroportatifs</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Outils électroportatifs</label>
                                             <input
                                                 type="number"
                                                 value={data.outils_electroportatifs_inspections}
                                                 onChange={(e) => setData('outils_electroportatifs_inspections', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Inspections électriques</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Inspections électriques</label>
                                             <input
                                                 type="number"
                                                 value={data.inspections_electriques}
                                                 onChange={(e) => setData('inspections_electriques', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Extincteurs</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Extincteurs</label>
                                             <input
                                                 type="number"
                                                 value={data.extincteurs}
                                                 onChange={(e) => setData('extincteurs', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Protections collectives</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Protections collectives</label>
                                             <input
                                                 type="number"
                                                 value={data.protections_collectives}
                                                 onChange={(e) => setData('protections_collectives', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">EPI inspections</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">EPI inspections</label>
                                             <input
                                                 type="number"
                                                 value={data.epi_inspections}
                                                 onChange={(e) => setData('epi_inspections', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Observations HSE</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Observations HSE</label>
                                             <input
                                                 type="number"
                                                 value={data.observations_hse}
                                                 onChange={(e) => setData('observations_hse', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                         
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-300 mb-2">Actions correctives clôturées</label>
+                                            <label className="block text-sm font-medium text-gray-600 mb-2">Actions correctives clôturées</label>
                                             <input
                                                 type="number"
                                                 value={data.actions_correctives_cloturees}
                                                 onChange={(e) => setData('actions_correctives_cloturees', parseInt(e.target.value) || 0)}
-                                                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400/50 transition-all duration-300"
+                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500/50 transition-all duration-300"
                                                 min="0"
                                             />
                                         </div>
                                     </div>
                                     
                                     <div className="mt-4 p-4 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-xl">
-                                        <div className="text-lg font-semibold text-indigo-300">
+                                        <div className="text-lg font-semibold text-indigo-600">
                                             Total inspections HSE: {totalInspectionsHse}
                                         </div>
                                     </div>
 
                                     {/* File Uploads for Inspection Reports */}
                                     <div className="mt-6 space-y-4">
-                                        <h3 className="text-lg font-semibold text-indigo-300">Rapports d'inspection</h3>
+                                        <h3 className="text-lg font-semibold text-indigo-600">Rapports d'inspection</h3>
                                         
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             {/* Inspection Générales Report */}
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Rapport inspections générales</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Rapport inspections générales</label>
                                                 <div className="relative">
                                                 <input
                                                     type="file"
@@ -1524,7 +1791,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                     />
                                                     <label
                                                         htmlFor="inspection_generales_report"
-                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-300 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-200 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
+                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-600 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-400 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
                                                     >
                                                         <Upload className="w-3 h-3 group-hover:scale-110 transition-transform duration-300" />
                                                         <span>Parcourir...</span>
@@ -1535,14 +1802,14 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                         <div className="flex items-center space-x-2">
                                                             <span className="text-lg">{getFileIcon(uploadedFiles.inspection_generales_report.type)}</span>
                                                             <div>
-                                                                <p className="text-indigo-300 font-medium text-xs">{uploadedFiles.inspection_generales_report.name}</p>
+                                                                <p className="text-indigo-600 font-medium text-xs">{uploadedFiles.inspection_generales_report.name}</p>
                                                                 <p className="text-indigo-400 text-xs">{(uploadedFiles.inspection_generales_report.size / 1024).toFixed(1)} KB</p>
                                                             </div>
                                                         </div>
                                                         <button
                                                             type="button"
                                                             onClick={() => handleFileDelete('inspection_generales_report')}
-                                                            className="p-1 text-indigo-400 hover:text-indigo-300 transition-colors duration-200"
+                                                            className="p-1 text-indigo-400 hover:text-indigo-600 transition-colors duration-200"
                                                         >
                                                             <X className="w-3 h-3" />
                                                         </button>
@@ -1552,7 +1819,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                             
                                             {/* Engins Report */}
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Rapport inspections engins</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Rapport inspections engins</label>
                                                 <div className="relative">
                                                 <input
                                                     type="file"
@@ -1566,7 +1833,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                     />
                                                     <label
                                                         htmlFor="inspection_engins_report"
-                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-300 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-200 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
+                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-600 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-400 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
                                                     >
                                                         <Upload className="w-3 h-3 group-hover:scale-110 transition-transform duration-300" />
                                                         <span>Parcourir...</span>
@@ -1577,14 +1844,14 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                         <div className="flex items-center space-x-2">
                                                             <span className="text-lg">{getFileIcon(uploadedFiles.inspection_engins_report.type)}</span>
                                                             <div>
-                                                                <p className="text-indigo-300 font-medium text-xs">{uploadedFiles.inspection_engins_report.name}</p>
+                                                                <p className="text-indigo-600 font-medium text-xs">{uploadedFiles.inspection_engins_report.name}</p>
                                                                 <p className="text-indigo-400 text-xs">{(uploadedFiles.inspection_engins_report.size / 1024).toFixed(1)} KB</p>
                                                             </div>
                                                         </div>
                                                         <button
                                                             type="button"
                                                             onClick={() => handleFileDelete('inspection_engins_report')}
-                                                            className="p-1 text-indigo-400 hover:text-indigo-300 transition-colors duration-200"
+                                                            className="p-1 text-indigo-400 hover:text-indigo-600 transition-colors duration-200"
                                                         >
                                                             <X className="w-3 h-3" />
                                                         </button>
@@ -1594,7 +1861,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                             
                                             {/* EPI Report */}
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Rapport inspections EPI</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Rapport inspections EPI</label>
                                                 <div className="relative">
                                                 <input
                                                     type="file"
@@ -1608,7 +1875,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                     />
                                                     <label
                                                         htmlFor="epi_inspections_report"
-                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-300 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-200 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
+                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-600 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-400 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
                                                     >
                                                         <Upload className="w-3 h-3 group-hover:scale-110 transition-transform duration-300" />
                                                         <span>Parcourir...</span>
@@ -1619,14 +1886,14 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                         <div className="flex items-center space-x-2">
                                                             <span className="text-lg">{getFileIcon(uploadedFiles.epi_inspections_report.type)}</span>
                                                             <div>
-                                                                <p className="text-indigo-300 font-medium text-xs">{uploadedFiles.epi_inspections_report.name}</p>
+                                                                <p className="text-indigo-600 font-medium text-xs">{uploadedFiles.epi_inspections_report.name}</p>
                                                                 <p className="text-indigo-400 text-xs">{(uploadedFiles.epi_inspections_report.size / 1024).toFixed(1)} KB</p>
                                                             </div>
                                                         </div>
                                                         <button
                                                             type="button"
                                                             onClick={() => handleFileDelete('epi_inspections_report')}
-                                                            className="p-1 text-indigo-400 hover:text-indigo-300 transition-colors duration-200"
+                                                            className="p-1 text-indigo-400 hover:text-indigo-600 transition-colors duration-200"
                                                         >
                                                             <X className="w-3 h-3" />
                                                         </button>
@@ -1636,7 +1903,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                             
                                             {/* Observations HSE Report */}
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Rapport observations HSE</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Rapport observations HSE</label>
                                                 <div className="relative">
                                                 <input
                                                     type="file"
@@ -1650,7 +1917,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                     />
                                                     <label
                                                         htmlFor="observations_hse_report"
-                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-300 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-200 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
+                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-600 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-400 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
                                                     >
                                                         <Upload className="w-3 h-3 group-hover:scale-110 transition-transform duration-300" />
                                                         <span>Parcourir...</span>
@@ -1661,14 +1928,14 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                         <div className="flex items-center space-x-2">
                                                             <span className="text-lg">{getFileIcon(uploadedFiles.observations_hse_report.type)}</span>
                                                             <div>
-                                                                <p className="text-indigo-300 font-medium text-xs">{uploadedFiles.observations_hse_report.name}</p>
+                                                                <p className="text-indigo-600 font-medium text-xs">{uploadedFiles.observations_hse_report.name}</p>
                                                                 <p className="text-indigo-400 text-xs">{(uploadedFiles.observations_hse_report.size / 1024).toFixed(1)} KB</p>
                                                             </div>
                                                         </div>
                                                         <button
                                                             type="button"
                                                             onClick={() => handleFileDelete('observations_hse_report')}
-                                                            className="p-1 text-indigo-400 hover:text-indigo-300 transition-colors duration-200"
+                                                            className="p-1 text-indigo-400 hover:text-indigo-600 transition-colors duration-200"
                                                         >
                                                             <X className="w-3 h-3" />
                                                         </button>
@@ -1678,7 +1945,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                             
                                             {/* Hygiene Base Vie Report */}
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Rapport hygiène base de vie</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Rapport hygiène base de vie</label>
                                                 <div className="relative">
                                                 <input
                                                     type="file"
@@ -1692,7 +1959,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                     />
                                                     <label
                                                         htmlFor="hygiene_base_vie_report"
-                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-300 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-200 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
+                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-600 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-400 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
                                                     >
                                                         <Upload className="w-3 h-3 group-hover:scale-110 transition-transform duration-300" />
                                                         <span>Parcourir...</span>
@@ -1703,14 +1970,14 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                         <div className="flex items-center space-x-2">
                                                             <span className="text-lg">{getFileIcon(uploadedFiles.hygiene_base_vie_report.type)}</span>
                                                             <div>
-                                                                <p className="text-indigo-300 font-medium text-xs">{uploadedFiles.hygiene_base_vie_report.name}</p>
+                                                                <p className="text-indigo-600 font-medium text-xs">{uploadedFiles.hygiene_base_vie_report.name}</p>
                                                                 <p className="text-indigo-400 text-xs">{(uploadedFiles.hygiene_base_vie_report.size / 1024).toFixed(1)} KB</p>
                                                             </div>
                                                         </div>
                                                         <button
                                                             type="button"
                                                             onClick={() => handleFileDelete('hygiene_base_vie_report')}
-                                                            className="p-1 text-indigo-400 hover:text-indigo-300 transition-colors duration-200"
+                                                            className="p-1 text-indigo-400 hover:text-indigo-600 transition-colors duration-200"
                                                         >
                                                             <X className="w-3 h-3" />
                                                         </button>
@@ -1720,7 +1987,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                             
                                             {/* Outils Electroportatifs Report */}
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Rapport outils électroportatifs</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Rapport outils électroportatifs</label>
                                                 <div className="relative">
                                                 <input
                                                     type="file"
@@ -1734,7 +2001,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                     />
                                                     <label
                                                         htmlFor="outils_electroportatifs_report"
-                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-300 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-200 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
+                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-600 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-400 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
                                                     >
                                                         <Upload className="w-3 h-3 group-hover:scale-110 transition-transform duration-300" />
                                                         <span>Parcourir...</span>
@@ -1745,14 +2012,14 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                         <div className="flex items-center space-x-2">
                                                             <span className="text-lg">{getFileIcon(uploadedFiles.outils_electroportatifs_report.type)}</span>
                                                             <div>
-                                                                <p className="text-indigo-300 font-medium text-xs">{uploadedFiles.outils_electroportatifs_report.name}</p>
+                                                                <p className="text-indigo-600 font-medium text-xs">{uploadedFiles.outils_electroportatifs_report.name}</p>
                                                                 <p className="text-indigo-400 text-xs">{(uploadedFiles.outils_electroportatifs_report.size / 1024).toFixed(1)} KB</p>
                                                             </div>
                                                         </div>
                                                         <button
                                                             type="button"
                                                             onClick={() => handleFileDelete('outils_electroportatifs_report')}
-                                                            className="p-1 text-indigo-400 hover:text-indigo-300 transition-colors duration-200"
+                                                            className="p-1 text-indigo-400 hover:text-indigo-600 transition-colors duration-200"
                                                         >
                                                             <X className="w-3 h-3" />
                                                         </button>
@@ -1762,7 +2029,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                             
                                             {/* Inspections Electriques Report */}
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Rapport inspections électriques</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Rapport inspections électriques</label>
                                                 <div className="relative">
                                                 <input
                                                     type="file"
@@ -1776,7 +2043,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                     />
                                                     <label
                                                         htmlFor="inspection_electriques_report"
-                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-300 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-200 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
+                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-600 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-400 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
                                                     >
                                                         <Upload className="w-3 h-3 group-hover:scale-110 transition-transform duration-300" />
                                                         <span>Parcourir...</span>
@@ -1787,14 +2054,14 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                         <div className="flex items-center space-x-2">
                                                             <span className="text-lg">{getFileIcon(uploadedFiles.inspection_electriques_report.type)}</span>
                                                             <div>
-                                                                <p className="text-indigo-300 font-medium text-xs">{uploadedFiles.inspection_electriques_report.name}</p>
+                                                                <p className="text-indigo-600 font-medium text-xs">{uploadedFiles.inspection_electriques_report.name}</p>
                                                                 <p className="text-indigo-400 text-xs">{(uploadedFiles.inspection_electriques_report.size / 1024).toFixed(1)} KB</p>
                                                             </div>
                                                         </div>
                                                         <button
                                                             type="button"
                                                             onClick={() => handleFileDelete('inspection_electriques_report')}
-                                                            className="p-1 text-indigo-400 hover:text-indigo-300 transition-colors duration-200"
+                                                            className="p-1 text-indigo-400 hover:text-indigo-600 transition-colors duration-200"
                                                         >
                                                             <X className="w-3 h-3" />
                                                         </button>
@@ -1804,7 +2071,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                             
                                             {/* Extincteurs Report */}
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Rapport extincteurs</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Rapport extincteurs</label>
                                                 <div className="relative">
                                                 <input
                                                     type="file"
@@ -1818,7 +2085,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                     />
                                                     <label
                                                         htmlFor="extincteurs_report"
-                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-300 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-200 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
+                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-600 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-400 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
                                                     >
                                                         <Upload className="w-3 h-3 group-hover:scale-110 transition-transform duration-300" />
                                                         <span>Parcourir...</span>
@@ -1829,14 +2096,14 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                         <div className="flex items-center space-x-2">
                                                             <span className="text-lg">{getFileIcon(uploadedFiles.extincteurs_report.type)}</span>
                                                             <div>
-                                                                <p className="text-indigo-300 font-medium text-xs">{uploadedFiles.extincteurs_report.name}</p>
+                                                                <p className="text-indigo-600 font-medium text-xs">{uploadedFiles.extincteurs_report.name}</p>
                                                                 <p className="text-indigo-400 text-xs">{(uploadedFiles.extincteurs_report.size / 1024).toFixed(1)} KB</p>
                                                             </div>
                                                         </div>
                                                         <button
                                                             type="button"
                                                             onClick={() => handleFileDelete('extincteurs_report')}
-                                                            className="p-1 text-indigo-400 hover:text-indigo-300 transition-colors duration-200"
+                                                            className="p-1 text-indigo-400 hover:text-indigo-600 transition-colors duration-200"
                                                         >
                                                             <X className="w-3 h-3" />
                                                         </button>
@@ -1846,7 +2113,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                             
                                             {/* Protections Collectives Report */}
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Rapport protections collectives</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Rapport protections collectives</label>
                                                 <div className="relative">
                                                 <input
                                                     type="file"
@@ -1860,7 +2127,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                     />
                                                     <label
                                                         htmlFor="protections_collectives_report"
-                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-300 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-200 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
+                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-600 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-400 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
                                                     >
                                                         <Upload className="w-3 h-3 group-hover:scale-110 transition-transform duration-300" />
                                                         <span>Parcourir...</span>
@@ -1871,14 +2138,14 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                         <div className="flex items-center space-x-2">
                                                             <span className="text-lg">{getFileIcon(uploadedFiles.protections_collectives_report.type)}</span>
                                                             <div>
-                                                                <p className="text-indigo-300 font-medium text-xs">{uploadedFiles.protections_collectives_report.name}</p>
+                                                                <p className="text-indigo-600 font-medium text-xs">{uploadedFiles.protections_collectives_report.name}</p>
                                                                 <p className="text-indigo-400 text-xs">{(uploadedFiles.protections_collectives_report.size / 1024).toFixed(1)} KB</p>
                                         </div>
                                                         </div>
                                                         <button
                                                             type="button"
                                                             onClick={() => handleFileDelete('protections_collectives_report')}
-                                                            className="p-1 text-indigo-400 hover:text-indigo-300 transition-colors duration-200"
+                                                            className="p-1 text-indigo-400 hover:text-indigo-600 transition-colors duration-200"
                                                         >
                                                             <X className="w-3 h-3" />
                                                         </button>
@@ -1888,7 +2155,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                     
                                             {/* Actions Correctives Clôturées Report */}
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-300 mb-2">Rapport actions correctives clôturées</label>
+                                                <label className="block text-sm font-medium text-gray-600 mb-2">Rapport actions correctives clôturées</label>
                                                 <div className="relative">
                                                 <input
                                                     type="file"
@@ -1902,7 +2169,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                     />
                                                     <label
                                                         htmlFor="actions_correctives_cloturees_report"
-                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-300 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-200 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
+                                                        className="group relative inline-flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/30 rounded-lg text-indigo-600 hover:from-indigo-500/20 hover:to-purple-500/20 hover:border-indigo-400/50 hover:text-indigo-400 transition-all duration-300 text-xs font-medium backdrop-blur-sm shadow-lg hover:shadow-indigo-500/25 cursor-pointer"
                                                     >
                                                         <Upload className="w-3 h-3 group-hover:scale-110 transition-transform duration-300" />
                                                         <span>Parcourir...</span>
@@ -1913,14 +2180,14 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                                         <div className="flex items-center space-x-2">
                                                             <span className="text-lg">{getFileIcon(uploadedFiles.actions_correctives_cloturees_report.type)}</span>
                                                             <div>
-                                                                <p className="text-indigo-300 font-medium text-xs">{uploadedFiles.actions_correctives_cloturees_report.name}</p>
+                                                                <p className="text-indigo-600 font-medium text-xs">{uploadedFiles.actions_correctives_cloturees_report.name}</p>
                                                                 <p className="text-indigo-400 text-xs">{(uploadedFiles.actions_correctives_cloturees_report.size / 1024).toFixed(1)} KB</p>
                                             </div>
                                                 </div>
                                                         <button
                                                             type="button"
                                                             onClick={() => handleFileDelete('actions_correctives_cloturees_report')}
-                                                            className="p-1 text-indigo-400 hover:text-indigo-300 transition-colors duration-200"
+                                                            className="p-1 text-indigo-400 hover:text-indigo-600 transition-colors duration-200"
                                                         >
                                                             <X className="w-3 h-3" />
                                                         </button>
@@ -1943,7 +2210,7 @@ export default function HseStatisticsEdit({ sites, hseStat, contractor }) {
                                         disabled={processing}
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
-                                        className="group relative px-8 py-4 bg-gradient-to-r from-emerald-500 to-cyan-500 rounded-xl text-white font-bold text-lg shadow-2xl hover:shadow-emerald-500/25 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="group relative px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl text-white font-bold text-lg shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         <div className="flex items-center space-x-3">
                                             <Save className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300" />

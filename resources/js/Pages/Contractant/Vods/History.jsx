@@ -22,20 +22,19 @@ export default function VodsHistory({ vods = [] }) {
 
   return (
     <div
-      className="p-6 rounded-3xl shadow-2xl border border-white/20 
-                 bg-gradient-to-br from-gray-50 via-white to-gray-100 
-                 dark:from-gray-900 dark:via-slate-900 dark:to-black 
+      className="p-6 rounded-3xl shadow-xl border border-blue-200/50 
+                 bg-gradient-to-br from-white via-blue-50 to-purple-50 
                  backdrop-blur-xl space-y-6"
     >
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h2 className="text-xl font-bold text-gray-800 dark:text-white">
+        <h2 className="text-xl font-bold text-gray-800">
           Historique des VODs
         </h2>
         <input
-          className="px-4 py-2 rounded-xl border border-gray-300 dark:border-white/20 
-                     bg-white/70 dark:bg-white/10 text-gray-800 dark:text-gray-100
-                     focus:ring-2 focus:ring-cyan-500 w-full sm:w-80"
+          className="px-4 py-3 rounded-xl border border-gray-300 
+                     bg-white text-gray-800
+                     focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full sm:w-80"
           placeholder="Filtrer par date / projet / activité…"
           value={q}
           onChange={(e) => setQ(e.target.value)}
@@ -45,7 +44,7 @@ export default function VodsHistory({ vods = [] }) {
       {/* Mobile cards */}
       <ul className="space-y-4 md:hidden">
         {filtered.length === 0 && (
-          <li className="text-sm text-gray-500 dark:text-gray-400">
+          <li className="text-sm text-gray-600">
             Aucun résultat.
           </li>
         )}
@@ -58,19 +57,19 @@ export default function VodsHistory({ vods = [] }) {
                 v.id ??
                 `${v.date}-${v.projet}-${v.activite}-${Math.random()}`
               }
-              className="p-4 rounded-2xl border border-gray-200 dark:border-white/10 
-                         bg-white/70 dark:bg-white/5 shadow-lg space-y-2"
+              className="p-4 rounded-2xl border border-blue-200/50 
+                         bg-white/90 shadow-lg space-y-2"
             >
-              <div className="text-sm text-gray-500 dark:text-gray-400">
+              <div className="text-sm text-gray-600">
                 {fmtDate(v.date || v.created_at)}
               </div>
-              <div className="font-semibold text-gray-800 dark:text-gray-100">
+              <div className="font-semibold text-gray-800">
                 {v.projet || "Projet —"}
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-300">
+              <div className="text-sm text-gray-600">
                 {v.activite || "Activité —"}
               </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              <div className="text-xs text-gray-500 mt-1">
                 Obs : {v.observateur || "—"}
               </div>
 
@@ -81,9 +80,9 @@ export default function VodsHistory({ vods = [] }) {
                       href={pdf}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center px-3 py-1.5 rounded-lg 
-                                 bg-gradient-to-r from-cyan-500 to-emerald-500 
-                                 text-white text-xs font-medium shadow hover:scale-105 transition"
+                      className="inline-flex items-center px-4 py-2 rounded-lg 
+                                 bg-gradient-to-r from-blue-500 to-purple-500 
+                                 text-white text-xs font-semibold shadow-lg hover:scale-105 transition"
                     >
                       Voir PDF
                     </a>
@@ -91,9 +90,9 @@ export default function VodsHistory({ vods = [] }) {
                   {dl && (
                     <a
                       href={dl}
-                      className="inline-flex items-center px-3 py-1.5 rounded-lg 
-                                 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 
-                                 text-xs font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+                      className="inline-flex items-center px-4 py-2 rounded-lg 
+                                 bg-gray-100 text-gray-700 
+                                 text-xs font-semibold hover:bg-gray-200 transition"
                       download
                     >
                       Télécharger
@@ -107,15 +106,15 @@ export default function VodsHistory({ vods = [] }) {
       </ul>
 
       {/* Desktop table */}
-      <div className="hidden md:block overflow-x-auto rounded-2xl border border-gray-200 dark:border-white/10 shadow-lg">
-        <table className="min-w-full text-sm bg-white/70 dark:bg-white/5 backdrop-blur-xl">
+      <div className="hidden md:block overflow-x-auto rounded-2xl border border-blue-200/50 shadow-lg">
+        <table className="min-w-full text-sm bg-white/90 backdrop-blur-xl">
           <thead>
-            <tr className="text-left text-gray-600 dark:text-gray-300 border-b dark:border-white/10">
-              <th className="py-3 px-4">Date</th>
-              <th className="py-3 px-4">Projet</th>
-              <th className="py-3 px-4">Activité</th>
-              <th className="py-3 px-4">Observateur</th>
-              <th className="py-3 px-4">Actions</th>
+            <tr className="text-left text-gray-700 border-b border-gray-200">
+              <th className="py-3 px-4 font-semibold">Date</th>
+              <th className="py-3 px-4 font-semibold">Projet</th>
+              <th className="py-3 px-4 font-semibold">Activité</th>
+              <th className="py-3 px-4 font-semibold">Observateur</th>
+              <th className="py-3 px-4 font-semibold">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -123,7 +122,7 @@ export default function VodsHistory({ vods = [] }) {
               <tr>
                 <td
                   colSpan={5}
-                  className="py-6 text-center text-gray-500 dark:text-gray-400"
+                  className="py-6 text-center text-gray-600"
                 >
                   Aucun résultat.
                 </td>
@@ -138,7 +137,7 @@ export default function VodsHistory({ vods = [] }) {
                     v.id ??
                     `${v.date}-${v.projet}-${v.activite}-${Math.random()}`
                   }
-                  className="border-b last:border-0 dark:border-white/10 hover:bg-gray-50/60 dark:hover:bg-white/5 transition"
+                  className="border-b last:border-0 border-gray-200 hover:bg-blue-50/50 transition"
                 >
                   <td className="py-3 px-4">{fmtDate(v.date || v.created_at)}</td>
                   <td className="py-3 px-4">{v.projet || "—"}</td>
@@ -152,9 +151,9 @@ export default function VodsHistory({ vods = [] }) {
                             href={pdf}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center px-3 py-1.5 rounded-lg 
-                                       bg-gradient-to-r from-cyan-500 to-emerald-500 
-                                       text-white text-xs font-medium shadow hover:scale-105 transition"
+                            className="inline-flex items-center px-4 py-2 rounded-lg 
+                                       bg-gradient-to-r from-blue-500 to-purple-500 
+                                       text-white text-xs font-semibold shadow-lg hover:scale-105 transition"
                           >
                             Voir PDF
                           </a>
@@ -162,9 +161,9 @@ export default function VodsHistory({ vods = [] }) {
                         {dl && (
                           <a
                             href={dl}
-                            className="inline-flex items-center px-3 py-1.5 rounded-lg 
-                                       bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 
-                                       text-xs font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+                            className="inline-flex items-center px-4 py-2 rounded-lg 
+                                       bg-gray-100 text-gray-700 
+                                       text-xs font-semibold hover:bg-gray-200 transition"
                             download
                           >
                             Télécharger

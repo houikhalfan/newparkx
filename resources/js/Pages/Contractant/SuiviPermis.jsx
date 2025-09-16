@@ -48,15 +48,15 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
   const getStatusIcon = (status) => {
     switch(status) {
       case 'en_attente':
-        return <Clock className="w-4 h-4 text-yellow-400" />;
+        return <Clock className="w-4 h-4 text-yellow-600" />;
       case 'en_cours':
-        return <AlertCircle className="w-4 h-4 text-blue-400" />;
+        return <AlertCircle className="w-4 h-4 text-blue-600" />;
       case 'signe':
-        return <CheckCircle className="w-4 h-4 text-green-400" />;
+        return <CheckCircle className="w-4 h-4 text-green-600" />;
       case 'rejete':
-        return <XCircle className="w-4 h-4 text-red-400" />;
+        return <XCircle className="w-4 h-4 text-red-600" />;
       default:
-        return <Clock className="w-4 h-4 text-gray-400" />;
+        return <Clock className="w-4 h-4 text-gray-600" />;
     }
   };
 
@@ -78,32 +78,32 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
   const getStatusColor = (status) => {
     switch(status) {
       case 'en_attente':
-        return "text-yellow-300";
+        return "text-yellow-600";
       case 'en_cours':
-        return "text-blue-300";
+        return "text-blue-600";
       case 'signe':
-        return "text-green-300";
+        return "text-green-600";
       case 'rejete':
-        return "text-red-300";
+        return "text-red-600";
       default:
-        return "text-gray-300";
+        return "text-gray-600";
     }
   };
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-cyan-900 to-emerald-900 relative overflow-hidden flex">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden flex">
         {/* Animated Background */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-200/30 to-pink-200/30 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-cyan-200/20 to-blue-200/20 rounded-full blur-3xl animate-pulse" />
         </div>
 
         {/* Grid Pattern */}
-        <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 opacity-20">
           <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(6,182,212,0.3) 1px, transparent 0)`,
+            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(59,130,246,0.2) 1px, transparent 0)`,
             backgroundSize: '50px 50px'
           }} />
         </div>
@@ -131,9 +131,9 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
                 className="relative z-10 px-6 mb-6"
               >
                 <div className="max-w-7xl mx-auto">
-                  <div className="bg-green-500/20 backdrop-blur-sm border border-green-400/30 rounded-xl p-4 flex items-center space-x-3">
-                    <FileText className="w-5 h-5 text-green-400" />
-                    <p className="text-green-300 font-medium">{flash.success}</p>
+                  <div className="bg-green-50 backdrop-blur-sm border border-green-200 rounded-xl p-4 flex items-center space-x-3 shadow-lg">
+                    <FileText className="w-5 h-5 text-green-600" />
+                    <p className="text-green-700 font-medium">{flash.success}</p>
                   </div>
                 </div>
               </motion.div>
@@ -141,20 +141,20 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
           </AnimatePresence>
 
           {/* Main Content */}
-          <div className="relative z-10 px-6 pb-12">
+          <div className="relative z-10 px-6 pb-12 pt-8">
             <div className="max-w-7xl mx-auto">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
-                className="text-center mb-12"
+                className="text-center mb-16"
               >
-                <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                  <span className="bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+                <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+                  <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                     Suivi des Permis
                   </span>
                 </h1>
-                <p className="text-gray-300 text-lg">Consultez l'état de vos demandes de permis</p>
+                <p className="text-gray-600 text-lg">Consultez l'état de vos demandes de permis</p>
               </motion.div>
 
               {/* Search Section */}
@@ -162,38 +162,34 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
-                className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl mb-8 max-w-4xl mx-auto"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
-                  backdropFilter: 'blur(20px)',
-                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)'
-                }}
+                className="mb-8 max-w-4xl mx-auto"
               >
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Rechercher
                     </label>
                     <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                       <input
                         type="text"
                         value={search}
                         onChange={handleSearch}
                         placeholder="Rechercher par numéro ou site..."
-                        className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all duration-300 text-sm"
+                        className="w-full pl-10 pr-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300 text-sm font-medium shadow-sm"
                       />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Statut
                     </label>
                     <div className="relative">
                       <select
                         value={statusFilter}
                         onChange={handleStatusFilter}
-                        className="w-full pl-3 pr-4 py-2.5 bg-white/5 border border-white/20 rounded-lg text-white focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/50 transition-all duration-300 text-sm appearance-none"
+                        className="w-full pl-3 pr-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all duration-300 text-sm appearance-none"
+                        style={{ colorScheme: 'light' }}
                       >
                         <option value="">Tous les statuts</option>
                         <option value="en_attente">En attente</option>
@@ -202,7 +198,7 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
                         <option value="rejete">Rejeté</option>
                       </select>
                       <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
                       </div>
@@ -210,10 +206,10 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
                   </div>
                   <div className="flex items-end">
                     <motion.button
-                      whileHover={{ scale: 1.05 }}
+                      whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={clearFilters}
-                      className="px-4 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white hover:bg-white/20 transition-all duration-300 backdrop-blur-sm text-sm"
+                      className="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl hover:from-red-600 hover:to-pink-600 transition-all duration-300 text-sm font-semibold shadow-lg hover:shadow-xl"
                     >
                       Effacer
                     </motion.button>
@@ -226,39 +222,38 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
                 initial={{ opacity: 0, y: 40 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.6 }}
-                className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl"
+                className="bg-white/90 backdrop-blur-xl border border-blue-200/50 rounded-3xl p-8 shadow-2xl"
                 style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
-                  backdropFilter: 'blur(20px)',
-                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1)'
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.95) 100%)',
+                  backdropFilter: 'blur(20px)'
                 }}
               >
                 {permis.length > 0 ? (
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-left text-gray-300">
-                      <thead className="text-xs uppercase bg-white/5 backdrop-blur-sm">
+                    <table className="w-full text-sm text-left text-gray-700">
+                      <thead className="text-xs uppercase bg-white/80 backdrop-blur-sm border-b border-gray-200">
                         <tr>
-                          <th className="px-6 py-4 font-semibold">Type</th>
-                          <th className="px-6 py-4 font-semibold">N° Permis</th>
-                          <th className="px-6 py-4 font-semibold">Site</th>
-                          <th className="px-6 py-4 font-semibold">Date</th>
-                          <th className="px-6 py-4 font-semibold">Statut</th>
-                          <th className="px-6 py-4 font-semibold text-center">Actions</th>
+                          <th className="px-6 py-4 font-semibold text-gray-700">Type</th>
+                          <th className="px-6 py-4 font-semibold text-gray-700">N° Permis</th>
+                          <th className="px-6 py-4 font-semibold text-gray-700">Site</th>
+                          <th className="px-6 py-4 font-semibold text-gray-700">Date</th>
+                          <th className="px-6 py-4 font-semibold text-gray-700">Statut</th>
+                          <th className="px-6 py-4 font-semibold text-center text-gray-700">Actions</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-white/10">
+                      <tbody className="divide-y divide-gray-200">
                         {permis.map((p, index) => (
                           <motion.tr 
                             key={p.id}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
-                            className="group hover:bg-white/5 transition-all duration-300"
+                            className="group hover:bg-blue-50/50 transition-all duration-300"
                           >
-                            <td className="px-6 py-4">Permis d'Excavation</td>
-                            <td className="px-6 py-4 font-medium">{p.numero_permis || "—"}</td>
-                            <td className="px-6 py-4">{p.site ? p.site.name : "—"}</td>
-                            <td className="px-6 py-4">
+                            <td className="px-6 py-4 text-gray-800 font-medium">Permis d'Excavation</td>
+                            <td className="px-6 py-4 font-semibold text-gray-800">{p.numero_permis || "—"}</td>
+                            <td className="px-6 py-4 text-gray-700">{p.site ? p.site.name : "—"}</td>
+                            <td className="px-6 py-4 text-gray-700">
                               {p.created_at
                                 ? new Date(p.created_at).toLocaleDateString("fr-FR")
                                 : "—"}
@@ -273,7 +268,7 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
                             </td>
                            <td className="px-6 py-4 text-center">
   {p.status === "en_cours" ? (
-    <span className="text-gray-400 font-medium cursor-not-allowed inline-flex items-center">
+    <span className="text-gray-500 font-medium cursor-not-allowed inline-flex items-center">
       <Eye className="w-4 h-4 mr-1" />
       Voir
     </span>
@@ -283,7 +278,7 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
          href={`/storage/${p.pdf_signed}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-green-300 hover:text-green-200 font-medium inline-flex items-center transition-colors duration-300"
+        className="text-green-600 hover:text-green-700 font-medium inline-flex items-center transition-colors duration-300"
       >
         <FileText className="w-4 h-4 mr-1" />
         PDF
@@ -293,7 +288,7 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
       <Link
         href={route("contractant.permisexcavation.show", p.id)}
-        className="text-cyan-300 hover:text-cyan-200 font-medium inline-flex items-center transition-colors duration-300"
+        className="text-blue-600 hover:text-blue-700 font-medium inline-flex items-center transition-colors duration-300"
       >
         <Eye className="w-4 h-4 mr-1" />
         Voir
@@ -309,11 +304,11 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
                   </div>
                 ) : (
                   <div className="text-center py-12">
-                    <div className="p-4 bg-white/5 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-                      <FileText className="w-10 h-10 text-gray-400" />
+                    <div className="p-4 bg-blue-50 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                      <FileText className="w-10 h-10 text-blue-600" />
                     </div>
-                    <h3 className="text-lg font-medium text-white mb-2">Aucun permis</h3>
-                    <p className="text-gray-400">Aucun permis n'a été soumis pour le moment.</p>
+                    <h3 className="text-lg font-medium text-gray-800 mb-2">Aucun permis</h3>
+                    <p className="text-gray-600">Aucun permis n'a été soumis pour le moment.</p>
                   </div>
                 )}
               </motion.div>

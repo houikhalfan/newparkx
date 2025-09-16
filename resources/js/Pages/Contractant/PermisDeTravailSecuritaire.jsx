@@ -1,17 +1,18 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { usePage } from "@inertiajs/react";
 import { motion, AnimatePresence } from "framer-motion";
-import ContractantLayout from "@/Pages/ContractantLayout";
+import ContractantSidebar from '@/Components/ContractantSidebar';
+import ContractantTopHeader from '@/Components/ContractantTopHeader';
 
 /* --------------------------------- UI bits -------------------------------- */
 const Section = ({ title, children }) => (
-  <div className="rounded-2xl border border-gray-200 bg-white shadow-sm">
-    <div className="border-b px-4 py-3 md:px-5">
-      <h2 className="text-sm font-semibold tracking-wide text-gray-700 uppercase">
+  <div className="rounded-3xl border border-blue-200/50 bg-white/90 backdrop-blur-xl shadow-2xl mb-8">
+    <div className="border-b border-blue-200/50 px-6 py-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10">
+      <h2 className="text-sm font-bold tracking-wide text-gray-800 uppercase">
         {title}
       </h2>
     </div>
-    <div className="p-4 md:p-5">{children}</div>
+    <div className="p-8 bg-white/95">{children}</div>
   </div>
 );
 
@@ -28,8 +29,8 @@ const Text = ({ disabled, ...rest }) => (
   <input
     {...rest}
     className={[
-      "w-full rounded-lg border px-3 py-2 text-sm outline-none",
-      "focus:ring-2 focus:ring-black/10 focus:border-gray-400",
+      "w-full rounded-xl border px-4 py-3 text-sm outline-none transition-all duration-300",
+      "focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500",
       disabled ? "bg-gray-50 text-gray-500" : "bg-white border-gray-300",
     ].join(" ")}
   />
@@ -40,8 +41,8 @@ const Area = ({ disabled, rows = 4, ...rest }) => (
     rows={rows}
     {...rest}
     className={[
-      "w-full rounded-lg border px-3 py-2 text-sm outline-none",
-      "focus:ring-2 focus:ring-black/10 focus:border-gray-400",
+      "w-full rounded-xl border px-4 py-3 text-sm outline-none transition-all duration-300",
+      "focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500",
       disabled ? "bg-gray-50 text-gray-500" : "bg-white border-gray-300",
     ].join(" ")}
   />
@@ -55,7 +56,7 @@ function CheckRow({ checked, onChange, label, disabled }) {
     <label className={`inline-flex items-start gap-2 ${disabled ? "opacity-60" : ""}`}>
       <input
         type="checkbox"
-        className="mt-0.5 h-4 w-4 rounded border-gray-300 text-black focus:ring-black/20"
+        className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
         checked={!!checked}
         onChange={(e) => onChange(e.target.checked)}
         disabled={disabled}
@@ -96,14 +97,14 @@ function CheckboxGroup({
   const isNoneSelected = mutuallyExclusiveKey && values.includes(mutuallyExclusiveKey);
 
   return (
-    <fieldset className="space-y-2">
-      <legend className="text-sm font-medium text-gray-900 mb-1">{legend}</legend>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+    <fieldset className="space-y-3">
+      <legend className="text-sm font-semibold text-gray-800 mb-2">{legend}</legend>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {options.map((o) => (
-          <label key={o.key} className="inline-flex items-start gap-2">
+          <label key={o.key} className="inline-flex items-start gap-3 p-2 rounded-lg hover:bg-blue-50/50 transition-colors duration-200">
             <input
               type="checkbox"
-              className="mt-0.5 h-4 w-4 rounded border-gray-300 text-black focus:ring-black/20"
+              className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               checked={values.includes(o.key)}
               onChange={() => toggle(o.key)}
               disabled={isNoneSelected && o.key !== mutuallyExclusiveKey}
@@ -141,8 +142,8 @@ function SignaturePicker({ id, label, value, onChange, disabled, error }) {
           else setPreview(null);
         }}
         className={[
-          "block w-full text-sm file:mr-3 file:rounded-md file:border-0 file:bg-gray-900 file:px-3 file:py-2",
-          "file:text-white hover:file:opacity-90",
+          "block w-full text-sm file:mr-3 file:rounded-lg file:border-0 file:bg-blue-500/20 file:px-3 file:py-2",
+          "file:text-blue-700 hover:file:bg-blue-500/30",
           disabled ? "opacity-60 cursor-not-allowed" : "",
         ].join(" ")}
       />
@@ -433,30 +434,75 @@ export default function Excavation() {
 
   /* ------------------------------- rendering ------------------------------- */
   return (
-    <ContractantLayout title="Permis d'excavation">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Permis de travail sécuritaire — Construction 
-          </h1>
-      
+    <>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden flex">
+        {/* Animated Background */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-200/30 to-pink-200/30 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-cyan-200/20 to-blue-200/20 rounded-full blur-3xl animate-pulse" />
         </div>
 
-        <AnimatePresence>
-          {ok && (
-            <motion.div
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              className="mb-4 rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-sm text-emerald-800"
-            >
-              Données validées côté client. Prêt à envoyer au responsable de site
-              (puis HSE). Implémentez ensuite l’enregistrement & PDF côté Laravel.
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(59,130,246,0.2) 1px, transparent 0)`,
+            backgroundSize: '50px 50px'
+          }} />
+        </div>
 
-        <form onSubmit={onSubmit} className="space-y-6">
+        {/* Sidebar */}
+        <ContractantSidebar />
+
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col">
+          {/* Top Header */}
+          <ContractantTopHeader 
+            contractor={usePage().props.auth?.contractor}
+            showBackButton={true}
+            backRoute={route('contractant.home')}
+            backLabel="Retour au tableau de bord"
+          />
+
+          <div className="relative z-10 px-6 pb-12 flex-1 pt-8">
+            <div className="max-w-7xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="text-center mb-12"
+              >
+                <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+                  <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    Permis de travail sécuritaire — Construction
+                  </span>
+                </h1>
+                <p className="text-gray-600 text-lg">
+                  Remplissez et soumettez votre permis de travail sécuritaire
+                </p>
+              </motion.div>
+
+              <AnimatePresence>
+                {ok && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    className="mb-8 rounded-xl border border-green-200 bg-green-50 px-6 py-4 text-sm text-green-800 shadow-lg"
+                  >
+                    Données validées côté client. Prêt à envoyer au responsable de site
+                    (puis HSE). Implémentez ensuite l'enregistrement & PDF côté Laravel.
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <motion.form 
+                onSubmit={onSubmit} 
+                className="space-y-8"
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
           {/* IDENTIFICATION */}
           <Section title="Identification">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -465,7 +511,8 @@ export default function Excavation() {
                 <select
                   value={data.site_id}
                   onChange={(e) => set("site_id", e.target.value)}
-                  className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/10"
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-300"
+                  style={{ colorScheme: 'light' }}
                 >
                   <option value="" disabled>
                     Choisir un site…
@@ -802,17 +849,27 @@ export default function Excavation() {
             </div>
           </Section>
 
-          {/* ACTIONS */}
-          <div className="flex items-center justify-end gap-3 pb-2">
-            <button
-              type="submit"
-              className="rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-black"
-            >
-              Soumettre (validation locale)
-            </button>
+              {/* ACTIONS */}
+              <motion.div 
+                className="flex items-center justify-end gap-4 pb-2 pt-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.8 }}
+              >
+                <motion.button
+                  type="submit"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 px-8 py-3 text-sm font-semibold text-white hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  Soumettre (validation locale)
+                </motion.button>
+              </motion.div>
+              </motion.form>
+            </div>
           </div>
-        </form>
+        </div>
       </div>
-    </ContractantLayout>
+    </>
   );
 }

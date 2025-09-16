@@ -41,11 +41,11 @@ export default function ContractantTopHeader({ contractor, showBackButton = fals
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="relative z-50 bg-gradient-to-r from-gray-800/80 to-gray-900/80 backdrop-blur-xl border-b border-cyan-500/20 shadow-2xl"
+            className="relative z-50 bg-white/80 backdrop-blur-xl border-b border-blue-200/50 shadow-lg"
             style={{
-                background: 'linear-gradient(135deg, rgba(31,41,55,0.8) 0%, rgba(17,24,39,0.9) 100%)',
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.95) 100%)',
                 backdropFilter: 'blur(20px)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(6, 182, 212, 0.1)'
+                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(59, 130, 246, 0.1)'
             }}
         >
             <div className="max-w-7xl mx-auto px-6 py-4">
@@ -53,14 +53,14 @@ export default function ContractantTopHeader({ contractor, showBackButton = fals
                     {/* Logo Section */}
                     <div className="flex items-center space-x-4">
                         <div className="relative">
-                            <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-2xl">
-                                <span className="text-white font-bold text-lg">P</span>
+                            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
+                                <span className="text-white font-bold text-xl">P</span>
                             </div>
-                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full animate-pulse" />
+                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full animate-pulse" />
                         </div>
                         <div>
-                            <h1 className="text-xl font-bold text-white">ParkX</h1>
-                            <p className="text-xs text-gray-400">Contractor Portal</p>
+                            <h1 className="text-2xl font-bold text-gray-800">ParkX</h1>
+                            <p className="text-sm text-gray-600">Contractor Portal</p>
                         </div>
                     </div>
 
@@ -69,12 +69,12 @@ export default function ContractantTopHeader({ contractor, showBackButton = fals
                         <div className="flex-1 flex justify-center">
                             <Link
                                 href={backRoute}
-                                className="group flex items-center space-x-3 text-white hover:text-cyan-300 transition-colors duration-300"
+                                className="group flex items-center space-x-3 text-gray-700 hover:text-blue-600 transition-colors duration-300"
                             >
-                                <div className="p-2 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 group-hover:bg-cyan-500/20 group-hover:border-cyan-400/50 transition-all duration-300">
+                                <div className="p-3 bg-white/80 backdrop-blur-sm rounded-xl border border-blue-200 group-hover:bg-blue-50 group-hover:border-blue-300 transition-all duration-300 shadow-lg">
                                     <ArrowLeft className="w-5 h-5" />
                                 </div>
-                                <span className="font-medium">{backLabel}</span>
+                                <span className="font-semibold">{backLabel}</span>
                             </Link>
                         </div>
                     )}
@@ -85,7 +85,7 @@ export default function ContractantTopHeader({ contractor, showBackButton = fals
                         {/* THEME TOGGLE */}
                         <button
                             onClick={() => setDarkMode(!darkMode)}
-                            className="p-2 rounded-full border border-cyan-400/30 text-cyan-300 hover:bg-cyan-500/20 hover:border-cyan-400 transition-colors duration-300"
+                            className="p-3 rounded-xl border border-blue-200 text-blue-600 hover:bg-blue-50 hover:border-blue-300 transition-colors duration-300 shadow-sm"
                         >
                             {darkMode ? (
                                 <Sun className="w-5 h-5" />
@@ -97,8 +97,8 @@ export default function ContractantTopHeader({ contractor, showBackButton = fals
                         {/* Contractor Info + Profile Dropdown */}
                         <div className="flex items-center space-x-4">
                             <div className="text-right">
-                                <p className="text-sm font-medium text-white">{contractor?.name || 'Contractor'}</p>
-                                <p className="text-xs text-gray-400">{contractor?.company_name || 'Company'}</p>
+                                <p className="text-sm font-semibold text-gray-800">{contractor?.name || 'Contractor'}</p>
+                                <p className="text-xs text-gray-600">{contractor?.company_name || 'Company'}</p>
                             </div>
                             {/* Profile Circle & Dropdown */}
                             {/* ... (your existing dropdown code here) ... */}
@@ -111,13 +111,13 @@ export default function ContractantTopHeader({ contractor, showBackButton = fals
                                 type="submit"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="group relative px-4 py-2 bg-gradient-to-r from-red-500/20 to-orange-500/20 border border-red-500/30 rounded-full text-red-300 hover:from-red-500/30 hover:to-orange-500/30 hover:border-red-400/50 hover:text-red-200 transition-all duration-300 backdrop-blur-sm"
+                                className="group relative px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl hover:from-red-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl"
                             >
                                 <div className="flex items-center space-x-2">
                                     <X className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
-                                    <span className="text-sm font-medium">Déconnexion</span>
+                                    <span className="text-sm font-semibold">Déconnexion</span>
                                 </div>
-                                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-red-400 to-orange-400 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300" />
+                                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-red-400 to-pink-400 opacity-0 group-hover:opacity-30 blur-lg transition-opacity duration-300" />
                             </motion.button>
                         </form>
                     </div>

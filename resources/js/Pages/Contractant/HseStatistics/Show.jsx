@@ -8,15 +8,15 @@ import ContractantTopHeader from '@/Components/ContractantTopHeader';
 export default function HseStatisticsShow({ statistic, contractor }) {
     const getSafetyIndicatorColor = (value, type) => {
         if (type === 'trir') {
-            return value > 3.0 ? 'text-red-400' : value > 1.0 ? 'text-yellow-400' : 'text-emerald-400';
+            return value > 3.0 ? 'text-red-600' : value > 1.0 ? 'text-yellow-600' : 'text-green-600';
         }
         if (type === 'ltir') {
-            return value > 1.0 ? 'text-red-400' : value > 0.5 ? 'text-yellow-400' : 'text-emerald-400';
+            return value > 1.0 ? 'text-red-600' : value > 0.5 ? 'text-yellow-600' : 'text-green-600';
         }
         if (type === 'dart') {
-            return value > 1.0 ? 'text-red-400' : value > 0.5 ? 'text-yellow-400' : 'text-emerald-400';
+            return value > 1.0 ? 'text-red-600' : value > 0.5 ? 'text-yellow-600' : 'text-green-600';
         }
-        return 'text-gray-400';
+        return 'text-gray-600';
     };
 
     const totalHeures = Number(statistic.heures_normales || 0) + Number(statistic.heures_supplementaires || 0);
@@ -28,18 +28,18 @@ export default function HseStatisticsShow({ statistic, contractor }) {
         <>
             <Head title={`Statistiques HSE #${statistic.id}`} />
 
-            <div className="min-h-screen bg-gradient-to-br from-gray-900 via-cyan-900 to-emerald-900 relative overflow-hidden flex">
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden flex">
                 {/* Animated Background */}
                 <div className="absolute inset-0 overflow-hidden">
-                    <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-cyan-500/20 to-emerald-500/20 rounded-full blur-3xl animate-pulse" />
-                    <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-emerald-500/20 to-cyan-500/20 rounded-full blur-3xl animate-pulse" />
-                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full blur-3xl animate-pulse" />
+                    <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse" />
+                    <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full blur-3xl animate-pulse" />
+                    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-indigo-500/10 to-blue-500/10 rounded-full blur-3xl animate-pulse" />
                 </div>
 
                 {/* Grid Pattern */}
                 <div className="absolute inset-0 opacity-10">
                     <div className="absolute inset-0" style={{
-                        backgroundImage: `radial-gradient(circle at 1px 1px, rgba(6,182,212,0.3) 1px, transparent 0)`,
+                        backgroundImage: `radial-gradient(circle at 1px 1px, rgba(59,130,246,0.3) 1px, transparent 0)`,
                         backgroundSize: '50px 50px'
                     }} />
                 </div>
@@ -67,18 +67,18 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                 transition={{ duration: 0.8 }}
                                 className="text-center mb-12"
                             >
-                                <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                                    <span className="bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">
+                                <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+                                    <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                                         Statistiques HSE #{statistic.id}
                                     </span>
                                 </h1>
-                                <div className="flex items-center justify-center space-x-4 text-gray-300">
+                                <div className="flex items-center justify-center space-x-4 text-gray-600">
                                     <div className="flex items-center space-x-2">
-                                        <Building className="w-5 h-5 text-cyan-400" />
+                                        <Building className="w-5 h-5 text-blue-600" />
                                         <span>{statistic.site}</span>
                                     </div>
                                     <div className="flex items-center space-x-2">
-                                        <Calendar className="w-5 h-5 text-emerald-400" />
+                                        <Calendar className="w-5 h-5 text-purple-600" />
                                         <span>{new Date(statistic.date).toLocaleDateString('fr-FR')}</span>
                                     </div>
                                 </div>
@@ -91,7 +91,7 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 0.2 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl"
+                                    className="bg-white/80 backdrop-blur-xl border border-blue-200/50 rounded-2xl p-6 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -99,11 +99,11 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                 >
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-sm font-medium text-gray-300 mb-1">Total Heures</p>
+                                            <p className="text-sm font-medium text-gray-600 mb-1">Total Heures</p>
                                             <p className="text-3xl font-bold text-cyan-300">{totalHeures.toFixed(2)}</p>
                                         </div>
                                         <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center">
-                                            <Clock className="w-6 h-6 text-white" />
+                                            <Clock className="w-6 h-6 text-gray-800" />
                                         </div>
                                     </div>
                                 </motion.div>
@@ -113,7 +113,7 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 0.3 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl"
+                                    className="bg-white/80 backdrop-blur-xl border border-blue-200/50 rounded-2xl p-6 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -121,11 +121,11 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                 >
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-sm font-medium text-gray-300 mb-1">Total Accidents</p>
+                                            <p className="text-sm font-medium text-gray-600 mb-1">Total Accidents</p>
                                             <p className="text-3xl font-bold text-red-300">{totalAccidents}</p>
                                         </div>
                                         <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
-                                            <AlertTriangle className="w-6 h-6 text-white" />
+                                            <AlertTriangle className="w-6 h-6 text-gray-800" />
                                         </div>
                                     </div>
                                 </motion.div>
@@ -135,7 +135,7 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 0.4 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl"
+                                    className="bg-white/80 backdrop-blur-xl border border-blue-200/50 rounded-2xl p-6 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -143,11 +143,11 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                 >
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-sm font-medium text-gray-300 mb-1">Formations</p>
+                                            <p className="text-sm font-medium text-gray-600 mb-1">Formations</p>
                                             <p className="text-3xl font-bold text-emerald-300">{totalFormations}</p>
                                         </div>
                                         <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
-                                            <Users className="w-6 h-6 text-white" />
+                                            <Users className="w-6 h-6 text-gray-800" />
                                         </div>
                                     </div>
                                 </motion.div>
@@ -157,7 +157,7 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 0.5 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl"
+                                    className="bg-white/80 backdrop-blur-xl border border-blue-200/50 rounded-2xl p-6 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -165,11 +165,11 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                 >
                                     <div className="flex items-center justify-between">
                                         <div>
-                                            <p className="text-sm font-medium text-gray-300 mb-1">Personnel</p>
+                                            <p className="text-sm font-medium text-gray-600 mb-1">Personnel</p>
                                             <p className="text-3xl font-bold text-purple-300">{statistic.effectif_personnel || 0}</p>
                                         </div>
                                         <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
-                                            <Users className="w-6 h-6 text-white" />
+                                            <Users className="w-6 h-6 text-gray-800" />
                                         </div>
                                     </div>
                                 </motion.div>
@@ -182,7 +182,7 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 0.6 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl"
+                                    className="bg-white/80 backdrop-blur-xl border border-blue-200/50 rounded-3xl p-8 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -190,22 +190,22 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                 >
                                     <div className="flex items-center space-x-3 mb-6">
                                         <div className="p-2 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-lg">
-                                            <FileText className="w-6 h-6 text-cyan-400" />
+                                            <FileText className="w-6 h-6 text-blue-600" />
                                         </div>
-                                        <h3 className="text-2xl font-bold text-white">Informations de Base</h3>
+                                        <h3 className="text-2xl font-bold text-gray-800">Informations de Base</h3>
                                     </div>
                                     <div className="space-y-4">
                                         <div className="flex justify-between items-center py-2 border-b border-white/10">
-                                            <span className="text-gray-300">Site:</span>
-                                            <span className="font-medium text-white">{statistic.site}</span>
+                                            <span className="text-gray-600">Site:</span>
+                                            <span className="font-medium text-gray-800">{statistic.site}</span>
                                         </div>
                                         <div className="flex justify-between items-center py-2 border-b border-white/10">
-                                            <span className="text-gray-300">Date:</span>
-                                            <span className="font-medium text-white">{new Date(statistic.date).toLocaleDateString('fr-FR')}</span>
+                                            <span className="text-gray-600">Date:</span>
+                                            <span className="font-medium text-gray-800">{new Date(statistic.date).toLocaleDateString('fr-FR')}</span>
                                         </div>
                                         <div className="flex justify-between items-center py-2">
-                                            <span className="text-gray-300">Soumis le:</span>
-                                            <span className="font-medium text-white">{new Date(statistic.created_at).toLocaleString('fr-FR')}</span>
+                                            <span className="text-gray-600">Soumis le:</span>
+                                            <span className="font-medium text-gray-800">{new Date(statistic.created_at).toLocaleString('fr-FR')}</span>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -215,7 +215,7 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 0.7 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl"
+                                    className="bg-white/80 backdrop-blur-xl border border-blue-200/50 rounded-3xl p-8 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -223,25 +223,25 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                 >
                                     <div className="flex items-center space-x-3 mb-6">
                                         <div className="p-2 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-lg">
-                                            <Clock className="w-6 h-6 text-emerald-400" />
+                                            <Clock className="w-6 h-6 text-green-600" />
                                         </div>
-                                        <h3 className="text-2xl font-bold text-white">Personnel & Heures</h3>
+                                        <h3 className="text-2xl font-bold text-gray-800">Personnel & Heures</h3>
                                     </div>
                                     <div className="space-y-4">
                                         <div className="flex justify-between items-center py-2 border-b border-white/10">
-                                            <span className="text-gray-300">Effectif Personnel:</span>
-                                            <span className="font-medium text-white">{statistic.effectif_personnel || 0}</span>
+                                            <span className="text-gray-600">Effectif Personnel:</span>
+                                            <span className="font-medium text-gray-800">{statistic.effectif_personnel || 0}</span>
                                         </div>
                                         <div className="flex justify-between items-center py-2 border-b border-white/10">
-                                            <span className="text-gray-300">Heures Normales:</span>
-                                            <span className="font-medium text-white">{statistic.heures_normales ? Number(statistic.heures_normales).toFixed(2) : '0.00'}</span>
+                                            <span className="text-gray-600">Heures Normales:</span>
+                                            <span className="font-medium text-gray-800">{statistic.heures_normales ? Number(statistic.heures_normales).toFixed(2) : '0.00'}</span>
                                         </div>
                                         <div className="flex justify-between items-center py-2 border-b border-white/10">
-                                            <span className="text-gray-300">Heures Supplémentaires:</span>
-                                            <span className="font-medium text-white">{statistic.heures_supplementaires ? Number(statistic.heures_supplementaires).toFixed(2) : '0.00'}</span>
+                                            <span className="text-gray-600">Heures Supplémentaires:</span>
+                                            <span className="font-medium text-gray-800">{statistic.heures_supplementaires ? Number(statistic.heures_supplementaires).toFixed(2) : '0.00'}</span>
                                         </div>
                                         <div className="flex justify-between items-center py-2">
-                                            <span className="text-gray-300">Total Heures:</span>
+                                            <span className="text-gray-600">Total Heures:</span>
                                             <span className="font-medium text-cyan-300">{totalHeures.toFixed(2)}</span>
                                         </div>
                                     </div>
@@ -253,7 +253,7 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.8, delay: 0.8 }}
-                                className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl mb-8"
+                                className="bg-white/80 backdrop-blur-xl border border-blue-200/50 rounded-3xl p-8 shadow-2xl mb-8"
                                 style={{
                                     background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                     backdropFilter: 'blur(20px)'
@@ -263,7 +263,7 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                     <div className="p-2 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-lg">
                                         <BarChart3 className="w-6 h-6 text-purple-400" />
                                     </div>
-                                    <h3 className="text-2xl font-bold text-white">Indicateurs de Sécurité</h3>
+                                    <h3 className="text-2xl font-bold text-gray-800">Indicateurs de Sécurité</h3>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <div className="text-center p-6 bg-gradient-to-br from-red-500/10 to-red-600/10 rounded-xl border border-red-500/20">
@@ -285,7 +285,7 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                             {statistic.dart ? Number(statistic.dart).toFixed(4) : '0.0000'}
                                         </div>
                                         <div className="text-sm font-medium text-emerald-300 mt-2">DART</div>
-                                        <div className="text-xs text-emerald-400/70 mt-1">Days Away, Restricted, or Transferred</div>
+                                        <div className="text-xs text-green-600/70 mt-1">Days Away, Restricted, or Transferred</div>
                                     </div>
                                 </div>
                             </motion.div>
@@ -295,7 +295,7 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.8, delay: 0.9 }}
-                                className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl mb-8"
+                                className="bg-white/80 backdrop-blur-xl border border-blue-200/50 rounded-3xl p-8 shadow-2xl mb-8"
                                 style={{
                                     background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                     backdropFilter: 'blur(20px)'
@@ -305,7 +305,7 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                     <div className="p-2 bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-lg">
                                         <AlertTriangle className="w-6 h-6 text-red-400" />
                                     </div>
-                                    <h3 className="text-2xl font-bold text-white">Accidents & Incidents</h3>
+                                    <h3 className="text-2xl font-bold text-gray-800">Accidents & Incidents</h3>
                                 </div>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                     {[
@@ -320,7 +320,7 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                     ].map(({ key, label, color, borderColor, textColor }) => (
                                         <div key={key} className={`text-center p-4 bg-gradient-to-br ${color} rounded-xl border ${borderColor}`}>
                                             <div className={`text-2xl font-bold ${textColor}`}>{statistic[key] || 0}</div>
-                                            <div className="text-sm text-gray-300 mt-1">{label}</div>
+                                            <div className="text-sm text-gray-600 mt-1">{label}</div>
                                         </div>
                                     ))}
                                 </div>
@@ -332,7 +332,7 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 1.0 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl"
+                                    className="bg-white/80 backdrop-blur-xl border border-blue-200/50 rounded-3xl p-8 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -340,21 +340,21 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                 >
                                     <div className="flex items-center space-x-3 mb-6">
                                         <div className="p-2 bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-lg">
-                                            <Users className="w-6 h-6 text-emerald-400" />
+                                            <Users className="w-6 h-6 text-green-600" />
                                         </div>
-                                        <h3 className="text-2xl font-bold text-white">Formations</h3>
+                                        <h3 className="text-2xl font-bold text-gray-800">Formations</h3>
                                     </div>
                                     <div className="space-y-4">
                                         <div className="flex justify-between items-center py-2 border-b border-white/10">
-                                            <span className="text-gray-300">Total Séances:</span>
-                                            <span className="font-medium text-white">{statistic.formations_total_seances || 0}</span>
+                                            <span className="text-gray-600">Total Séances:</span>
+                                            <span className="font-medium text-gray-800">{statistic.formations_total_seances || 0}</span>
                                         </div>
                                         <div className="flex justify-between items-center py-2 border-b border-white/10">
-                                            <span className="text-gray-300">Total Participants:</span>
-                                            <span className="font-medium text-white">{statistic.formations_total_participants || 0}</span>
+                                            <span className="text-gray-600">Total Participants:</span>
+                                            <span className="font-medium text-gray-800">{statistic.formations_total_participants || 0}</span>
                                         </div>
                                         <div className="flex justify-between items-center py-2">
-                                            <span className="text-gray-300">Total Heures:</span>
+                                            <span className="text-gray-600">Total Heures:</span>
                                             <span className="font-medium text-emerald-300">{statistic.formations_total_heures ? Number(statistic.formations_total_heures).toFixed(2) : '0.00'}</span>
                                         </div>
                                     </div>
@@ -364,7 +364,7 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8, delay: 1.1 }}
-                                    className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl"
+                                    className="bg-white/80 backdrop-blur-xl border border-blue-200/50 rounded-3xl p-8 shadow-2xl"
                                     style={{
                                         background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                         backdropFilter: 'blur(20px)'
@@ -372,21 +372,21 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                 >
                                     <div className="flex items-center space-x-3 mb-6">
                                         <div className="p-2 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-lg">
-                                            <Shield className="w-6 h-6 text-cyan-400" />
+                                            <Shield className="w-6 h-6 text-blue-600" />
                                         </div>
-                                        <h3 className="text-2xl font-bold text-white">Permis & Inspections</h3>
+                                        <h3 className="text-2xl font-bold text-gray-800">Permis & Inspections</h3>
                                     </div>
                                     <div className="space-y-4">
                                         <div className="flex justify-between items-center py-2 border-b border-white/10">
-                                            <span className="text-gray-300">Total Permis:</span>
-                                            <span className="font-medium text-white">{statistic.permis_total || 0}</span>
+                                            <span className="text-gray-600">Total Permis:</span>
+                                            <span className="font-medium text-gray-800">{statistic.permis_total || 0}</span>
                                         </div>
                                         <div className="flex justify-between items-center py-2 border-b border-white/10">
-                                            <span className="text-gray-300">Total Inspections:</span>
-                                            <span className="font-medium text-white">{statistic.inspections_total_hse || 0}</span>
+                                            <span className="text-gray-600">Total Inspections:</span>
+                                            <span className="font-medium text-gray-800">{statistic.inspections_total_hse || 0}</span>
                                         </div>
                                         <div className="flex justify-between items-center py-2">
-                                            <span className="text-gray-300">PTSR Contrôlés:</span>
+                                            <span className="text-gray-600">PTSR Contrôlés:</span>
                                             <span className="font-medium text-cyan-300">{statistic.ptsr_controles || 0}</span>
                                         </div>
                                     </div>
@@ -398,7 +398,7 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.8, delay: 1.2 }}
-                                className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl"
+                                className="bg-white/80 backdrop-blur-xl border border-blue-200/50 rounded-3xl p-8 shadow-2xl"
                                 style={{
                                     background: 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
                                     backdropFilter: 'blur(20px)'
@@ -408,7 +408,7 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                     <div className="p-2 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-lg">
                                         <Download className="w-6 h-6 text-purple-400" />
                                     </div>
-                                    <h3 className="text-2xl font-bold text-white">Rapports Téléchargés</h3>
+                                    <h3 className="text-2xl font-bold text-gray-800">Rapports Téléchargés</h3>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     {[
@@ -425,7 +425,7 @@ export default function HseStatisticsShow({ statistic, contractor }) {
                                         { key: 'actions_correctives_cloturees_report', label: 'Rapport Actions Correctives' },
                                     ].map(({ key, label }) => (
                                         <div key={key} className="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors duration-200">
-                                            <span className="text-sm text-gray-300">{label}</span>
+                                            <span className="text-sm text-gray-600">{label}</span>
                                             {statistic[key] ? (
                                                 <Link
                                                     href={route('contractant.hse-statistics.download', [statistic.id, key])}
