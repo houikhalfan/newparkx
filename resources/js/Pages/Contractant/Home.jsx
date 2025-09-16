@@ -126,7 +126,7 @@ export default function ContractorHome() {
 
   const cards = [
     {
-      title: "VODs",
+      title: "VODS",
       desc: "Créer et suivre vos Visites Observation & Ronde.",
       href: "/contractant/vods",
       Icon: FolderOpen,
@@ -147,7 +147,7 @@ export default function ContractorHome() {
       color: "from-violet-500 to-purple-600",
     },
     {
-      title: "Paraphe & Signature",
+      title: "Permis",
       desc: "Déposez vos pièces pour signature par l'administration.",
       Icon: FileSignature,
       color: "from-pink-500 to-rose-600",
@@ -347,12 +347,7 @@ export default function ContractorHome() {
           transition={{ delay: 0.3, duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Services <span className="bg-gradient-to-r from-cyan-400 to-emerald-400 bg-clip-text text-transparent">Futuristes</span>
-          </h2>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-            Accédez à vos outils avec une interface nouvelle génération
-          </p>
+          
         </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">

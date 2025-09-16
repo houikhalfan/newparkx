@@ -282,11 +282,6 @@ const cards = useMemo(() => {
       >
         <div className="max-w-6xl mx-auto px-6 text-center">
 
-          <h2 className="text-6xl md:text-7xl font-extrabold mb-6 leading-tight">
-            <span className="bg-gradient-to-r from-slate-800 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              Sécurité avec audace
-            </span>
-          </h2>
           
           <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-12 leading-relaxed">
             Bienvenue sur votre interface ParkX. Accédez à tous vos outils et services 

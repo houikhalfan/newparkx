@@ -322,7 +322,7 @@ if (!header.project_id) newErrors.project_id = "Le projet est requis.";
             <div className="flex items-center">
               <Shield className="w-5 h-5 mr-3" />
               <span className="font-semibold">
-                Il vous reste <strong>{remaining}</strong> VOD(s) à soumettre ce mois-ci
+                Il vous reste <strong>{remaining}</strong> VODS à soumettre ce mois-ci
                 {typeof daysLeft === 'number' && <> — Jours restants : <strong>{daysLeft}</strong></>}.
               </span>
             </div>

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { route } from "ziggy-js";  // ✅ correct
 import { 
   FileText, 
   BarChart3, 
@@ -38,10 +39,17 @@ export default function ContractantSidebar() {
       color: 'from-purple-500 to-pink-500'
     },
     { 
-      href: '/contractant/parapheur', 
-      label: 'Papiers à signer',
+      href: route("contractant.suivi-permis.index"),
+      label: "Permis & Suivis",
       icon: FileSignature,
-      color: 'from-orange-500 to-red-500'
+      color: "from-orange-500 to-red-500",
+      children: [
+        {
+         href: route("contractant.permisexcavation.create"),
+
+          label: "Créer",
+        }
+      ]
     },
     { 
       href: '/contractant/materiel', 
@@ -60,7 +68,6 @@ export default function ContractantSidebar() {
         setIsMobileOpen(false);
       }
     }
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -148,12 +155,13 @@ export default function ContractantSidebar() {
       {/* Navigation */}
       <nav className="flex-1 p-3 space-y-2">
         <AnimatePresence>
-          {navItems.map((item, index) => {
+          {navItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.href);
             
             return (
               <div key={item.href}>
+                {/* Parent item */}
                 <Link
                   href={item.href}
                   className={`
@@ -162,7 +170,7 @@ export default function ContractantSidebar() {
                       ? 'bg-white text-gray-900 shadow-lg' 
                       : 'text-gray-300 hover:text-white hover:bg-white/10'
                     }
-                    ${isCollapsed && !isMobile ? 'justify-center' : ''}
+                    ${isCollapsed ? 'justify-center' : ''}
                   `}
                 >
                   {/* Active Background Glow */}
@@ -199,6 +207,21 @@ export default function ContractantSidebar() {
                     </div>
                   )}
                 </Link>
+
+                {/* Children (secondary links) */}
+                {!isCollapsed && item.children && (
+                  <div className="ml-10 mt-1 space-y-1">
+                    {item.children.map((child) => (
+                      <Link
+                        key={child.href}
+                        href={child.href}
+                        className="block text-xs text-gray-400 hover:text-white px-2 py-1 rounded-md hover:bg-white/10"
+                      >
+                        {child.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
             );
           })}
