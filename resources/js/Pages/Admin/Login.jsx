@@ -136,9 +136,7 @@ export default function AdminLogin() {
                 variants={iconVariants}
                 className="flex flex-col items-center mb-8"
               >
-                <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg mb-4">
-                  <Shield className="w-12 h-12 text-white" />
-                </div>
+               
                 <img 
                   src="/images/logo.png" 
                   alt="Company logo" 

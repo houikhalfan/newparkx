@@ -93,8 +93,9 @@
   <tr>
     <td><strong>Date :</strong> {{ $dateVisite }}</td>
 <td><strong>Projet :</strong>
-  {{ $vod->projet ?? ($vod->relationLoaded('project') ? $vod->project->name : '—') }}
+  {{ $vod->project?->name ?? $vod->projet ?? '—' }}
 </td>
+
     <td><strong>Activité :</strong> {{ $vod->activite }}</td>
   </tr>
   <tr>

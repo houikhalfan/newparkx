@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, usePage, router } from "@inertiajs/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, X, Sun, Moon } from "lucide-react";
+import { ArrowLeft, X, Sun, Moon, User, Settings, HelpCircle } from "lucide-react";
 
 export default function ContractantTopHeader({ contractor, showBackButton = false, backRoute = null, backLabel = "Retour au tableau de bord" }) {
     const { csrf_token } = usePage().props;
@@ -51,17 +51,19 @@ export default function ContractantTopHeader({ contractor, showBackButton = fals
             <div className="max-w-7xl mx-auto px-6 py-4">
                 <div className="flex items-center justify-between">
                     {/* Logo Section */}
-                    <div className="flex items-center space-x-4">
-                        <div className="relative">
-                            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
-                                <span className="text-white font-bold text-xl">P</span>
-                            </div>
-                            <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full animate-pulse" />
-                        </div>
-                        <div>
-                            <h1 className="text-2xl font-bold text-gray-800">ParkX</h1>
-                            <p className="text-sm text-gray-600">Contractor Portal</p>
-                        </div>
+        <div className="flex items-center space-x-4">
+    <div className="relative">
+        <div className="w-30 h-12 flex items-center justify-center overflow-hidden p-0">
+            <img 
+                src="/images/logo.png" 
+                alt="ParkX Logo" 
+                className="h-10 object-contain"
+            />
+        </div>
+        <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full animate-pulse" />
+    </div>
+
+                     
                     </div>
 
                     {/* Back Button (if needed) */}
@@ -100,8 +102,50 @@ export default function ContractantTopHeader({ contractor, showBackButton = fals
                                 <p className="text-sm font-semibold text-gray-800">{contractor?.name || 'Contractor'}</p>
                                 <p className="text-xs text-gray-600">{contractor?.company_name || 'Company'}</p>
                             </div>
+                            
                             {/* Profile Circle & Dropdown */}
-                            {/* ... (your existing dropdown code here) ... */}
+                            <div className="relative" ref={profileDropdownRef}>
+                                <button
+                                    onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+                                    className="w-12 h-12 bg-[#013b94] rounded-2xl flex items-center justify-center text-white font-semibold text-lg shadow-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-300"
+                                >
+                                    {contractor?.name ? contractor.name.charAt(0).toUpperCase() : 'C'}
+                                </button>
+                                
+                                <AnimatePresence>
+                                    {showProfileDropdown && (
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                            transition={{ duration: 0.2 }}
+                                            className="absolute right-0 mt-2 w-64 bg-white/95 backdrop-blur-xl rounded-2xl shadow-xl border border-blue-200/50 overflow-hidden z-50"
+                                        >
+                                            <div className="p-4 border-b border-blue-100/50">
+                                                <p className="font-semibold text-gray-800">{contractor?.name || 'Contractor'}</p>
+                                                <p className="text-sm text-gray-600">{contractor?.email || 'email@example.com'}</p>
+                                            </div>
+                                            <div className="p-2">
+                                          
+                                                <Link
+                                                    href={route('contractant.settings')}
+                                                    className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors duration-200"
+                                                >
+                                                    <Settings className="w-5 h-5 text-blue-500" />
+                                                    <span>Paramètres</span>
+                                                </Link>
+                                                <Link
+                                                    href={route('contractant.help')}
+                                                    className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 rounded-xl transition-colors duration-200"
+                                                >
+                                                    <HelpCircle className="w-5 h-5 text-blue-500" />
+                                                    <span>Aide & Support</span>
+                                                </Link>
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
                         </div>
 
                         {/* Logout */}
@@ -111,7 +155,7 @@ export default function ContractantTopHeader({ contractor, showBackButton = fals
                                 type="submit"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
-                                className="group relative px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl hover:from-red-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl"
+                                className="group relative px-6 py-3 bg-[#013b94] text-white rounded-xl hover:from-red-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl"
                             >
                                 <div className="flex items-center space-x-2">
                                     <X className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />

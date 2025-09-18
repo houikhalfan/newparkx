@@ -74,6 +74,10 @@ function CheckboxGroup({
   requiredLabel = "Sélectionnez au moins une option.",
   error,
   mutuallyExclusiveKey, // e.g., "aucun" – disables others if present
+  showOtherField = false,
+  otherValue = "",
+  onOtherChange = () => {},
+  otherError = "",
 }) {
   const toggle = (key) => {
     const s = new Set(values);
@@ -113,6 +117,19 @@ function CheckboxGroup({
           </label>
         ))}
       </div>
+      
+      {showOtherField && values.includes("autre") && (
+        <div className="mt-3">
+          <Label>Précisez l'autre option:</Label>
+          <Text
+            value={otherValue}
+            onChange={(e) => onOtherChange(e.target.value)}
+            placeholder="Précisez..."
+          />
+          <FieldError>{otherError}</FieldError>
+        </div>
+      )}
+      
       <FieldError>{error || (values.length === 0 ? requiredLabel : "")}</FieldError>
     </fieldset>
   );
@@ -173,21 +190,21 @@ export default function Excavation() {
       { key: "travail_chaud", label: "Travail à chaud" },
       { key: "espace_confine", label: "Espace confiné" },
       { key: "consignation", label: "Consignation/Déconsignation" },
-      { key: "demolition", label: "Démolition" },
+      { key: "demolition", label: "Demolition" },
       { key: "echafaudage", label: "Échafaudage" },
-      { key: "lignes_elec", label: "À proximité de lignes électriques" },
-      { key: "structures_temp", label: "Structures temporaires – activités à haut risque" },
-      { key: "moins_3m_eau", label: "À moins de 3 m de la ligne d'eau ou littoral" },
-      { key: "plateforme_aerienne", label: "Avec une plate-forme aérienne motorisée" },
+      { key: "lignes_elec", label: "Travail a proximité de lignes électriques" },
+      { key: "structures_temp", label: "Structures temporaires pour les activités à haut risque" },
+      { key: "moins_3m_eau", label: "Travailler moins de 3m de la ligne d'eau ou littoral" },
+      { key: "plateforme_aerienne", label: "Travail avec une plate forme aérienne motorisée" },
       { key: "excavation", label: "Excavation" },
       { key: "dynamitage", label: "Dynamitage" },
       { key: "fermeture_route", label: "Fermeture de la route" },
-      { key: "levage_critique", label: "Levage critique" },
       { key: "levage_personnel", label: "Levage du personnel" },
       { key: "radiographie", label: "Radiographie" },
       { key: "hydrotest", label: "HydroTest" },
-      { key: "mise_service", label: "Mise en service" },
-      { key: "autre", label: "Autre (préciser en commentaires)" },
+      { key: "lavage_critique", label: "Lavage critique" },
+      { key: "mise_service", label: "Mise en servie" },
+      { key: "autre", label: "Autre" },
     ],
     []
   );
@@ -200,12 +217,13 @@ export default function Excavation() {
       { key: "excavation", label: "Excavation" },
       { key: "consignation", label: "Consignation/déconsignation" },
       { key: "chute", label: "Protection contre le chute" },
-      { key: "scan", label: "Rapport de scan" },
-      { key: "isolement", label: "Plan d'isolement" },
+      { key: "scan", label: "SCAN REPORT" },
+      { key: "isolement", label: "ISOLATION DRAWING" },
       { key: "levage", label: "Étude de Levage" },
-      { key: "deviation", label: "Plan de déviation de la route" },
+      { key: "deviation", label: "Plan de fermeture de la route" },
       { key: "radio", label: "Plan de radiographie" },
       { key: "hydro", label: "Plan d'hydro-test" },
+      { key: "lavage_critique", label: "Lavage critique" },
     ],
     []
   );
@@ -213,28 +231,28 @@ export default function Excavation() {
   // DANGERS PARTICULIERS (grand tableau)
   const optDangers = useMemo(
     () => [
-      { key: "glisser", label: "Glisser / trébucher / tomber" },
-      { key: "acces_difficile", label: "Accès ou travail difficilement accessible" },
+      { key: "glisser", label: "Glisser/trébucher/tomber" },
+      { key: "acces_difficile", label: "Aire de travail difficilement accessible" },
       { key: "chute_hauteur", label: "Chute en hauteur" },
-      { key: "mobile_rotatif", label: "Équipement mobile / rotatif" },
-      { key: "coupe_outil", label: "Coupe / perforer (bords tranchants, coupe, clous…)" },
-      { key: "frapper", label: "Frapper / Se faire frapper" },
-      { key: "pression_souffle", label: "Équipement sous pression / sous vide" },
-      { key: "brulure", label: "Brûlure de chaleur / de froid" },
-      { key: "vapeurs", label: "Vapeurs inflammables / combustibles" },
+      { key: "mobile_rotatif", label: "Equipement mobile/rotatif" },
+      { key: "coupe_outil", label: "Coupe/perforer (Bords tranchants, outils de coupe, clous)" },
+      { key: "frapper", label: "Frapper par/Se frapper contre (projectiles, bris d'équipement, équipement pneumatique, et à air comprimé, levage et gréage, empilage, équipement lourd)" },
+      { key: "pression_souffle", label: "Equipement sous pression/sous vide" },
+      { key: "brulure", label: "Brûlure de chaleur/de froid" },
+      { key: "vapeurs", label: "Vapeurs inflammable/combustibles" },
       { key: "elec", label: "Danger électriques" },
       { key: "bruit", label: "Bruit" },
-      { key: "ergonomie", label: "Ergonomie" },
-      { key: "produits", label: "Produits chimiques" },
+      { key: "ergonomie", label: "Ergonomie (position de travail, levage manuel, éclairage)" },
+      { key: "produits", label: "Produits chimiques (inhalation, contact cutané, ingestion)" },
       { key: "faible_oxygene", label: "Faible concentration en oxygène" },
       { key: "atmosphere", label: "Atmosphère dangereuse" },
-      { key: "rayonnements", label: "Radiations ionisantes / non-ionisantes" },
-      { key: "stress_thermique", label: "Stress thermique (chaud / froid)" },
-      { key: "poussieres", label: "Poussières et contaminants dans l'air" },
+      { key: "rayonnements", label: "Radiations ionisantes/non-ionisantes" },
+      { key: "stress_thermique", label: "Heat/Cold stress" },
+      { key: "poussieres", label: "Poussières et contaminats dans l'air" },
       { key: "meteo", label: "Conditions météorologiques" },
-      { key: "contamination_sol", label: "Contamination des sols / de l'eau" },
+      { key: "contamination_sol", label: "Contamination des sols/de l'eau de surfaillance" },
       { key: "simultane", label: "Opérations simultanées" },
-      { key: "autre", label: "Autre (préciser en commentaires)" },
+      { key: "autre", label: "Autre" },
       { key: "aucun", label: "Aucun" },
     ],
     []
@@ -243,15 +261,13 @@ export default function Excavation() {
   // EPI – Chimique/Physique
   const optEpiChimique = useMemo(
     () => [
-      { key: "lunette", label: "Lunette" },
-      { key: "ecran", label: "Écran facial" },
+      { key: "goggles", label: "Goggles" },
+      { key: "ecran", label: "Ecran facial" },
+      { key: "gants", label: "Gants (soudage, résistant à la chaleur, aux produits chimiques, aux courbes, aux couleurs)" },
       { key: "auditive", label: "Protection auditive" },
-      { key: "arc_electrique", label: "Protection de l'Arc électrique" },
-      { key: "chutes", label: "Protection contre les chutes (ligne de vie, Harnais)" },
-      { key: "flottaison", label: "Équipement de flottaison" },
-      { key: "gants", label: "Gants (soudage, chaleur, produits chimiques…)" },
-      { key: "vetements", label: "Vêtements / tablier de soudage ou imperméables" },
-      { key: "autre", label: "Autre (préciser en commentaires)" },
+      { key: "arc_electrique", label: "Equipement de protection de l'Arc électrique" },
+      { key: "chutes", label: "Protection contre les chutes (line de vie, harnais)" },
+      { key: "flottaison", label: "Equipement de flottaison (veste, combinaison)" },
     ],
     []
   );
@@ -261,8 +277,9 @@ export default function Excavation() {
     () => [
       { key: "filtres", label: "Appareils à filtres à particules" },
       { key: "cartouches", label: "Appareils à cartouches chimiques" },
-      { key: "epuration", label: "Appareil à épuration d’air pour le soudage" },
-      { key: "isolant", label: "Appareil respiratoire isolant" },
+      { key: "epuration", label: "Appareils à épuration d'air pour le soudage" },
+      { key: "papr", label: "Appareils à épuration d'air motorisés (PAPR)" },
+      { key: "adduction", label: "Appareils à adduction d'air (Type C)" },
     ],
     []
   );
@@ -272,8 +289,8 @@ export default function Excavation() {
     () => [
       { key: "radios", label: "Radio(s)" },
       { key: "signaleurs", label: "Signaleurs" },
-      { key: "avertissement", label: "Signaux d’avertissement" },
-      { key: "perimetre", label: "Périmètre de sécurité" },
+      { key: "avertissement", label: "Signaux d'avertissement" },
+      { key: "perimetre", label: "Perimètre de sécurité" },
     ],
     []
   );
@@ -292,9 +309,9 @@ export default function Excavation() {
   const optQualiteAir = useMemo(
     () => [
       { key: "detecteur", label: "Détecteur de gaz/oxygène" },
-      { key: "echant", label: "Équipement d’échantillonnage" },
+      { key: "echant", label: "Équipement d'échantillonnage" },
       { key: "ventilation", label: "Ventilation mécanique" },
-      { key: "anemometre", label: "Anémomètre (vitesse du vent)" },
+      { key: "anemometre", label: "Anémomètre(vitesse du vent)" },
     ],
     []
   );
@@ -302,7 +319,7 @@ export default function Excavation() {
   const optEtincelles = useMemo(
     () => [
       { key: "anti_deflag", label: "Outils anti-déflagrants" },
-      { key: "mise_terre", label: "Mise à la terre" },
+      { key: "mise_terre", label: "Courroies de mise à la terre" },
       { key: "anti_explosion", label: "Éclairage anti-explosion" },
       { key: "autres", label: "Autres" },
     ],
@@ -326,6 +343,8 @@ export default function Excavation() {
     activites: [],
     permis_supp: [],
     dangers: [],
+    danger_autre: "", // Champ pour préciser l'autre danger
+    activite_autre: "", // Champ pour préciser l'autre activité
 
     // EPI
     epi_sans_additionnel: false,
@@ -340,6 +359,12 @@ export default function Excavation() {
 
     // COMMENTAIRES
     commentaires: "",
+
+    // SIGNATURES - CONFIRMATIONS
+    confirmation_travail: false,
+    confirmation_conditions: false,
+    confirmation_equipement: false,
+    confirmation_epi: false,
 
     // SIGNATURES (contractant – requis)
     sig_resp_construction_nom: "",
@@ -363,6 +388,7 @@ export default function Excavation() {
     fermeture_q1: null,
     fermeture_q2: null,
     fermeture_q3: null,
+    fermeture_suivi: "",
   });
 
   const set = (k, v) => setData((d) => ({ ...d, [k]: v }));
@@ -386,8 +412,18 @@ export default function Excavation() {
     if (data.activites.length === 0) e.activites = "Sélectionnez au moins une activité.";
     if (data.permis_supp.length === 0) e.permis_supp = "Sélectionnez au moins un permis supplémentaire.";
     if (data.dangers.length === 0) e.dangers = "Sélectionnez au moins un danger.";
+    
+    // Si "autre" est sélectionné dans les dangers, vérifier que le champ est rempli
+    if (data.dangers.includes("autre") && !data.danger_autre.trim()) {
+      e.danger_autre = "Veuillez préciser l'autre danger.";
+    }
+    
+    // Si "autre" est sélectionné dans les activités, vérifier que le champ est rempli
+    if (data.activites.includes("autre") && !data.activite_autre.trim()) {
+      e.activite_autre = "Veuillez préciser l'autre activité.";
+    }
 
-    // EPI – au moins un globalement, sauf si “sans additionnel”
+    // EPI – au moins un globalement, sauf si "sans additionnel"
     if (!data.epi_sans_additionnel) {
       if (data.epi_chimique.length === 0 && data.epi_respiratoire.length === 0) {
         e.epi = "Sélectionnez au moins un EPI (ou cochez Sans EPI additionnel).";
@@ -402,6 +438,12 @@ export default function Excavation() {
 
     // Commentaires
     if (!String(data.commentaires || "").trim()) e.commentaires = "Champ requis.";
+
+    // Confirmations
+    if (!data.confirmation_travail) e.confirmation_travail = "Cette confirmation est requise.";
+    if (!data.confirmation_conditions) e.confirmation_conditions = "Cette confirmation est requise.";
+    if (!data.confirmation_equipement) e.confirmation_equipement = "Cette confirmation est requise.";
+    if (!data.confirmation_epi) e.confirmation_epi = "Cette confirmation est requise.";
 
     // Signatures (contractant)
     if (!data.sig_resp_construction_nom.trim())
@@ -503,368 +545,348 @@ export default function Excavation() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
               >
-          {/* IDENTIFICATION */}
-          <Section title="Identification">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div>
-                <Label>Endroit / Plan</Label>
-                <select
-                  value={data.site_id}
-                  onChange={(e) => set("site_id", e.target.value)}
-                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-300"
-                  style={{ colorScheme: 'light' }}
-                >
-                  <option value="" disabled>
-                    Choisir un site…
-                  </option>
-                  {sites.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-                <FieldError>{errors.site_id}</FieldError>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label>Durée — De</Label>
-                  <Text
-                    type="date"
-                    value={data.duree_de}
-                    onChange={(e) => set("duree_de", e.target.value)}
+                {/* IDENTIFICATION */}
+                <Section title="Identification">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div>
+                      <Label>Endroit</Label>
+                      <select
+                        value={data.site_id}
+                        onChange={(e) => set("site_id", e.target.value)}
+                        className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500 transition-all duration-300"
+                        style={{ colorScheme: 'light' }}
+                      >
+                        <option value="" disabled>
+                          Choisir un site…
+                        </option>
+                        {sites.map((s) => (
+                          <option key={s.id} value={s.id}>
+                            {s.name}
+                          </option>
+                        ))}
+                      </select>
+                      <FieldError>{errors.site_id}</FieldError>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label>Durée: De</Label>
+                        <Text
+                          type="date"
+                          value={data.duree_de}
+                          onChange={(e) => set("duree_de", e.target.value)}
+                        />
+                        <FieldError>{errors.duree_de}</FieldError>
+                      </div>
+                      <div>
+                        <Label>À</Label>
+                        <Text
+                          type="date"
+                          value={data.duree_a}
+                          onChange={(e) => set("duree_a", e.target.value)}
+                        />
+                        <FieldError>{errors.duree_a}</FieldError>
+                      </div>
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <Label>Description de la tâche</Label>
+                      <Area
+                        value={data.description}
+                        onChange={(e) => set("description", e.target.value)}
+                      />
+                      <FieldError>{errors.description}</FieldError>
+                    </div>
+
+                    <div>
+                      <Label>Plan sécuritaire de la tâche réalisé par</Label>
+                      <Text
+                        value={data.plan_securitaire_par}
+                        onChange={(e) => set("plan_securitaire_par", e.target.value)}
+                      />
+                      <FieldError>{errors.plan_securitaire_par}</FieldError>
+                    </div>
+                    <div>
+                      <Label>Date</Label>
+                      <Text
+                        type="date"
+                        value={data.date_analyse}
+                        onChange={(e) => set("date_analyse", e.target.value)}
+                      />
+                      <FieldError>{errors.date_analyse}</FieldError>
+                    </div>
+
+                    <div>
+                      <Label>Contractant demandeur du permis</Label>
+                      <Text
+                        value={data.demandeur}
+                        onChange={(e) => set("demandeur", e.target.value)}
+                      />
+                      <FieldError>{errors.demandeur}</FieldError>
+                    </div>
+                    <div>
+                      <Label>Contractant effectuant le travail</Label>
+                      <Text
+                        value={data.contractant}
+                        onChange={(e) => set("contractant", e.target.value)}
+                      />
+                      <FieldError>{errors.contractant}</FieldError>
+                      <label className="mt-2 flex items-center gap-2 text-sm text-gray-700">
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4 rounded border-gray-300 text-black focus:ring-black/20"
+                          checked={data.meme_que_demandeur}
+                          onChange={(e) => {
+                            const checked = e.target.checked;
+                            setData((d) => ({
+                              ...d,
+                              meme_que_demandeur: checked,
+                              contractant: checked ? d.demandeur : d.contractant,
+                            }));
+                          }}
+                        />
+                        Même que demandeur
+                      </label>
+                    </div>
+                  </div>
+                </Section>
+
+                {/* TYPE D'ACTIVITE */}
+                <Section title="TYPE D'ACTIVITE">
+                  <CheckboxGroup
+                    legend="Sélectionner les activités"
+                    options={optActivite}
+                    values={data.activites}
+                    setValues={(v) => set("activites", v)}
+                    showOtherField={true}
+                    otherValue={data.activite_autre}
+                    onOtherChange={(v) => set("activite_autre", v)}
+                    otherError={errors.activite_autre}
+                    error={errors.activites}
                   />
-                  <FieldError>{errors.duree_de}</FieldError>
-                </div>
-                <div>
-                  <Label>À</Label>
-                  <Text
-                    type="date"
-                    value={data.duree_a}
-                    onChange={(e) => set("duree_a", e.target.value)}
+                </Section>
+
+                {/* PERMIS DE TRAVAIL SUPPLEMENTAIRE REQUIS */}
+                <Section title="PERMIS DE TRAVAIL SUPPLEMENTAIRE REQUIS">
+                  <CheckboxGroup
+                    legend="Permis"
+                    options={optPermisSupp}
+                    values={data.permis_supp}
+                    setValues={(v) => set("permis_supp", v)}
+                    error={errors.permis_supp}
                   />
-                  <FieldError>{errors.duree_a}</FieldError>
-                </div>
-              </div>
+                </Section>
 
-              <div className="md:col-span-2">
-                <Label>Description de la tâche</Label>
-                <Area
-                  value={data.description}
-                  onChange={(e) => set("description", e.target.value)}
-                />
-                <FieldError>{errors.description}</FieldError>
-              </div>
-
-              <div>
-                <Label>Plan sécuritaire de la tâche réalisé par</Label>
-                <Text
-                  value={data.plan_securitaire_par}
-                  onChange={(e) => set("plan_securitaire_par", e.target.value)}
-                />
-                <FieldError>{errors.plan_securitaire_par}</FieldError>
-              </div>
-              <div>
-                <Label>Date</Label>
-                <Text
-                  type="date"
-                  value={data.date_analyse}
-                  onChange={(e) => set("date_analyse", e.target.value)}
-                />
-                <FieldError>{errors.date_analyse}</FieldError>
-              </div>
-
-              <div>
-                <Label>Contractant demandeur du permis</Label>
-                <Text
-                  value={data.demandeur}
-                  onChange={(e) => set("demandeur", e.target.value)}
-                />
-                <FieldError>{errors.demandeur}</FieldError>
-              </div>
-              <div>
-                <Label>Contractant effectuant le travail</Label>
-                <Text
-                  value={data.contractant}
-                  onChange={(e) => set("contractant", e.target.value)}
-                />
-                <FieldError>{errors.contractant}</FieldError>
-                <label className="mt-2 flex items-center gap-2 text-sm text-gray-700">
-                  <input
-                    type="checkbox"
-                    className="h-4 w-4 rounded border-gray-300 text-black focus:ring-black/20"
-                    checked={data.meme_que_demandeur}
-                    onChange={(e) => {
-                      const checked = e.target.checked;
-                      setData((d) => ({
-                        ...d,
-                        meme_que_demandeur: checked,
-                        contractant: checked ? d.demandeur : d.contractant,
-                      }));
-                    }}
+                {/* DANGERS PARTICULIERS */}
+                <Section title="DANGERS PARTICULIERS">
+                  <CheckboxGroup
+                    legend="Sélectionner les dangers (ou 'Aucun')"
+                    options={optDangers}
+                    values={data.dangers}
+                    setValues={(v) => set("dangers", v)}
+                    mutuallyExclusiveKey="aucun"
+                    showOtherField={true}
+                    otherValue={data.danger_autre}
+                    onOtherChange={(v) => set("danger_autre", v)}
+                    otherError={errors.danger_autre}
+                    error={errors.dangers}
                   />
-                  Même que demandeur
-                </label>
-              </div>
-            </div>
-          </Section>
+                </Section>
 
-          {/* TYPE D'ACTIVITÉ */}
-          <Section title="Type d’activité">
-            <CheckboxGroup
-              legend="Sélectionner les activités"
-              options={optActivite}
-              values={data.activites}
-              setValues={(v) => set("activites", v)}
-              error={errors.activites}
-            />
-          </Section>
-
-          {/* PERMIS SUPPLÉMENTAIRE REQUIS */}
-          <Section title="Permis de travail supplémentaire requis">
-            <CheckboxGroup
-              legend="Permis"
-              options={optPermisSupp}
-              values={data.permis_supp}
-              setValues={(v) => set("permis_supp", v)}
-              error={errors.permis_supp}
-            />
-          </Section>
-
-          {/* DANGERS PARTICULIERS */}
-          <Section title="Dangers particuliers">
-            <CheckboxGroup
-              legend="Sélectionner les dangers (ou 'Aucun')"
-              options={optDangers}
-              values={data.dangers}
-              setValues={(v) => set("dangers", v)}
-              mutuallyExclusiveKey="aucun"
-              error={errors.dangers}
-            />
-          </Section>
-
-          {/* ÉQUIPEMENT DE PROTECTION PERSONNELLE (EPI) */}
-          <Section title="Équipement de protection personnelle requis (EPI)">
-            <div className="mb-3">
-              <CheckRow
-                checked={data.epi_sans_additionnel}
-                onChange={(v) => set("epi_sans_additionnel", v)}
-                label="Sans EPI additionnel"
-              />
-              <FieldError>{errors.epi}</FieldError>
-            </div>
-
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div className={`${data.epi_sans_additionnel ? "opacity-60" : ""}`}>
-                <CheckboxGroup
-                  legend="Protection chimique et physique"
-                  options={optEpiChimique}
-                  values={data.epi_chimique}
-                  setValues={(v) => set("epi_chimique", v)}
-                />
-              </div>
-              <div className={`${data.epi_sans_additionnel ? "opacity-60" : ""}`}>
-                <CheckboxGroup
-                  legend="Protection respiratoire"
-                  options={optEpiResp}
-                  values={data.epi_respiratoire}
-                  setValues={(v) => set("epi_respiratoire", v)}
-                />
-              </div>
-            </div>
-          </Section>
-
-          {/* ÉQUIPEMENT DE PROTECTION (checklist) */}
-          <Section title="Équipement de protection / Mesures">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div>
-                <CheckboxGroup
-                  legend="Communications"
-                  options={optEquiptComms}
-                  values={data.equip_comms}
-                  setValues={(v) => set("equip_comms", v)}
-                  error={errors.equip_comms}
-                />
-              </div>
-              <div>
-                <CheckboxGroup
-                  legend="Barrières / Sécurité"
-                  options={optEquiptBarriers}
-                  values={data.equip_barrieres}
-                  setValues={(v) => set("equip_barrieres", v)}
-                  error={errors.equip_barrieres}
-                />
-              </div>
-              <div>
-                <CheckboxGroup
-                  legend="Qualité de l’air"
-                  options={optQualiteAir}
-                  values={data.equip_qualite_air}
-                  setValues={(v) => set("equip_qualite_air", v)}
-                  error={errors.equip_qualite_air}
-                />
-              </div>
-              <div>
-                <CheckboxGroup
-                  legend="Électricité / Étincelles / Chocs"
-                  options={optEtincelles}
-                  values={data.equip_etincelles}
-                  setValues={(v) => set("equip_etincelles", v)}
-                  error={errors.equip_etincelles}
-                />
-              </div>
-            </div>
-          </Section>
-
-          {/* COMMENTAIRES */}
-          <Section title="Commentaires et recommandations particulières">
-            <Area
-              value={data.commentaires}
-              onChange={(e) => set("commentaires", e.target.value)}
-              placeholder="Commentaires additionnels…"
-            />
-            <FieldError>{errors.commentaires}</FieldError>
-          </Section>
-
-          {/* SIGNATURES — AUTORISATION (Contractant requis) */}
-          <Section title="Signatures d’autorisation du permis">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              {/* Responsable construction – Contractant */}
-              <div>
-                <Label>Responsable construction (Contractant) — Nom</Label>
-                <Text
-                  value={data.sig_resp_construction_nom}
-                  onChange={(e) => set("sig_resp_construction_nom", e.target.value)}
-                />
-                <FieldError>{errors.sig_resp_construction_nom}</FieldError>
-                <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
-                  <SignaturePicker
-                    id="sig_resp_construction_file"
-                    label="Signature (JPG/PNG)"
-                    value={data.sig_resp_construction_file}
-                    onChange={(file) => set("sig_resp_construction_file", file)}
-                    error={errors.sig_resp_construction_file}
-                  />
-                  <div>
-                    <Label>Date</Label>
-                    <Text
-                      type="date"
-                      value={data.sig_resp_construction_date}
-                      onChange={(e) =>
-                        set("sig_resp_construction_date", e.target.value)
-                      }
+                {/* ÉQUIPEMENT DE PROTECTION PERSONNELLE REQUIS */}
+                <Section title="ÉQUIPEMENT DE PROTECTION PERSONNELLE REQUIS">
+                  <div className="mb-3">
+                    <CheckRow
+                      checked={data.epi_sans_additionnel}
+                      onChange={(v) => set("epi_sans_additionnel", v)}
+                      label="Équipement de protection additionnel non requis"
                     />
-                    <FieldError>{errors.sig_resp_construction_date}</FieldError>
+                    <FieldError>{errors.epi}</FieldError>
                   </div>
-                </div>
-              </div>
 
-              {/* Responsable HSE – Contractant */}
-              <div>
-                <Label>Responsable HSE (Contractant) — Nom</Label>
-                <Text
-                  value={data.sig_resp_hse_nom}
-                  onChange={(e) => set("sig_resp_hse_nom", e.target.value)}
-                />
-                <FieldError>{errors.sig_resp_hse_nom}</FieldError>
-                <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
-                  <SignaturePicker
-                    id="sig_resp_hse_file"
-                    label="Signature (JPG/PNG)"
-                    value={data.sig_resp_hse_file}
-                    onChange={(file) => set("sig_resp_hse_file", file)}
-                    error={errors.sig_resp_hse_file}
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div className={`${data.epi_sans_additionnel ? "opacity-60" : ""}`}>
+                      <CheckboxGroup
+                        legend="PROTECTION CHIMIQUE ET PHYSIQUE"
+                        options={optEpiChimique}
+                        values={data.epi_chimique}
+                        setValues={(v) => set("epi_chimique", v)}
+                      />
+                    </div>
+                    <div className={`${data.epi_sans_additionnel ? "opacity-60" : ""}`}>
+                      <CheckboxGroup
+                        legend="PROTECTION RESPIRATOIRE"
+                        options={optEpiResp}
+                        values={data.epi_respiratoire}
+                        setValues={(v) => set("epi_respiratoire", v)}
+                      />
+                    </div>
+                  </div>
+                </Section>
+
+                {/* EQUIPEMENT DE PROTECTION */}
+                <Section title="EQUIPEMENT DE PROTECTION">
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div>
+                      <CheckboxGroup
+                        legend="COMMUNICATIONS"
+                        options={optEquiptComms}
+                        values={data.equip_comms}
+                        setValues={(v) => set("equip_comms", v)}
+                        error={errors.equip_comms}
+                      />
+                    </div>
+                    <div>
+                      <CheckboxGroup
+                        legend="Barricades"
+                        options={optEquiptBarriers}
+                        values={data.equip_barrieres}
+                        setValues={(v) => set("equip_barrieres", v)}
+                        error={errors.equip_barrieres}
+                      />
+                    </div>
+                    <div>
+                      <CheckboxGroup
+                        legend="QUALITE DE L'AIR"
+                        options={optQualiteAir}
+                        values={data.equip_qualite_air}
+                        setValues={(v) => set("equip_qualite_air", v)}
+                        error={errors.equip_qualite_air}
+                      />
+                    </div>
+                    <div>
+                      <CheckboxGroup
+                        legend="ETINCELLES ELECTRIQUES/PREVENTION DES CHOCS"
+                        options={optEtincelles}
+                        values={data.equip_etincelles}
+                        setValues={(v) => set("equip_etincelles", v)}
+                        error={errors.equip_etincelles}
+                      />
+                    </div>
+                  </div>
+                </Section>
+
+                {/* COMMENTAIRES ET RECOMMANDATIONS PARTICULIÈRES */}
+                <Section title="COMMENTAIRES ET RECOMMANDATIONS PARTICULIÈRES">
+                  <Area
+                    value={data.commentaires}
+                    onChange={(e) => set("commentaires", e.target.value)}
+                    placeholder="Aucun commentaire additionnel ou recommandation"
                   />
-                  <div>
-                    <Label>Date</Label>
-                    <Text
-                      type="date"
-                      value={data.sig_resp_hse_date}
-                      onChange={(e) => set("sig_resp_hse_date", e.target.value)}
-                    />
-                    <FieldError>{errors.sig_resp_hse_date}</FieldError>
+                  <FieldError>{errors.commentaires}</FieldError>
+                </Section>
+
+                {/* SIGNATURE D'AUTORISATION DE PERMIS */}
+                <Section title="SIGNATURE D'AUTORISATION DE PERMIS">
+                  <div className="mb-6 space-y-4">
+                    <p className="text-sm text-gray-700">
+                      Le contractant qui exécute les travaux comprend l'étendue des travaux, 
+                      la nature des dangers, les mesures préventives et fera en sorte que ces 
+                      exigences sont suivies. Le personnel assigné aux travaux devra être informé de:
+                    </p>
+                    
+                    <div className="space-y-3">
+                      <CheckRow
+                        checked={data.confirmation_travail}
+                        onChange={(v) => set("confirmation_travail", v)}
+                        label="Travail à faire"
+                      />
+                      <CheckRow
+                        checked={data.confirmation_conditions}
+                        onChange={(v) => set("confirmation_conditions", v)}
+                        label="Les conditions dangereuses et les mesures de contrôle (SPA?)"
+                      />
+                      <CheckRow
+                        checked={data.confirmation_equipement}
+                        onChange={(v) => set("confirmation_equipement", v)}
+                        label="Équipement de protection requis"
+                      />
+                      <CheckRow
+                        checked={data.confirmation_epi}
+                        onChange={(v) => set("confirmation_epi", v)}
+                        label="EPI additionnel"
+                      />
+                    </div>
+                    
+                    <FieldError>{errors.confirmation_travail || errors.confirmation_conditions || errors.confirmation_equipement || errors.confirmation_epi}</FieldError>
                   </div>
-                </div>
-              </div>
+                  
+                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    {/* Superviseur Construction Jacobs */}
+                    <div>
+                      <Label>Superviseur Construction Jacobs — Nom en lettres moulées</Label>
+                      <Text
+                        value={data.sig_resp_construction_nom}
+                        onChange={(e) => set("sig_resp_construction_nom", e.target.value)}
+                      />
+                      <FieldError>{errors.sig_resp_construction_nom}</FieldError>
+                      <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+                        <SignaturePicker
+                          id="sig_resp_construction_file"
+                          label="Signature (JPG/PNG)"
+                          value={data.sig_resp_construction_file}
+                          onChange={(file) => set("sig_resp_construction_file", file)}
+                          error={errors.sig_resp_construction_file}
+                        />
+                        <div>
+                          <Label>Date</Label>
+                          <Text
+                            type="date"
+                            value={data.sig_resp_construction_date}
+                            onChange={(e) =>
+                              set("sig_resp_construction_date", e.target.value)
+                            }
+                          />
+                          <FieldError>{errors.sig_resp_construction_date}</FieldError>
+                        </div>
+                      </div>
+                    </div>
 
-              {/* ParkX roles – désactivés ici */}
-              <div className="opacity-60">
-                <Label>Construction manager ParkX</Label>
-                <Text disabled placeholder="Renseigné par ParkX" />
-                <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
-                  <SignaturePicker
-                    id="sig_cm_parkx"
-                    label="Signature (désactivée)"
-                    disabled
-                    value={null}
-                    onChange={() => {}}
-                  />
-                  <div>
-                    <Label>Date</Label>
-                    <Text disabled placeholder="—" />
+                    {/* H&S Manager (délégué) Jacobs */}
+                    <div>
+                      <Label>H&S Manager (délégué) Jacobs — Nom en lettres moulées</Label>
+                      <Text
+                        value={data.sig_resp_hse_nom}
+                        onChange={(e) => set("sig_resp_hse_nom", e.target.value)}
+                      />
+                      <FieldError>{errors.sig_resp_hse_nom}</FieldError>
+                      <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
+                        <SignaturePicker
+                          id="sig_resp_hse_file"
+                          label="Signature (JPG/PNG)"
+                          value={data.sig_resp_hse_file}
+                          onChange={(file) => set("sig_resp_hse_file", file)}
+                          error={errors.sig_resp_hse_file}
+                        />
+                        <div>
+                          <Label>Date</Label>
+                          <Text
+                            type="date"
+                            value={data.sig_resp_hse_date}
+                            onChange={(e) => set("sig_resp_hse_date", e.target.value)}
+                          />
+                          <FieldError>{errors.sig_resp_hse_date}</FieldError>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </Section>
 
-              <div className="opacity-60">
-                <Label>HSE Manager ParkX</Label>
-                <Text disabled placeholder="Renseigné par ParkX" />
-                <div className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
-                  <SignaturePicker
-                    id="sig_hse_parkx"
-                    label="Signature (désactivée)"
-                    disabled
-                    value={null}
-                    onChange={() => {}}
-                  />
-                  <div>
-                    <Label>Date</Label>
-                    <Text disabled placeholder="—" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Section>
-
-          {/* FERMETURE DU PERMIS (affiché – non requis pour l’instant) */}
-          <Section title="Fermeture du permis (sera complétée après travaux)">
-            <div className="grid grid-cols-1 gap-4">
-              <CheckRow
-                checked={data.fermeture_q1 === true}
-                onChange={(v) => set("fermeture_q1", v)}
-                label="Le personnel assigné aux travaux a-t-il été avisé que le travail est complété ?"
-              />
-              <CheckRow
-                checked={data.fermeture_q2 === true}
-                onChange={(v) => set("fermeture_q2", v)}
-                label="Les mesures temporaires (barricades / avertissements) ont-elles été enlevées ?"
-              />
-              <CheckRow
-                checked={data.fermeture_q3 === true}
-                onChange={(v) => set("fermeture_q3", v)}
-                label="Les matériaux / outils / équipements ont-ils été enlevés des lieux ?"
-              />
-              <p className="text-xs text-gray-500">
-                * Cette section ne bloque pas la soumission du Contractant pour l’instant.
-              </p>
-            </div>
-          </Section>
-
-              {/* ACTIONS */}
-              <motion.div 
-                className="flex items-center justify-end gap-4 pb-2 pt-6"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.8 }}
-              >
-                <motion.button
-                  type="submit"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 px-8 py-3 text-sm font-semibold text-white hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-300"
+                {/* ACTIONS */}
+                <motion.div 
+                  className="flex items-center justify-end gap-4 pb-2 pt-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.8 }}
                 >
-                  Soumettre (validation locale)
-                </motion.button>
-              </motion.div>
+                  <motion.button
+                    type="submit"
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 px-8 py-3 text-sm font-semibold text-white hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    Soumettre (validation locale)
+                  </motion.button>
+                </motion.div>
               </motion.form>
             </div>
           </div>

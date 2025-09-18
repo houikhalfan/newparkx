@@ -496,7 +496,7 @@ export default function ContractantSidebar() {
       {!isCollapsed && (
         <div className="p-4 border-t border-blue-200/30">
           <div className="text-xs text-gray-500 text-center font-medium">
-            ParkX Contractor Portal
+            ParkX hhh Portal
           </div>
         </div>
       )}

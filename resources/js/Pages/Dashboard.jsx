@@ -117,9 +117,7 @@ const hseResponsableCards = useMemo(
       gradient: 'from-green-500 to-emerald-500',
       lightGradient: 'from-green-50 to-emerald-50',
       stats: 'Documents à signer',
-      trend: assignedPending > 0 ? 'Urgent' : 'À jour',
       category: 'HSE',
-      priority: assignedPending > 0 ? 'high' : 'normal'
     }
   ],
   [assignedPending]

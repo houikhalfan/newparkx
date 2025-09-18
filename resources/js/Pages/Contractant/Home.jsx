@@ -4,19 +4,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, usePage, router } from "@inertiajs/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Package,
-  FileText,
-  BarChart3,
-  FileSignature,
-  FolderOpen,
-  ClipboardList,
   X,
-  Sparkles,
-  Zap,
-  Star,
 } from "lucide-react";
 
-const ServiceCard = ({ Icon, title, desc, href, color, isSignature, onClick }) => {
+const ServiceCard = ({ image, title, desc, href, isSignature, onClick }) => {
   const content = (
     <motion.div
       whileHover={{ 
@@ -40,17 +31,21 @@ const ServiceCard = ({ Icon, title, desc, href, color, isSignature, onClick }) =
       {/* Animated Background Glow */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-purple-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       
-      {/* Icon Container with Bright Effect */}
-      <div className="relative mb-6">
+      {/* Image Container with Bright Effect */}
+      <div className="relative mb-4">
         <div
-          className={`w-24 h-24 rounded-3xl flex items-center justify-center bg-gradient-to-br ${color} shadow-lg group-hover:shadow-xl transition-all duration-500 relative overflow-hidden`}
+          className="w-20 h-20 rounded-3xl flex items-center justify-center bg-white shadow-lg group-hover:shadow-xl transition-all duration-500 relative overflow-hidden"
           style={{
             boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
           }}
         >
-          {/* Icon Glow Effect */}
+          {/* Image Glow Effect */}
           <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-3xl" />
-          <Icon size={36} className="text-white relative z-10 group-hover:scale-110 transition-transform duration-300" />
+          <img 
+            src={`/images/${image}`} 
+            alt={title}
+            className="w-12 h-12 object-contain relative z-10 group-hover:scale-110 transition-transform duration-300" 
+          />
           
           {/* Animated Border */}
           <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-white/40 via-transparent to-white/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -61,37 +56,37 @@ const ServiceCard = ({ Icon, title, desc, href, color, isSignature, onClick }) =
         <div className="absolute -bottom-3 -left-3 w-4 h-4 bg-pink-300 rounded-full opacity-0 group-hover:opacity-100 animate-ping delay-300" />
       </div>
 
-      {/* Content */}
-      <div className="flex-1 flex flex-col justify-center">
-        <h3 className="text-2xl font-bold text-gray-800 mb-4 group-hover:text-blue-600 transition-colors duration-300">
+      {/* Content with fixed height */}
+      <div className="flex-1 flex flex-col justify-center mb-4 min-h-[120px]">
+        <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">
           {title}
         </h3>
-        <p className="text-sm text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-300">
+        <p className="text-sm text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-300 line-clamp-3">
           {desc}
         </p>
       </div>
       
-      {/* Interactive Button */}
-      <div className="relative">
-        <span className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-2xl text-sm font-semibold group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300 shadow-lg group-hover:shadow-xl">
+      {/* Interactive Button - Now consistently positioned */}
+      <div className="relative w-full mt-auto">
+        <span className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#013b94] text-white rounded-2xl text-sm font-semibold group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300 shadow-lg group-hover:shadow-xl w-full">
           <span>Accéder</span>
           <motion.svg 
-            width="18" 
-            height="18" 
+            width="16" 
+            height="16" 
             viewBox="0 0 24 24"
             className="group-hover:translate-x-1 transition-transform duration-300"
           >
           <path fill="currentColor" d="M13 5l7 7-7 7v-4H4v-6h9V5z" />
           </motion.svg>
-      </span>
+        </span>
         
         {/* Button Glow Effect */}
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover:opacity-30 blur-lg transition-opacity duration-500" />
       </div>
 
       {/* Corner Accents */}
-      <div className="absolute top-6 right-6 w-6 h-6 border-t-2 border-r-2 border-blue-300 rounded-tr-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-      <div className="absolute bottom-6 left-6 w-6 h-6 border-b-2 border-l-2 border-purple-300 rounded-bl-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute top-6 right-6 w-6 h-6 border-t-2 border-r-2 border-blue-300 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute bottom-6 left-6 w-6 h-6 border-b-2 border-l-2 border-purple-300 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
     </motion.div>
   );
 
@@ -130,36 +125,31 @@ export default function ContractorHome() {
       title: "VODS",
       desc: "Créer et suivre vos Visites Observation & Ronde.",
       href: "/contractant/vods",
-      Icon: FolderOpen,
-      color: "from-blue-500 to-cyan-500",
+      image: "form.png",
     },
     {
       title: "Documents",
       desc: "Consulter et télécharger les documents partagés.",
       href: "/contractant/documents",
-      Icon: FileText,
-      color: "from-emerald-500 to-green-500",
+      image: "doc.png",
     },
     {
       title: "Statistiques HSE",
-      desc: "Soumettre et suivre vos statistiques de santé, sécurité et environnement.",
+      desc: "Soumettre et suivre vos statistiques HSE.",
       href: route("contractant.hse-statistics.index"),
-      Icon: BarChart3,
-      color: "from-purple-500 to-violet-500",
+      image: "stat.png",
     },
     {
       title: "Permis",
       desc: "Déposez vos pièces pour signature par l'administration.",
-      Icon: FileSignature,
-      color: "from-pink-500 to-rose-500",
+      image: "agreement.png",
       isSignature: true,
     },
     {
       title: "Ressources Matérielles",
-      desc: "Gérer et suivre l'état de vos engins et équipements.",
+      desc: "Soumettre à la conformité.",
       href: route("contractant.materiel.index"),
-      Icon: Package,
-      color: "from-orange-500 to-amber-500",
+      image: "materiel.png",
     },
   ];
 
@@ -190,17 +180,17 @@ export default function ContractorHome() {
       >
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            {/* Logo Section */}
-            <div className="flex items-center space-x-4">
+            {/* Logo Section - Aligned to the left */}
+            <div className="flex items-center space-x-4 ml-4"> {/* Added ml-4 for left alignment */}
               <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
-                  <span className="text-white font-bold text-xl">P</span>
+                <div className="w-30 h-12 flex items-center justify-center overflow-hidden p-0">
+                  <img 
+                    src="/images/logo.png" 
+                    alt="ParkX Logo" 
+                    className="h-10 object-contain"
+                  />
                 </div>
                 <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full animate-pulse" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-800">ParkX</h1>
-                <p className="text-sm text-gray-600">Contractor Portal</p>
               </div>
             </div>
 
@@ -213,23 +203,23 @@ export default function ContractorHome() {
                   <p className="text-xs text-gray-600">{contractor?.company_name || 'Company'}</p>
                 </div>
                 
-                {/* Profile Circle with Dropdown */}
+                {/* Profile Circle with Dropdown - Changed to #013b94 */}
                 <div className="relative" ref={profileDropdownRef}>
                   <div 
                     className="group cursor-pointer"
                     onClick={() => setShowProfileDropdown(!showProfileDropdown)}
                   >
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg border-2 border-blue-200 hover:border-blue-300 transition-all duration-300">
+                    <div className="w-12 h-12 bg-[#013b94] rounded-full flex items-center justify-center shadow-lg border-2 border-blue-200 hover:border-blue-300 transition-all duration-300">
                       <span className="text-white font-bold text-lg">
                         {contractor?.name?.charAt(0)?.toUpperCase() || 'C'}
                       </span>
                     </div>
                     
                     {/* Hover Glow Effect */}
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-400 to-purple-400 opacity-0 group-hover:opacity-30 blur-lg transition-opacity duration-300" />
+                    <div className="absolute inset-0 rounded-full bg-[#013b94] opacity-0 group-hover:opacity-30 blur-lg transition-opacity duration-300" />
                     
-                    {/* Status Indicator */}
-                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white animate-pulse" />
+                    {/* Status Indicator - Changed to #013b94 */}
+                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#013b94] rounded-full border-2 border-white animate-pulse" />
                   </div>
 
                   {/* Profile Dropdown */}
@@ -250,7 +240,7 @@ export default function ContractorHome() {
                       {/* Profile Header */}
                       <div className="p-4 border-b border-blue-200/30">
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                          <div className="w-10 h-10 bg-[#013b94] rounded-full flex items-center justify-center">
                             <span className="text-white font-bold">
                               {contractor?.name?.charAt(0)?.toUpperCase() || 'C'}
                             </span>
@@ -301,7 +291,7 @@ export default function ContractorHome() {
                 onClick={() => {
                   router.post(route('contractant.logout'));
                 }}
-                className="group relative px-6 py-3 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-xl hover:from-red-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl"
+className="group relative px-6 py-3 bg-[#0e5186] text-white rounded-xl hover:bg-[#0c3f66] transition-all duration-300 shadow-lg hover:shadow-xl"
               >
                 <div className="flex items-center space-x-2">
                   <svg className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -319,29 +309,29 @@ export default function ContractorHome() {
       </motion.header>
 
       {/* Hero Section */}
-      <section className="relative text-gray-800 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 via-transparent to-purple-100/30" />
-        
-        <div className="relative max-w-7xl mx-auto px-6 py-16 md:py-20 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="mb-8"
-          >
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
-              {name}
-          </h1>
-            <div className="text-2xl md:text-3xl font-semibold text-gray-700 mb-4">
-              Bienvenue dans votre espace ParkX
-            </div>
-            <div className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Gérez vos projets, documents et permis de manière simple et efficace
-            </div>
-          </motion.div>
+  <section className="relative text-gray-800 overflow-hidden">
+  <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 via-transparent to-purple-100/30" />
 
-        </div>
-      </section>
+  <div className="relative max-w-7xl mx-auto px-6 py-16 md:py-20 text-center">
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8 }}
+      className="mb-8"
+    >
+      {/* Main Title */}
+      <div className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+        Bienvenue dans votre espace ParkX
+      </div>
+
+      {/* Subtitle */}
+      <div className="text-2xl md:text-3xl text-gray-600 max-w-2xl mx-auto">
+        Gérez vos projets, documents et permis de manière simple et efficace
+      </div>
+    </motion.div>
+  </div>
+</section>
+
 
       {/* Cards Section */}
       <main className="max-w-7xl mx-auto px-6 -mt-20 pb-32 relative z-10">
@@ -372,11 +362,10 @@ export default function ContractorHome() {
               }}
             >
               <ServiceCard
-                Icon={card.Icon}
+                image={card.image}
                 title={card.title}
                 desc={card.desc}
                 href={card.href}
-                color={card.color}
                 isSignature={card.isSignature}
                 onClick={() => setShowSignatureOptions(true)}
               />
@@ -415,13 +404,13 @@ export default function ContractorHome() {
                   <X size={24} />
                 </button>
 
-                <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center bg-black  bg-clip-text text-transparent">
                   Choisissez une option
                 </h2>
 
                 {/* Gestion des fichiers */}
                 <div className="mb-8">
-                  <h3 className="text-sm font-semibold text-blue-600 mb-4 uppercase tracking-wider">
+                  <h3 className="text-sm font-semibold text-[#013b94] mb-4 uppercase tracking-wider">
                     Gestion des Fichiers
                   </h3>
                   <Link
@@ -429,21 +418,19 @@ export default function ContractorHome() {
                     className="group flex flex-col items-center justify-center rounded-2xl border border-blue-200 bg-white/80 hover:border-blue-300 hover:shadow-xl hover:shadow-blue-100/50 p-6 transition-all duration-500 backdrop-blur-sm"
                     onClick={() => setShowSignatureOptions(false)}
                   >
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl transition-all duration-500">
-                      <FileText className="w-8 h-8 text-white" />
+                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl transition-all duration-500">
+                      <img src="/images/doc.png" alt="Documents" className="w-8 h-8" />
                     </div>
                     <h3 className="text-lg font-bold text-gray-800 text-center group-hover:text-blue-600 transition-colors duration-300">
                       Suivre la situation de vos fichiers
                     </h3>
-                    <p className="text-sm text-gray-600 mt-2 text-center group-hover:text-gray-700 transition-colors duration-300">
-                      Envoyez vos documents pour signature.
-                    </p>
+                   
                   </Link>
                 </div>
 
                 {/* Demandes de permis */}
                 <div>
-                  <h3 className="text-sm font-semibold text-purple-600 mb-4 uppercase tracking-wider">
+                  <h3 className="text-sm font-semibold text-[#013b94] mb-4 uppercase tracking-wider">
                     Demandes de Permis
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -453,8 +440,8 @@ export default function ContractorHome() {
                       className="group flex flex-col items-center justify-center rounded-2xl border border-emerald-200 bg-white/80 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-100/50 p-6 transition-all duration-500 backdrop-blur-sm"
                       onClick={() => setShowSignatureOptions(false)}
                     >
-                      <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-green-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl transition-all duration-500">
-                        <ClipboardList className="w-8 h-8 text-white" />
+                      <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl transition-all duration-500">
+                        <img src="/images/agreement.png" alt="Permis d'excavation" className="w-8 h-8" />
                       </div>
                       <h3 className="text-lg font-bold text-gray-800 text-center group-hover:text-emerald-600 transition-colors duration-300">
                         Nouveau Permis d'excavation
@@ -470,8 +457,8 @@ export default function ContractorHome() {
                       className="group flex flex-col items-center justify-center rounded-2xl border border-purple-200 bg-white/80 hover:border-purple-300 hover:shadow-xl hover:shadow-purple-100/50 p-6 transition-all duration-500 backdrop-blur-sm"
                       onClick={() => setShowSignatureOptions(false)}
                     >
-                      <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-violet-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl transition-all duration-500">
-                        <ClipboardList className="w-8 h-8 text-white" />
+                      <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl transition-all duration-500">
+                        <img src="/images/agreement.png" alt="Permis de travail" className="w-8 h-8" />
                       </div>
                       <h3 className="text-lg font-bold text-gray-800 text-center group-hover:text-purple-600 transition-colors duration-300">
                         Permis de Travail Sécuritaire
@@ -517,7 +504,7 @@ export default function ContractorHome() {
               Centre de Notifications
             </h3>
             <p className="text-gray-600 leading-relaxed mb-6 group-hover:text-gray-700 transition-colors duration-300">
-              Vos alertes et messages importants s'affichent ici en temps réel.
+              Vos alertes et messages important s'affichent ici en temps réel.
             </p>
             
             {/* Status Indicators */}
@@ -533,7 +520,7 @@ export default function ContractorHome() {
             </div>
 
             {/* Corner Accents */}
-            <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-blue-300/50 rounded-tr-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-blue-300/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           </motion.div>
 
           <motion.div 
@@ -586,7 +573,7 @@ export default function ContractorHome() {
           </div>
 
             {/* Corner Accents */}
-            <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-emerald-300/50 rounded-tr-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-emerald-300/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
           </motion.div>
         </section>
       </main>

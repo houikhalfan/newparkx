@@ -955,86 +955,90 @@ function AdminDashboard() {
                                                                 </div>
                                                             </Td>
                                                             <Td className="text-right">
-                        {r.kind === "pending" ? (
-                          <div className="inline-flex gap-2">
-                            <motion.button
-                              whileHover={{ scale: 1.05 }}
-                              whileTap={{ scale: 0.95 }}
-                              type="button"
-                              onClick={() => toggleContractorDetails(r.id)}
-                              className={`inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                                expandedContractors.has(r.id)
-                                  ? 'bg-blue-200 hover:bg-blue-300 dark:bg-blue-800 dark:hover:bg-blue-700 text-blue-700 dark:text-blue-200'
-                                  : 'bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400'
-                              }`}
-                              title={expandedContractors.has(r.id) ? 'Masquer les détails' : 'Voir les détails du contractant'}
-                            >
-                              <Eye className="w-3 h-3" />
-                              {expandedContractors.has(r.id) ? 'Masquer' : 'Voir Details'}
-                            </motion.button>
-                            <form method="POST" action={route("admin.contractors.approve", r.id)}>
-                              <input type="hidden" name="_token" value={csrf_token} />
+                                                                {/* Bouton Voir Details - Toujours visible */}
+                                                                <motion.button
+                                                                    whileHover={{ scale: 1.05 }}
+                                                                    whileTap={{ scale: 0.95 }}
+                                                                    type="button"
+                                                                    onClick={() => toggleContractorDetails(r.id)}
+                                                                    className={`inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                                                                        expandedContractors.has(r.id)
+                                                                            ? 'bg-blue-200 hover:bg-blue-300 dark:bg-blue-800 dark:hover:bg-blue-700 text-blue-700 dark:text-blue-200'
+                                                                            : 'bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400'
+                                                                    }`}
+                                                                    title={expandedContractors.has(r.id) ? 'Masquer les détails' : 'Voir les détails du contractant'}
+                                                                >
+                                                                    <Eye className="w-3 h-3" />
+                                                                    {expandedContractors.has(r.id) ? 'Masquer' : 'Voir Details'}
+                                                                </motion.button>
+
+                                                                {r.kind === "pending" ? (
+                                                                    // Boutons pour les contractants en attente
+                                                                    <div className="inline-flex gap-2">
+                                                                        <form method="POST" action={route("admin.contractors.approve", r.id)}>
+                                                                            <input type="hidden" name="_token" value={csrf_token} />
                                                                             <motion.button
                                                                                 whileHover={{ scale: 1.05 }}
                                                                                 whileTap={{ scale: 0.95 }}
-                                type="submit"
+                                                                                type="submit"
                                                                                 className="inline-flex items-center gap-1 px-3 py-2 bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:hover:bg-green-900/50 text-green-600 dark:text-green-400 rounded-lg text-xs font-medium transition-all"
-                              >
+                                                                            >
                                                                                 <CheckCircle2 className="w-3 h-3" />
-                                Approuver
+                                                                                Approuver
                                                                             </motion.button>
-                            </form>
-                            <form method="POST" action={route("admin.contractors.reject", r.id)}>
-                              <input type="hidden" name="_token" value={csrf_token} />
+                                                                        </form>
+                                                                        <form method="POST" action={route("admin.contractors.reject", r.id)}>
+                                                                            <input type="hidden" name="_token" value={csrf_token} />
                                                                             <motion.button
                                                                                 whileHover={{ scale: 1.05 }}
                                                                                 whileTap={{ scale: 0.95 }}
-                                type="submit"
+                                                                                type="submit"
                                                                                 className="inline-flex items-center gap-1 px-3 py-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-lg text-xs font-medium transition-all"
-                              >
+                                                                            >
                                                                                 <X className="w-3 h-3" />
-                                Rejeter
+                                                                                Rejeter
                                                                             </motion.button>
-                            </form>
-                          </div>
-                        ) : (
+                                                                        </form>
+                                                                    </div>
+                                                                ) : (
+                                                                    // Bouton de suppression pour les contractants approuvés
                                                                     <motion.button
                                                                         whileHover={{ scale: 1.05 }}
                                                                         whileTap={{ scale: 0.95 }}
-                              type="button"
-                              onClick={async () => {
-                                const res = await Swal.fire({
-                                  title: "Supprimer ce contractant ?",
-                                  text: "Cette action est irréversible.",
-                                  icon: "warning",
-                                  showCancelButton: true,
-                                  confirmButtonText: "Oui, supprimer",
-                                  cancelButtonText: "Annuler",
-                                  confirmButtonColor: "#dc2626",
+                                                                        type="button"
+                                                                        onClick={async () => {
+                                                                            const res = await Swal.fire({
+                                                                                title: "Supprimer ce contractant ?",
+                                                                                text: "Cette action est irréversible.",
+                                                                                icon: "warning",
+                                                                                showCancelButton: true,
+                                                                                confirmButtonText: "Oui, supprimer",
+                                                                                cancelButtonText: "Annuler",
+                                                                                confirmButtonColor: "#dc2626",
                                                                                 customClass: {
                                                                                     popup: 'rounded-2xl',
                                                                                     title: 'text-slate-900 dark:text-white'
                                                                                 }
-                                });
-                                if (res.isConfirmed) {
-                                  document.getElementById(`delete-contractor-${r.id}`).submit();
-                                }
-                              }}
+                                                                            });
+                                                                            if (res.isConfirmed) {
+                                                                                document.getElementById(`delete-contractor-${r.id}`).submit();
+                                                                            }
+                                                                        }}
                                                                         className="inline-flex items-center gap-1 px-3 py-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-lg text-xs font-medium transition-all"
-                            >
+                                                                    >
                                                                         <Trash2 className="w-3 h-3" />
-                              Supprimer
+                                                                        Supprimer
                                                                     </motion.button>
                                                                 )}
 
-                            <form
-                              id={`delete-contractor-${r.id}`}
-                              method="POST"
-                              action={route("admin.contractors.delete", r.id)}
-                              className="hidden"
-                            >
-                              <input type="hidden" name="_token" value={csrf_token} />
-                            </form>
+                                                                <form
+                                                                    id={`delete-contractor-${r.id}`}
+                                                                    method="POST"
+                                                                    action={route("admin.contractors.delete", r.id)}
+                                                                    className="hidden"
+                                                                >
+                                                                    <input type="hidden" name="_token" value={csrf_token} />
+                                                                </form>
                                                             </Td>
                                                         </motion.tr>
                                                         
