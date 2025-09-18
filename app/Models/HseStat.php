@@ -190,31 +190,53 @@ class HseStat extends Model
         parent::boot();
 
         static::saving(function ($model) {
-            // Calculate total hours
+            // Calculate total hours - Total volume d'horaire travaillé = Volume horaire normale + Volume horaire supplémentaire
             $model->total_heures = $model->heures_normales + $model->heures_supplementaires;
             $model->effectif_passant_horaire_normal = $model->effectif_personnel;
             
             // Calculate safety indicators
             $totalHours = $model->total_heures;
             if ($totalHours > 0) {
-                // TRIR = (Total Recordable Injuries / Total Hours Worked) * 200,000
+                // TRIR Total Recordable Incident Rate = (Nombre total des accidents enregistrables / Nombre total des heures travaillées) * 200000
+                // Les accidents enregistrables incluent : acc_mortel + acc_arret + acc_soins_medicaux + acc_restriction_temporaire
                 $totalRecordableInjuries = $model->acc_mortel + $model->acc_arret + $model->acc_soins_medicaux + $model->acc_restriction_temporaire;
                 $model->trir = ($totalRecordableInjuries / $totalHours) * 200000;
                 
-                // LTIR = (Lost Time Injuries / Total Hours Worked) * 200,000
+                // LTIR Lost Time Injury Rate = (Nombre des accidents avec arrêt / Nombre total des heures travaillées) * 200000
+                // Les accidents avec arrêt incluent : acc_mortel + acc_arret
                 $lostTimeInjuries = $model->acc_mortel + $model->acc_arret;
                 $model->ltir = ($lostTimeInjuries / $totalHours) * 200000;
                 
-                // DART = (Days Away, Restricted, or Transferred / Total Hours Worked) * 200,000
+                // DART Days Away, Restricted or Transferred Rate = (Nbre de DART × 200 000) / Heures travaillées
+                // Les DART incluent : acc_mortel + acc_restriction_temporaire
                 $dartInjuries = $model->acc_mortel + $model->acc_restriction_temporaire;
-                $model->dart = ($dartInjuries / $totalHours) * 200000;
+                $model->dart = ($dartInjuries * 200000) / $totalHours;
             } else {
                 $model->trir = 0;
                 $model->ltir = 0;
                 $model->dart = 0;
             }
 
-            // Calculate training totals
+            // Calculate training totals according to the provided formulas
+            
+            // Total des personnes formées /induction HSE = Total des inductions+ Total des personnes formés
+            $model->formes_total_personnes = $model->inductions_total_personnes + 
+                ($model->excavation_participants + $model->points_chauds_participants + 
+                $model->espace_confine_participants + $model->levage_participants + 
+                $model->travail_hauteur_participants + $model->sst_participants + 
+                $model->epi_participants + $model->modes_operatoires_participants + 
+                $model->permis_spa_participants + $model->outils_electroportatifs_participants);
+
+            // Total des heures de formations et induction = Volume horaire des inductions + Total des heures de formations
+            $totalFormationsHeures = $model->excavation_duree_h + $model->points_chauds_duree_h + 
+                $model->espace_confine_duree_h + $model->levage_duree_h + 
+                $model->travail_hauteur_duree_h + $model->sst_duree_h + 
+                $model->epi_duree_h + $model->modes_operatoires_duree_h + 
+                $model->permis_spa_duree_h + $model->outils_electroportatifs_duree_h;
+            
+            $model->formations_total_heures = $model->inductions_volume_heures + $totalFormationsHeures;
+
+            // Calculate training sessions (for backward compatibility)
             $model->formations_total_seances = 
                 $model->excavation_sessions + $model->points_chauds_sessions + 
                 $model->espace_confine_sessions + $model->levage_sessions + 
@@ -229,14 +251,7 @@ class HseStat extends Model
                 $model->epi_participants + $model->modes_operatoires_participants + 
                 $model->permis_spa_participants + $model->outils_electroportatifs_participants;
 
-            $model->formations_total_heures = 
-                $model->excavation_duree_h + $model->points_chauds_duree_h + 
-                $model->espace_confine_duree_h + $model->levage_duree_h + 
-                $model->travail_hauteur_duree_h + $model->sst_duree_h + 
-                $model->epi_duree_h + $model->modes_operatoires_duree_h + 
-                $model->permis_spa_duree_h + $model->outils_electroportatifs_duree_h;
-
-            // Calculate permit totals
+            // Calculate permit totals - Total des permis = (Nombre des permis général + Nombre des permis spécifiques)
             $model->permis_specifiques_total = 
                 $model->permis_excavation + $model->permis_point_chaud + 
                 $model->permis_espace_confine + $model->permis_travail_hauteur + 
@@ -245,7 +260,7 @@ class HseStat extends Model
 
             $model->permis_total = $model->permis_general + $model->permis_specifiques_total;
 
-            // Calculate inspection totals
+            // Calculate inspection totals - Nombre des inspections HSE = Total des inspections ci-dessous
             $model->inspections_total_hse = 
                 $model->inspections_generales + $model->inspections_engins + 
                 $model->hygiene_base_vie + $model->outils_electroportatifs + 
@@ -253,9 +268,11 @@ class HseStat extends Model
                 $model->protections_collectives + $model->epi_inspections + 
                 $model->observations_hse;
 
-            // Calculate PTSR percentage
+            // Calculate PTSR percentage - Pourcentage PTSR contrôlé = (Nombre PTSR Contrôlé / Nombre PTSR) * 100
             if ($model->ptsr_total > 0) {
                 $model->ptsr_controles_pourcent = ($model->ptsr_controles / $model->ptsr_total) * 100;
+            } else {
+                $model->ptsr_controles_pourcent = 0;
             }
 
             // Calculate action closure rate
@@ -263,9 +280,11 @@ class HseStat extends Model
                 $model->taux_fermeture_actions_pourcent = ($model->actions_correctives_cloturees / $model->observations_hse) * 100;
             }
 
-            // Calculate awareness percentage
-            if ($model->personnes_sensibilisees > 0 && $model->nb_sensibilisations > 0) {
-                $model->moyenne_sensibilisation_pourcent = ($model->personnes_sensibilisees / $model->nb_sensibilisations);
+            // Calculate awareness percentage - Moyenne des personnes = (Total des personnes sensibilisées / effectif du personnel) * 100
+            if ($model->effectif_personnel > 0) {
+                $model->moyenne_sensibilisation_pourcent = ($model->personnes_sensibilisees / $model->effectif_personnel) * 100;
+            } else {
+                $model->moyenne_sensibilisation_pourcent = 0;
             }
 
             // Set date analysis fields

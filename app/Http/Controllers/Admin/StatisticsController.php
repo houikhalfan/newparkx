@@ -44,12 +44,12 @@ class StatisticsController extends Controller
         $query = HseStat::with(['user', 'contractor'])
             ->where('user_type', 'contractor');
 
-        // Apply date range filter if provided
+        // Apply date range filter if provided - Use the 'date' field from "Période & Heures" section
         if ($request->has('start_date') && $request->has('end_date')) {
             $startDate = $request->start_date;
             $endDate = $request->end_date;
             
-            $query->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+            $query->whereBetween('date', [$startDate, $endDate]);
         }
 
         // Apply site filter if provided
@@ -64,7 +64,7 @@ class StatisticsController extends Controller
             });
         }
 
-        $allStats = $query->orderBy('created_at', 'desc')->get();
+        $allStats = $query->orderBy('date', 'desc')->get();
 
         // Calculate aggregated statistics
         $aggregatedData = [
@@ -466,12 +466,12 @@ class StatisticsController extends Controller
         $query = HseStat::with(['user', 'contractor'])
             ->where('user_type', 'contractor');
 
-        // Apply date range filter if provided
+        // Apply date range filter if provided - Use the 'date' field from "Période & Heures" section
         if ($request->has('start_date') && $request->has('end_date')) {
             $startDate = $request->start_date;
             $endDate = $request->end_date;
             
-            $query->whereBetween('created_at', [$startDate . ' 00:00:00', $endDate . ' 23:59:59']);
+            $query->whereBetween('date', [$startDate, $endDate]);
         }
 
         // Apply site filter if provided
