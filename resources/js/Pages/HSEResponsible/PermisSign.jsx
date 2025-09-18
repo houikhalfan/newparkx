@@ -438,14 +438,7 @@ export default function PermisSign({
                 Retour au Tableau de Bord
               </Link>
 
-              <Link
-                href="/logout"
-                method="post"
-                className="px-4 py-3 rounded-xl text-white font-semibold bg-red-500 hover:bg-red-600 shadow-lg hover:scale-105 transition"
-              >
-                <LogOut className="w-4 h-4 inline-block mr-2" />
-                Déconnexion
-              </Link>
+            
 
               <div className="flex items-center space-x-3 bg-white/90 backdrop-blur-sm rounded-xl px-4 py-2 shadow-lg">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">

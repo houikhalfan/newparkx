@@ -113,14 +113,7 @@ export default function EPIRequestsHistory({ epiRequests, flash }) {
                                         <Plus className="w-4 h-4" />
                                         <span>Nouvelle Demande</span>
                                     </Link>
-                                    <Link
-                                        href="/logout"
-                                        method="post"
-                                        className="group relative inline-flex items-center space-x-2 px-4 py-2.5 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105 shadow-lg bg-red-500 hover:bg-red-600 text-sm"
-                                    >
-                                        <LogOut className="w-4 h-4" />
-                                        <span>Déconnexion</span>
-                                    </Link>
+                               
                                     {/* User Info */}
                                     <div className="flex items-center space-x-3 bg-white/90 backdrop-blur-sm rounded-2xl px-4 py-2.5 shadow-lg border border-gray-100">
                                         <div className="w-9 h-9 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">

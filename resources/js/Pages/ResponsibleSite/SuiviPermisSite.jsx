@@ -114,14 +114,7 @@ export default function SuiviPermisSite() {
                   <span>Retour au Tableau de Bord</span>
                 </Link>
 
-                <Link
-                  href="/logout"
-                  method="post"
-                  className="inline-flex items-center space-x-2 px-4 py-3 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105 shadow-lg bg-red-500 hover:bg-red-600"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Déconnexion</span>
-                </Link>
+             
 
                 <div className="flex items-center space-x-3 bg-white/90 backdrop-blur-sm rounded-xl px-4 py-2 shadow-lg">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">

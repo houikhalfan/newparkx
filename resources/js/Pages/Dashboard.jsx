@@ -2,31 +2,7 @@ import React, { useMemo } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { motion } from 'framer-motion';
 import { 
-  Shield, 
-  FileText, 
-  Package, 
-  Video, 
-  FileSignature, 
-  Archive,
   ArrowRight,
-  CheckCircle,
-  Clock,
-  Users,
-  Star,
-  Zap,
-  TrendingUp,
-  Activity,
-  BarChart3,
-  Settings,
-  Bell,
-  Sparkles,
-  Globe,
-  Layers,
-  Database,
-  Cpu,
-  Network,
-  PenTool,
-  Truck,
   LogOut,
   UserCircle
 } from 'lucide-react';
@@ -66,41 +42,23 @@ export default function Dashboard() {
     () => [
       {
         title: 'Documents',
-        description: 'Gérez, téléchargez et partagez vos fichiers',
-        icon: FileText,
+        description: 'Consulter et télécharger les documents partagés',
+        image: 'doc.png',
         href: '/documents',
-        gradient: 'from-blue-500 to-cyan-500',
-        lightGradient: 'from-blue-50 to-cyan-50',
-        stats: 'Tous vos fichiers',
-        trend: '+12%',
-        category: 'Gestion',
-        badge: 'Nouveau'
-      },
-      {
-        title: 'Demande EPI',
-        description: 'Demandez et gérez vos équipements de protection individuelle',
-        icon: Package,
-        href: '/epi-requests',
-        gradient: 'from-purple-500 to-pink-500',
-        lightGradient: 'from-purple-50 to-pink-50',
-        stats: 'Équipements disponibles',
-        trend: '+8%',
-        category: 'Sécurité',
-        badge: 'Populaire'
       },
       {
         title: 'VODS',
-        description: 'Accédez aux vidéos et formulaires liés',
-        icon: Video,
+        description: 'Créer et suivre vos Visites Observation & Ronde',
+        image: 'form.png',
         href: '/vods',
-        gradient: 'from-emerald-500 to-teal-500',
-        lightGradient: 'from-emerald-50 to-teal-50',
-        stats: 'Formations en ligne',
-        trend: '+15%',
-        category: 'Formation',
-        badge: 'Hot'
       },
-     
+      {
+        title: 'Statistiques HSE',
+        description: 'Soumettre et suivre vos statistiques HSE',
+        image: 'stat.png',
+         href: '/epi-requests',
+      },
+  
     ],
     []
   );
@@ -111,13 +69,9 @@ const hseResponsableCards = useMemo(
     {
       title: 'Signatures HSE',
       description: 'Validez les permis et documents en attente de signature HSE',
-      icon: Shield, // or FileSignature if you prefer
+      image: 'agreement.png',
       href: '/hse-responsible/permis',
       badge: assignedPending,
-      gradient: 'from-green-500 to-emerald-500',
-      lightGradient: 'from-green-50 to-emerald-50',
-      stats: 'Documents à signer',
-      category: 'HSE',
     }
   ],
   [assignedPending]
@@ -127,30 +81,18 @@ const hseResponsableCards = useMemo(
   const responsableCards = useMemo(
     () => [
      {
-title: 'Gestion des Permis',
-description: 'Consultez et signez les documents rapidement',
-  icon: FileSignature,
-  href: '/responsible-site/suivi-permis',   // 👈 new route
-  badge: assignedPending,
-  gradient: 'from-orange-500 to-red-500',
-  lightGradient: 'from-orange-50 to-red-50',
-  stats: 'En attente de signature',
-  trend: assignedPending > 0 ? 'Urgent' : 'À jour',
-  category: 'Administration',
-  priority: assignedPending > 0 ? 'high' : 'normal'
-},
+        title: 'Gestion des Permis',
+        description: 'Consultez et signez les documents rapidement',
+        image: 'agreement.png',
+        href: '/responsible-site/suivi-permis',
+        badge: assignedPending,
+      },
       {
         title: 'Ressources Matérielles',
         description: 'Gérez et suivez vos ressources matérielles',
-        icon: Archive,
+        image: 'materiel.png',
         href: '/materiel',
         badge: materialPending,
-        gradient: 'from-cyan-500 to-blue-500',
-        lightGradient: 'from-cyan-50 to-blue-50',
-        stats: 'Ressources disponibles',
-        trend: '+5%',
-        category: 'Ressources',
-        badge: 'Essentiel'
       },
     ],
     [assignedPending, materialPending]
@@ -174,12 +116,16 @@ const cards = useMemo(() => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       {/* Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-indigo-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-r from-cyan-400/10 to-emerald-400/10 rounded-full blur-2xl animate-pulse" />
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-200/30 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-1/2 -left-40 w-96 h-96 bg-purple-200/20 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute bottom-20 right-1/3 w-64 h-64 bg-pink-200/25 rounded-full blur-3xl animate-pulse delay-500" />
+        <div className="absolute top-1/4 left-1/4 w-48 h-48 bg-yellow-200/20 rounded-full blur-2xl animate-pulse delay-700" />
+        
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.05)_1px,transparent_1px)] bg-[size:50px_50px] animate-pulse" />
       </div>
 
       {/* Modern Header */}
@@ -189,32 +135,30 @@ const cards = useMemo(() => {
         transition={{ duration: 0.6 }}
         className="relative z-10"
       >
-        <div className="bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-lg">
-          <div className="max-w-7xl mx-auto px-6 py-6">
+        <div className="bg-white/80 backdrop-blur-xl border-b border-blue-200/50 shadow-lg">
+          <div className="max-w-7xl mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
               {/* Logo & Brand */}
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-4 ml-4">
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
                   className="relative"
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg">
-                    <img src="/images/wh.png" className="h-8 w-auto" alt="PARKX Logo" />
+                  <div className="w-30 h-12 flex items-center justify-center overflow-hidden p-0">
+                    <img 
+                      src="/images/logo.png" 
+                      alt="ParkX Logo" 
+                      className="h-10 object-contain"
+                    />
                   </div>
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-full animate-pulse" />
+                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full animate-pulse" />
                 </motion.div>
-                <div>
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                    ParkX
-                  </h1>
-                  <p className="text-sm text-slate-500 font-medium">Plateforme Industrielle Intelligente</p>
-                </div>
               </div>
 
               {/* Actions */}
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-6">
                 {/* Admin Button */}
                 {isAdmin && (
                   <motion.div
@@ -227,12 +171,28 @@ const cards = useMemo(() => {
                       className="group relative inline-flex items-center space-x-2 px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
                       style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
                     >
-                      <Shield className="w-4 h-4" />
+                      <ShieldIcon className="w-4 h-4" />
                       <span>Dashboard Admin</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </Link>
                   </motion.div>
                 )}
+
+                {/* User Info */}
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5, duration: 0.5 }}
+                  className="flex items-center space-x-3 bg-white/90 backdrop-blur-sm rounded-xl px-4 py-2 shadow-lg"
+                >
+                  <div className="w-8 h-8 rounded-full bg-[#013b94] flex items-center justify-center">
+                    <UserCircle className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="text-slate-800">
+                    <p className="text-sm font-medium">{user?.name || 'Utilisateur'}</p>
+                    <p className="text-xs text-slate-600">ParkX</p>
+                  </div>
+                </motion.div>
 
                 {/* Logout Button */}
                 <motion.div
@@ -243,27 +203,13 @@ const cards = useMemo(() => {
                   <Link
                     href="/logout"
                     method="post"
-                    className="group relative inline-flex items-center space-x-2 px-4 py-3 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105 shadow-lg bg-red-500 hover:bg-red-600"
+                    className="group relative px-6 py-3 bg-[#0e5186] text-white rounded-xl hover:bg-[#0c3f66] transition-all duration-300 shadow-lg hover:shadow-xl"
                   >
-                    <LogOut className="w-4 h-4" />
-                    <span>Déconnexion</span>
+                    <div className="flex items-center space-x-2">
+                      <LogOut className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" />
+                      <span className="text-sm font-semibold">Déconnexion</span>
+                    </div>
                   </Link>
-                </motion.div>
-
-                {/* User Info */}
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.5, duration: 0.5 }}
-                  className="flex items-center space-x-3 bg-white/90 backdrop-blur-sm rounded-xl px-4 py-2 shadow-lg"
-                >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">
-                    <UserCircle className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="text-slate-800">
-                    <p className="text-sm font-medium">{user?.name || 'Utilisateur'}</p>
-                    <p className="text-xs text-slate-600">ParkX</p>
-                  </div>
                 </motion.div>
               </div>
             </div>
@@ -276,40 +222,99 @@ const cards = useMemo(() => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 0.7 }}
-        className="relative z-10 pt-16 pb-20"
+        className="relative z-10 pt-16 pb-8 text-center"
       >
-        <div className="max-w-6xl mx-auto px-6 text-center">
-
-          
-          <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-12 leading-relaxed">
-            Bienvenue sur votre interface ParkX. Accédez à tous vos outils et services 
-            en un seul endroit pour optimiser votre expérience industrielle.
+        <div className="max-w-6xl mx-auto px-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+            Bienvenue dans votre espace ParkX
+          </h1>
+          <p className="text-2xl md:text-3xl text-gray-600 max-w-2xl mx-auto">
+            Gérez vos projets, documents et permis de manière simple et efficace
           </p>
-
         </div>
       </motion.section>
 
       {/* Services Grid */}
-      <section className="relative z-10 pb-20 px-6">
+      <section className="relative z-10 pb-20 px-6 mt-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
             {cards.map((card, index) => (
               <motion.div
                 key={card.title}
-                initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ delay: 0.9 + index * 0.15, duration: 0.6, ease: "easeOut" }}
-                whileHover={{ y: -8, scale: 1.02 }}
+                initial={{ opacity: 0, y: 60, rotateX: -15 }}
+                animate={{ opacity: 1, y: 0, rotateX: 0 }}
+                transition={{ 
+                  delay: index * 0.1, 
+                  duration: 0.8,
+                  type: "spring",
+                  stiffness: 100
+                }}
+                style={{
+                  transformStyle: "preserve-3d"
+                }}
                 className="group relative"
               >
                 <Link href={card.href} className="block h-full">
-                  <div className="relative h-full bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20 overflow-hidden group-hover:shadow-2xl transition-all duration-500">
-                    {/* Gradient Background */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${card.lightGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                  <div className="group relative bg-white/80 backdrop-blur-xl border border-white/60 shadow-xl rounded-3xl p-8 flex flex-col items-center text-center justify-between hover:shadow-2xl hover:border-white/80 transition-all duration-500 overflow-hidden h-[340px] hover:bg-white/90">
+                    {/* Animated Background Glow */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-purple-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     
-                    {/* Floating Elements */}
-                    <div className="absolute top-4 right-4 w-20 h-20 bg-gradient-to-br from-white/20 to-transparent rounded-full blur-xl group-hover:scale-150 transition-transform duration-700" />
-                    <div className="absolute bottom-4 left-4 w-16 h-16 bg-gradient-to-tr from-white/10 to-transparent rounded-full blur-lg group-hover:scale-125 transition-transform duration-700" />
+                    {/* Image Container with Bright Effect */}
+                    <div className="relative mb-4">
+                      <div
+                        className="w-20 h-20 rounded-3xl flex items-center justify-center bg-white shadow-lg group-hover:shadow-xl transition-all duration-500 relative overflow-hidden"
+                        style={{
+                          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3)'
+                        }}
+                      >
+                        {/* Image Glow Effect */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-3xl" />
+                        <img 
+                          src={`/images/${card.image}`} 
+                          alt={card.title}
+                          className="w-12 h-12 object-contain relative z-10 group-hover:scale-110 transition-transform duration-300" 
+                        />
+                        
+                        {/* Animated Border */}
+                        <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-white/40 via-transparent to-white/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                      </div>
+                      
+                      {/* Floating Particles */}
+                      <div className="absolute -top-3 -right-3 w-6 h-6 bg-yellow-300 rounded-full opacity-0 group-hover:opacity-100 animate-ping" />
+                      <div className="absolute -bottom-3 -left-3 w-4 h-4 bg-pink-300 rounded-full opacity-0 group-hover:opacity-100 animate-ping delay-300" />
+                    </div>
+
+                    {/* Content with fixed height */}
+                    <div className="flex-1 flex flex-col justify-center mb-4 min-h-[120px]">
+                      <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">
+                        {card.title}
+                      </h3>
+                      <p className="text-sm text-gray-600 leading-relaxed group-hover:text-gray-700 transition-colors duration-300 line-clamp-3">
+                        {card.description}
+                      </p>
+                    </div>
+                    
+                    {/* Interactive Button */}
+                    <div className="relative w-full mt-auto">
+                      <span className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#013b94] text-white rounded-2xl text-sm font-semibold group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-300 shadow-lg group-hover:shadow-xl w-full">
+                        <span>Accéder</span>
+                        <motion.svg 
+                          width="16" 
+                          height="16" 
+                          viewBox="0 0 24 24"
+                          className="group-hover:translate-x-1 transition-transform duration-300"
+                        >
+                          <path fill="currentColor" d="M13 5l7 7-7 7v-4H4v-6h9V5z" />
+                        </motion.svg>
+                      </span>
+                      
+                      {/* Button Glow Effect */}
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-400 to-purple-400 opacity-0 group-hover:opacity-30 blur-lg transition-opacity duration-500" />
+                    </div>
+
+                    {/* Corner Accents */}
+                    <div className="absolute top-6 right-6 w-6 h-6 border-t-2 border-r-2 border-blue-300 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute bottom-6 left-6 w-6 h-6 border-b-2 border-l-2 border-purple-300 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                     {/* Badge */}
                     {typeof card.badge === 'number' && card.badge > 0 && (
@@ -319,60 +324,6 @@ const cards = useMemo(() => {
                         </span>
                       </div>
                     )}
-
-                    {/* Category Badge */}
-                    <div className="relative z-10 mb-6">
-                      <span className={`inline-block px-4 py-2 rounded-full text-xs font-bold bg-gradient-to-r ${card.gradient} text-white shadow-lg`}>
-                        {card.category}
-                      </span>
-                      {card.badge && typeof card.badge === 'string' && (
-                        <span className="ml-2 inline-block px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r from-emerald-400 to-cyan-400 text-white">
-                          {card.badge}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Icon */}
-                    <div className="relative z-10 mb-6">
-                      <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${card.gradient} flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                        <card.icon className="w-10 h-10 text-white" />
-                      </div>
-                    </div>
-
-                    {/* Content */}
-                    <div className="relative z-10 mb-6">
-                      <h4 className="text-2xl font-bold text-slate-800 mb-3 group-hover:text-slate-900 transition-colors">
-                        {card.title}
-                      </h4>
-                      <p className="text-slate-600 leading-relaxed group-hover:text-slate-700 transition-colors">
-                        {card.description}
-                      </p>
-                    </div>
-
-                    {/* Stats */}
-                    <div className="relative z-10 flex items-center justify-between mb-6">
-                      <span className="text-sm text-slate-500 font-medium">{card.stats}</span>
-                      <span className={`text-sm font-bold ${
-                        card.trend === 'Urgent' ? 'text-red-500' : 
-                        card.trend === 'À jour' ? 'text-emerald-500' : 
-                        'text-blue-500'
-                      }`}>
-                        {card.trend}
-                      </span>
-                    </div>
-
-                    {/* Action */}
-                    <div className="relative z-10 flex items-center justify-between">
-                      <span className="text-sm font-semibold text-slate-700 group-hover:text-slate-800 transition-colors">
-                        Accéder au service
-                      </span>
-                      <div className={`w-10 h-10 rounded-full bg-gradient-to-r ${card.gradient} flex items-center justify-center group-hover:translate-x-1 transition-transform duration-300 shadow-lg`}>
-                        <ArrowRight className="w-5 h-5 text-white" />
-                      </div>
-                    </div>
-
-                    {/* Hover Effect Overlay */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500 rounded-3xl`} />
                   </div>
                 </Link>
               </motion.div>
@@ -380,42 +331,6 @@ const cards = useMemo(() => {
           </div>
         </div>
       </section>
-
-      {/* Footer CTA */}
-      <motion.section
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.5, duration: 0.7 }}
-        className="relative z-10 py-20 px-6"
-      >
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-12 shadow-2xl border border-white/20">
-            <h3 className="text-4xl font-bold text-slate-800 mb-6">
-              Prêt à optimiser votre expérience ?
-            </h3>
-            <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto">
-              Explorez nos services et découvrez comment ParkX peut transformer votre workflow industriel.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 rounded-2xl text-white font-bold text-lg transition-all duration-300 shadow-lg"
-                style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
-              >
-                Commencer maintenant
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-8 py-4 rounded-2xl border-2 border-slate-300 text-slate-700 font-bold text-lg transition-all duration-300 hover:bg-slate-50 hover:border-slate-400"
-              >
-                En savoir plus
-              </motion.button>
-            </div>
-          </div>
-        </div>
-      </motion.section>
     </div>
   );
 }

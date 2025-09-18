@@ -135,21 +135,7 @@ export default function DocumentsIndex({ documents, filters }) {
                                         </Link>
                                     </motion.div>
 
-                                    {/* Logout Button */}
-                                    <motion.div
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.4, duration: 0.5 }}
-                                    >
-                                        <Link
-                                            href="/logout"
-                                            method="post"
-                                            className="group relative inline-flex items-center space-x-2 px-4 py-3 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105 shadow-lg bg-red-500 hover:bg-red-600"
-                                        >
-                                            <LogOut className="w-4 h-4" />
-                                            <span>Déconnexion</span>
-                                        </Link>
-                                    </motion.div>
+                                 
 
                                     {/* User Info */}
                                     <motion.div
