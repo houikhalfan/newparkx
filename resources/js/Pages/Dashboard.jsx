@@ -53,8 +53,8 @@ export default function Dashboard() {
         href: '/vods',
       },
       {
-        title: 'Statistiques HSE',
-        description: 'Soumettre et suivre vos statistiques HSE',
+        title: 'Demande EPI',
+        description: 'Soumettre et suivre vos demandes d\'équipements de protection individuelle',
         image: 'stat.png',
          href: '/epi-requests',
       },
