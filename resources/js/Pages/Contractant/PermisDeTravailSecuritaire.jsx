@@ -3,7 +3,7 @@ import { usePage } from "@inertiajs/react";
 import { motion, AnimatePresence } from "framer-motion";
 import ContractantSidebar from '@/Components/ContractantSidebar';
 import ContractantTopHeader from '@/Components/ContractantTopHeader';
-
+import { router } from "@inertiajs/react";
 /* --------------------------------- UI bits -------------------------------- */
 const Section = ({ title, children }) => (
   <div className="rounded-3xl border border-blue-200/50 bg-white/90 backdrop-blur-xl shadow-2xl mb-8">
@@ -179,9 +179,19 @@ function SignaturePicker({ id, label, value, onChange, disabled, error }) {
   );
 }
 
+// Function to generate permit number
+const generatePermitNumber = (contractorName) => {
+  const timestamp = new Date().getTime().toString().slice(-6);
+  const initials = contractorName
+    ? contractorName.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 3)
+    : 'CTR';
+  return `EXC-${initials}-${timestamp}`;
+};
+
 /* ---------------------------------- Page ---------------------------------- */
 export default function Excavation() {
-  const { sites = [] } = usePage().props;
+  const { sites = [], auth } = usePage().props;
+  const contractorName = auth?.contractor?.name || '';
 
   /* ----------------------------- static options ---------------------------- */
   // TYPE D'ACTIVITÉ
@@ -328,6 +338,9 @@ export default function Excavation() {
 
   /* ------------------------------- form state ------------------------------ */
   const [data, setData] = useState({
+    // Header
+    numero_permis: generatePermitNumber(contractorName),
+    
     // IDENTIFICATION
     site_id: "",
     duree_de: "",
@@ -335,9 +348,9 @@ export default function Excavation() {
     description: "",
     plan_securitaire_par: "",
     date_analyse: "",
-    demandeur: "",
-    contractant: "",
-    meme_que_demandeur: false,
+    demandeur: contractorName || "",
+    contractant: contractorName || "",
+    meme_que_demandeur: true,
 
     // GROUPES (au moins 1)
     activites: [],
@@ -460,19 +473,54 @@ export default function Excavation() {
     setErrors(e);
     return Object.keys(e).length === 0;
   };
+// Ajoutez cette fonction avant le onSubmit
+const buildFormData = (data) => {
+  const formData = new FormData();
+  
+  Object.entries(data).forEach(([key, value]) => {
+    if (value === null || value === undefined) {
+      return;
+    }
+    
+    if (value instanceof File) {
+      formData.append(key, value);
+    } else if (Array.isArray(value)) {
+      value.forEach((v, i) => {
+        if (v !== null && v !== undefined) {
+          formData.append(`${key}[${i}]`, v);
+        }
+      });
+    } else if (typeof value === 'boolean') {
+      formData.append(key, value ? '1' : '0');
+    } else {
+      formData.append(key, value.toString());
+    }
+  });
+  
+  return formData;
+};
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-    setOk(false);
-    if (!validate()) return;
+// Puis modifiez le onSubmit :
+const onSubmit = (e) => {
+  e.preventDefault();
+  setOk(false);
 
-    // Frontend-only for now:
-    // Here you'd build a FormData and POST to your route for storage (including images).
-    // console.log("PERMIS EXCAVATION (payload):", data);
+  if (!validate()) return;
 
-    setOk(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+  const formData = buildFormData(data);
+
+  router.post(route("contractant.permis-travail-securitaire.store"), formData, {
+    forceFormData: true,
+    onSuccess: () => {
+      window.location.href = route("contractant.permis-travail-securitaire.index");
+    },
+    onError: (errors) => {
+      setErrors(errors);
+    },
+  });
+};
+
+ // ← CETTE ACCOLADE FERMANTE ÉTAIT MANQUANTE
 
   /* ------------------------------- rendering ------------------------------- */
   return (
@@ -500,7 +548,7 @@ export default function Excavation() {
         <div className="flex-1 flex flex-col">
           {/* Top Header */}
           <ContractantTopHeader 
-            contractor={usePage().props.auth?.contractor}
+            contractor={auth?.contractor}
             showBackButton={true}
             backRoute={route('contractant.home')}
             backLabel="Retour au tableau de bord"
@@ -545,6 +593,35 @@ export default function Excavation() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
               >
+                {/* Header */}
+                <motion.div
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, delay: 0.4 }}
+                  className="mb-8 rounded-3xl border border-gray-200 bg-white shadow-lg overflow-hidden"
+                >
+                  <div className="flex flex-col md:flex-row items-center justify-between px-6 py-4 bg-gray-50 border-b border-gray-200">
+                    <div className="flex items-center gap-3 mb-4 md:mb-0">
+                      <img src="/images/logo.png" alt="ParkX" className="h-8 w-auto" />
+                      <h1 className="text-gray-800 font-semibold tracking-wide uppercase text-lg">
+                        PERMIS De TRAVAIL SÉCURITAIRE
+                      </h1>
+                    </div>
+
+                    {/* NUMÉRO DE PERMIS (auto-generated) */}
+                    <div className="mt-2">
+                      <div className="text-sm text-gray-700">NUMÉRO DE PERMIS</div>
+                     <Text
+  readOnly
+  value={data.numero_permis || generatePermitNumber(contractorName)}
+  className="bg-gray-100 cursor-not-allowed"
+/>
+
+                      <FieldError>{errors.numero_permis}</FieldError>
+                    </div>
+                  </div>
+                </motion.div>
+
                 {/* IDENTIFICATION */}
                 <Section title="Identification">
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -650,6 +727,7 @@ export default function Excavation() {
                   </div>
                 </Section>
 
+                {/* Rest of the form sections remain the same... */}
                 {/* TYPE D'ACTIVITE */}
                 <Section title="TYPE D'ACTIVITE">
                   <CheckboxGroup
@@ -878,14 +956,15 @@ export default function Excavation() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.8 }}
                 >
-                  <motion.button
-                    type="submit"
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 px-8 py-3 text-sm font-semibold text-white hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-300"
-                  >
-                    Soumettre (validation locale)
-                  </motion.button>
+   <motion.button
+  type="submit"
+  whileHover={{ scale: 1.05, y: -2 }}
+  whileTap={{ scale: 0.95 }}
+  className="rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 px-8 py-3 text-sm font-semibold text-white hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-300"
+>
+  Soumettre
+</motion.button>
+
                 </motion.div>
               </motion.form>
             </div>

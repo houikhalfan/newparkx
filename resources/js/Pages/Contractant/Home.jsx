@@ -442,21 +442,23 @@ export default function ContractorHome() {
                     </Link>
 
                     {/* Permis 2 - Travail Sécuritaire */}
-                    <Link
-                      href={route("contractant.permis.travail.securitaire")}
-                      className="group flex flex-col items-center justify-center rounded-2xl border border-purple-200 bg-white/80 hover:border-purple-300 hover:shadow-xl hover:shadow-purple-100/50 p-4 transition-all duration-500 backdrop-blur-sm h-full"
-                      onClick={() => setShowSignatureOptions(false)}
-                    >
-                      <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mb-3 shadow-lg group-hover:shadow-xl transition-all duration-500">
-                        <img src="/images/agreement.png" alt="Permis de travail" className="w-6 h-6" />
-                      </div>
-                      <h3 className="text-base font-bold text-gray-800 text-center group-hover:text-purple-600 transition-colors duration-300 mb-2">
-                        Permis de Travail
-                      </h3>
-                      <p className="text-xs text-gray-600 text-center group-hover:text-gray-700 transition-colors duration-300">
-                        Demande de permis de travail sécuritaire
-                      </p>
-                    </Link>
+               // Correction
+<Link
+  href={route('contractant.permis-travail-securitaire.index')
+}
+  className="group flex flex-col items-center justify-center rounded-2xl border border-purple-200 bg-white/80 hover:border-purple-300 hover:shadow-xl hover:shadow-purple-100/50 p-4 transition-all duration-500 backdrop-blur-sm h-full"
+  onClick={() => setShowSignatureOptions(false)}
+>
+  <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mb-3 shadow-lg group-hover:shadow-xl transition-all duration-500">
+    <img src="/images/agreement.png" alt="Permis de travail" className="w-6 h-6" />
+  </div>
+  <h3 className="text-base font-bold text-gray-800 text-center group-hover:text-purple-600 transition-colors duration-300 mb-2">
+    Permis de Travail
+  </h3>
+  <p className="text-xs text-gray-600 text-center group-hover:text-gray-700 transition-colors duration-300">
+    Demande de permis de travail sécuritaire
+  </p>
+</Link>
 
                     {/* Permis 3 - Thème 3 */}
                     <Link

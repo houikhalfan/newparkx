@@ -54,10 +54,10 @@ export default function ContractantSidebar() {
           href: route("contractant.permisexcavation.create"),
           label: "Permis D'Excavation",
         },
-        {
-          href: route("contractant.permis.travail.securitaire"),
-          label: "Permis de travail sécuritaire — Construction",
-        }
+{
+  href: "/contractant/permis-travail-securitaire/create",
+  label: "Permis de travail sécuritaire — Construction",
+}
       ]
     },
     { 

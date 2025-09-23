@@ -1,42 +1,31 @@
 import React from "react";
-import { Link, usePage, router } from "@inertiajs/react";
+import { usePage, router } from "@inertiajs/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, X, Calendar, FileText, Eye, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { Search, FileText, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 import ContractantSidebar from '@/Components/ContractantSidebar';
 import ContractantTopHeader from '@/Components/ContractantTopHeader';
 
 export default function SuiviPermis({ permis = [], filters, contractor }) {
   const { flash } = usePage().props;
   
-  // Provide default values for filters if they're undefined
   const safeFilters = filters || {};
   const [search, setSearch] = React.useState(safeFilters.search || '');
   const [statusFilter, setStatusFilter] = React.useState(safeFilters.status || '');
 
   const handleSearch = (e) => {
     setSearch(e.target.value);
-    
-    // Trigger search immediately
     router.get(route('contractant.permis'), {
       search: e.target.value,
       status: statusFilter,
-    }, {
-      preserveState: true,
-      replace: true,
-    });
+    }, { preserveState: true, replace: true });
   };
 
   const handleStatusFilter = (e) => {
     setStatusFilter(e.target.value);
-    
-    // Trigger filter immediately
     router.get(route('contractant.permis'), {
       search: search,
       status: e.target.value,
-    }, {
-      preserveState: true,
-      replace: true,
-    });
+    }, { preserveState: true, replace: true });
   };
 
   const clearFilters = () => {
@@ -47,47 +36,36 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
 
   const getStatusIcon = (status) => {
     switch(status) {
-      case 'en_attente':
-        return <Clock className="w-4 h-4 text-yellow-600" />;
-      case 'en_cours':
-        return <AlertCircle className="w-4 h-4 text-blue-600" />;
-      case 'signe':
-        return <CheckCircle className="w-4 h-4 text-green-600" />;
-      case 'rejete':
-        return <XCircle className="w-4 h-4 text-red-600" />;
-      default:
-        return <Clock className="w-4 h-4 text-gray-600" />;
+      case 'en_attente': return <Clock className="w-4 h-4 text-yellow-600" />;
+      case 'en_cours': return <AlertCircle className="w-4 h-4 text-blue-600" />;
+      case 'signe': return <CheckCircle className="w-4 h-4 text-green-600" />;
+      case 'rejete': return <XCircle className="w-4 h-4 text-red-600" />;
+      default: return <Clock className="w-4 h-4 text-gray-600" />;
     }
   };
 
   const getStatusText = (status) => {
     switch(status) {
-      case 'en_attente':
-        return "En attente";
-      case 'en_cours':
-        return "En cours";
-      case 'signe':
-        return "Signé";
-      case 'rejete':
-        return "Rejeté";
-      default:
-        return "—";
+      case 'en_attente': return "En attente";
+      case 'en_cours': return "En cours";
+      case 'signe': return "Signé";
+      case 'rejete': return "Rejeté";
+      default: return "—";
     }
   };
 
   const getStatusColor = (status) => {
     switch(status) {
-      case 'en_attente':
-        return "text-yellow-600";
-      case 'en_cours':
-        return "text-blue-600";
-      case 'signe':
-        return "text-green-600";
-      case 'rejete':
-        return "text-red-600";
-      default:
-        return "text-gray-600";
+      case 'en_attente': return "text-yellow-600";
+      case 'en_cours': return "text-blue-600";
+      case 'signe': return "text-green-600";
+      case 'rejete': return "text-red-600";
+      default: return "text-gray-600";
     }
+  };
+
+  const getPermitTypeLabel = (permis) => {
+    return permis.type_label || "Permis d'Excavation";
   };
 
   return (
@@ -250,7 +228,9 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
                             transition={{ duration: 0.5, delay: index * 0.1 }}
                             className="group hover:bg-blue-50/50 transition-all duration-300"
                           >
-                            <td className="px-6 py-4 text-gray-800 font-medium">Permis d'Excavation</td>
+                            <td className="px-6 py-4 text-gray-800 font-medium">
+                              {getPermitTypeLabel(p)}
+                            </td>
                             <td className="px-6 py-4 font-semibold text-gray-800">{p.numero_permis || "—"}</td>
                             <td className="px-6 py-4 text-gray-700">{p.site ? p.site.name : "—"}</td>
                             <td className="px-6 py-4 text-gray-700">
@@ -266,37 +246,26 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
                                 </span>
                               </div>
                             </td>
-                           <td className="px-6 py-4 text-center">
-  {p.status === "en_cours" ? (
-    <span className="text-gray-500 font-medium cursor-not-allowed inline-flex items-center">
-      <Eye className="w-4 h-4 mr-1" />
-      Voir
-    </span>
-  ) : p.status === "signe" && p.pdf_signed ? (
-    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-      <a
-         href={`/storage/${p.pdf_signed}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-green-600 hover:text-green-700 font-medium inline-flex items-center transition-colors duration-300"
-      >
-        <FileText className="w-4 h-4 mr-1" />
-        PDF
-      </a>
-    </motion.div>
-  ) : (
-    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-      <Link
-        href={route("contractant.permisexcavation.show", p.id)}
-        className="text-blue-600 hover:text-blue-700 font-medium inline-flex items-center transition-colors duration-300"
-      >
-        <Eye className="w-4 h-4 mr-1" />
-        Voir
-      </Link>
-    </motion.div>
-  )}
-</td>
-
+                            <td className="px-6 py-4 text-center">
+                              {p.status === "signe" && p.pdf_signed ? (
+                                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                                  <a
+                                    href={`/storage/${p.pdf_signed}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-green-600 hover:text-green-700 font-medium inline-flex items-center transition-colors duration-300"
+                                  >
+                                    <FileText className="w-4 h-4 mr-1" />
+                                    PDF
+                                  </a>
+                                </motion.div>
+                              ) : (
+                                <span className="text-gray-500 font-medium inline-flex items-center">
+                                  <Clock className="w-4 h-4 mr-1" />
+                                  Pas encore signé
+                                </span>
+                              )}
+                            </td>
                           </motion.tr>
                         ))}
                       </tbody>

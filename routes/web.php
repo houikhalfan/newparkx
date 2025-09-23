@@ -15,6 +15,9 @@ use App\Http\Controllers\ContractantController;
 use App\Http\Controllers\ContractorAuthController;
 use App\Http\Controllers\Admin\AdminPasswordController;
 use App\Http\Controllers\Contractant\PermisExcavationController;
+use App\Http\Controllers\Contractant\SuiviPermisController;
+ use App\Http\Controllers\Contractant\PermisTravailSecuritaireController;
+
 use App\Http\Controllers\Admin\VodController as AdminVodController;
 use App\Http\Controllers\Employee\ResponsibleSiteController;
 
@@ -34,6 +37,7 @@ use App\Http\Controllers\Admin\ProjectController;
 
 // Permis d’excavation
 use App\Http\Controllers\Admin\PermisAdminController;
+
 
 // Matériel
 use App\Http\Controllers\Employee\MaterialRequestInboxController as EmpMaterialCtrl;
@@ -221,6 +225,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 Route::get('/permis', [PermisAdminController::class, 'index'])
         ->name('permis.index');
         
+        //permis de travail
+
+
+        
         // Projects
         Route::resource('projects', ProjectController::class);
 
@@ -359,7 +367,8 @@ Route::prefix('contractant')->name('contractant.')->group(function () {
         })->name('permis.selection');
 
 // ✅ Suivi des permis
-Route::get('/suivi-permis', [PermisExcavationController::class, 'index'])
+// Dans routes/web.php - REMPLACEZ cette ligne
+Route::get('/suivi-permis', [SuiviPermisController::class, 'index'])
     ->name('suivi-permis.index');
 
 // ✅ Création d’un nouveau permis
@@ -375,10 +384,28 @@ Route::get('/permis-excavation/{permisExcavation}', [PermisExcavationController:
     ->name('permisexcavation.show');
 
 
-        // ✅ Permis de travail sécuritaire (frontend only for now)
-        Route::get('/permis-de-travail-securitaire', function () {
-            return Inertia::render('Contractant/PermisDeTravailSecuritaire');
-        })->name('permis.travail.securitaire');
+        // ✅ Permis de travail sécuritaire 
+  // ✅ Permis de travail sécuritaire 
+// ✅ Permis de travail sécuritaire
+Route::get('/suivi-permis-travail-securitaire', [PermisTravailSecuritaireController::class, 'index'])
+    ->name('permis-travail-securitaire.index');
+
+Route::get('/permis-travail-securitaire', [PermisTravailSecuritaireController::class, 'index'])
+    ->name('permis-travail-securitaire.list');
+
+    
+Route::get('/permis-travail-securitaire/create', [PermisTravailSecuritaireController::class, 'create'])
+    ->name('permis-travail-securitaire.create');
+
+Route::post('/permis-travail-securitaire', [PermisTravailSecuritaireController::class, 'store'])
+    ->name('permis-travail-securitaire.store');
+
+Route::get('/permis-travail-securitaire/{permisTravailSecuritaire}', [PermisTravailSecuritaireController::class, 'show'])
+    ->name('permis-travail-securitaire.show');
+
+Route::post('/permis-travail-securitaire/{permisTravailSecuritaire}/approbation', [PermisTravailSecuritaireController::class, 'approbation'])
+    ->name('permis-travail-securitaire.approbation');
+
 
         // VODS
         Route::get('/vods', [ContractantVodController::class, 'index'])->name('vods.index');
