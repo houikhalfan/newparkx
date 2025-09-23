@@ -220,6 +220,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // Permis d’excavation
 Route::get('/permis', [PermisAdminController::class, 'index'])
         ->name('permis.index');
+        
         // Projects
         Route::resource('projects', ProjectController::class);
 

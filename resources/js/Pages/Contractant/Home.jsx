@@ -181,7 +181,7 @@ export default function ContractorHome() {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             {/* Logo Section - Aligned to the left */}
-            <div className="flex items-center space-x-4 ml-4"> {/* Added ml-4 for left alignment */}
+            <div className="flex items-center space-x-4 ml-4">
               <div className="relative">
                 <div className="w-30 h-12 flex items-center justify-center overflow-hidden p-0">
                   <img 
@@ -203,7 +203,7 @@ export default function ContractorHome() {
                   <p className="text-xs text-gray-600">{contractor?.company_name || 'Company'}</p>
                 </div>
                 
-                {/* Profile Circle with Dropdown - Changed to #013b94 */}
+                {/* Profile Circle with Dropdown */}
                 <div className="relative" ref={profileDropdownRef}>
                   <div 
                     className="group cursor-pointer"
@@ -218,7 +218,7 @@ export default function ContractorHome() {
                     {/* Hover Glow Effect */}
                     <div className="absolute inset-0 rounded-full bg-[#013b94] opacity-0 group-hover:opacity-30 blur-lg transition-opacity duration-300" />
                     
-                    {/* Status Indicator - Changed to #013b94 */}
+                    {/* Status Indicator */}
                     <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#013b94] rounded-full border-2 border-white animate-pulse" />
                   </div>
 
@@ -291,7 +291,7 @@ export default function ContractorHome() {
                 onClick={() => {
                   router.post(route('contractant.logout'));
                 }}
-className="group relative px-6 py-3 bg-[#0e5186] text-white rounded-xl hover:bg-[#0c3f66] transition-all duration-300 shadow-lg hover:shadow-xl"
+                className="group relative px-6 py-3 bg-[#0e5186] text-white rounded-xl hover:bg-[#0c3f66] transition-all duration-300 shadow-lg hover:shadow-xl"
               >
                 <div className="flex items-center space-x-2">
                   <svg className="w-4 h-4 group-hover:rotate-12 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -309,42 +309,31 @@ className="group relative px-6 py-3 bg-[#0e5186] text-white rounded-xl hover:bg-
       </motion.header>
 
       {/* Hero Section */}
-  <section className="relative text-gray-800 overflow-hidden">
-  <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 via-transparent to-purple-100/30" />
+      <section className="relative text-gray-800 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-100/30 via-transparent to-purple-100/30" />
 
-  <div className="relative max-w-7xl mx-auto px-6 py-16 md:py-20 text-center">
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-      className="mb-8"
-    >
-      {/* Main Title */}
-      <div className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-        Bienvenue dans votre espace ParkX
-      </div>
+        <div className="relative max-w-7xl mx-auto px-6 py-16 md:py-20 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="mb-8"
+          >
+            {/* Main Title */}
+            <div className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
+              Bienvenue dans votre espace ParkX
+            </div>
 
-      {/* Subtitle */}
-      <div className="text-2xl md:text-3xl text-gray-600 max-w-2xl mx-auto">
-        Gérez vos projets, documents et permis de manière simple et efficace
-      </div>
-    </motion.div>
-  </div>
-</section>
-
+            {/* Subtitle */}
+            <div className="text-2xl md:text-3xl text-gray-600 max-w-2xl mx-auto">
+              Gérez vos projets, documents et permis de manière simple et efficace
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
       {/* Cards Section */}
       <main className="max-w-7xl mx-auto px-6 -mt-20 pb-32 relative z-10">
-        {/* Section Title */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          
-        </motion.div>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-8">
           {cards.map((card, idx) => (
             <motion.div
@@ -373,7 +362,7 @@ className="group relative px-6 py-3 bg-[#0e5186] text-white rounded-xl hover:bg-
           ))}
         </div>
 
-        {/* Bright Modal */}
+        {/* Permis Modal */}
         <AnimatePresence>
           {showSignatureOptions && (
             <motion.div
@@ -381,9 +370,10 @@ className="group relative px-6 py-3 bg-[#0e5186] text-white rounded-xl hover:bg-
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              onClick={() => setShowSignatureOptions(false)}
             >
               <motion.div
-                className="relative bg-white/95 backdrop-blur-xl border border-blue-200/50 rounded-3xl shadow-2xl max-w-2xl w-full p-8 overflow-hidden"
+                className="relative bg-white/95 backdrop-blur-xl border border-blue-200/50 rounded-3xl shadow-2xl max-w-4xl w-full mx-4 p-8 overflow-hidden max-h-[90vh] overflow-y-auto"
                 initial={{ scale: 0.9, opacity: 0, y: 20 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -393,6 +383,7 @@ className="group relative px-6 py-3 bg-[#0e5186] text-white rounded-xl hover:bg-
                   backdropFilter: 'blur(20px)',
                   boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(59, 130, 246, 0.2)'
                 }}
+                onClick={(e) => e.stopPropagation()}
               >
                 {/* Animated Background */}
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-purple-50/50" />
@@ -404,7 +395,7 @@ className="group relative px-6 py-3 bg-[#0e5186] text-white rounded-xl hover:bg-
                   <X size={24} />
                 </button>
 
-                <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center bg-black  bg-clip-text text-transparent">
+                <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center">
                   Choisissez une option
                 </h2>
 
@@ -424,7 +415,6 @@ className="group relative px-6 py-3 bg-[#0e5186] text-white rounded-xl hover:bg-
                     <h3 className="text-lg font-bold text-gray-800 text-center group-hover:text-blue-600 transition-colors duration-300">
                       Suivre la situation de vos fichiers
                     </h3>
-                   
                   </Link>
                 </div>
 
@@ -433,38 +423,106 @@ className="group relative px-6 py-3 bg-[#0e5186] text-white rounded-xl hover:bg-
                   <h3 className="text-sm font-semibold text-[#013b94] mb-4 uppercase tracking-wider">
                     Demandes de Permis
                   </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {/* ✅ Create excavation permit */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {/* Permis 1 - Excavation */}
                     <Link
                       href={route("contractant.permisexcavation.create")}
-                      className="group flex flex-col items-center justify-center rounded-2xl border border-emerald-200 bg-white/80 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-100/50 p-6 transition-all duration-500 backdrop-blur-sm"
+                      className="group flex flex-col items-center justify-center rounded-2xl border border-emerald-200 bg-white/80 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-100/50 p-4 transition-all duration-500 backdrop-blur-sm h-full"
                       onClick={() => setShowSignatureOptions(false)}
                     >
-                      <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl transition-all duration-500">
-                        <img src="/images/agreement.png" alt="Permis d'excavation" className="w-8 h-8" />
+                      <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mb-3 shadow-lg group-hover:shadow-xl transition-all duration-500">
+                        <img src="/images/agreement.png" alt="Permis d'excavation" className="w-6 h-6" />
                       </div>
-                      <h3 className="text-lg font-bold text-gray-800 text-center group-hover:text-emerald-600 transition-colors duration-300">
-                        Nouveau Permis d'excavation
+                      <h3 className="text-base font-bold text-gray-800 text-center group-hover:text-emerald-600 transition-colors duration-300 mb-2">
+                        Permis d'excavation
                       </h3>
-                      <p className="text-sm text-gray-600 mt-2 text-center group-hover:text-gray-700 transition-colors duration-300">
-                        Déposez vos nouvelles demandes de permis.
+                      <p className="text-xs text-gray-600 text-center group-hover:text-gray-700 transition-colors duration-300">
+                        Nouvelle demande de permis d'excavation
                       </p>
                     </Link>
 
-                    {/* Secure Work Permit (frontend only for now) */}
+                    {/* Permis 2 - Travail Sécuritaire */}
                     <Link
-                      href="/contractant/permis-de-travail-securitaire"
-                      className="group flex flex-col items-center justify-center rounded-2xl border border-purple-200 bg-white/80 hover:border-purple-300 hover:shadow-xl hover:shadow-purple-100/50 p-6 transition-all duration-500 backdrop-blur-sm"
+                      href={route("contractant.permis.travail.securitaire")}
+                      className="group flex flex-col items-center justify-center rounded-2xl border border-purple-200 bg-white/80 hover:border-purple-300 hover:shadow-xl hover:shadow-purple-100/50 p-4 transition-all duration-500 backdrop-blur-sm h-full"
                       onClick={() => setShowSignatureOptions(false)}
                     >
-                      <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-4 shadow-lg group-hover:shadow-xl transition-all duration-500">
-                        <img src="/images/agreement.png" alt="Permis de travail" className="w-8 h-8" />
+                      <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mb-3 shadow-lg group-hover:shadow-xl transition-all duration-500">
+                        <img src="/images/agreement.png" alt="Permis de travail" className="w-6 h-6" />
                       </div>
-                      <h3 className="text-lg font-bold text-gray-800 text-center group-hover:text-purple-600 transition-colors duration-300">
-                        Permis de Travail Sécuritaire
+                      <h3 className="text-base font-bold text-gray-800 text-center group-hover:text-purple-600 transition-colors duration-300 mb-2">
+                        Permis de Travail
                       </h3>
-                      <p className="text-sm text-gray-600 mt-2 text-center group-hover:text-gray-700 transition-colors duration-300">
-                        Déposez vos demandes de permis.
+                      <p className="text-xs text-gray-600 text-center group-hover:text-gray-700 transition-colors duration-300">
+                        Demande de permis de travail sécuritaire
+                      </p>
+                    </Link>
+
+                    {/* Permis 3 - Thème 3 */}
+                    <Link
+                      href="#"
+                      className="group flex flex-col items-center justify-center rounded-2xl border border-orange-200 bg-white/80 hover:border-orange-300 hover:shadow-xl hover:shadow-orange-100/50 p-4 transition-all duration-500 backdrop-blur-sm h-full"
+                      onClick={() => setShowSignatureOptions(false)}
+                    >
+                      <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mb-3 shadow-lg group-hover:shadow-xl transition-all duration-500">
+                        <img src="/images/agreement.png" alt="Permis thème 3" className="w-6 h-6" />
+                      </div>
+                      <h3 className="text-base font-bold text-gray-800 text-center group-hover:text-orange-600 transition-colors duration-300 mb-2">
+                        Permis Thème 3
+                      </h3>
+                      <p className="text-xs text-gray-600 text-center group-hover:text-gray-700 transition-colors duration-300">
+                        Description du permis thème 3
+                      </p>
+                    </Link>
+
+                    {/* Permis 4 - Thème 4 */}
+                    <Link
+                      href="#"
+                      className="group flex flex-col items-center justify-center rounded-2xl border border-red-200 bg-white/80 hover:border-red-300 hover:shadow-xl hover:shadow-red-100/50 p-4 transition-all duration-500 backdrop-blur-sm h-full"
+                      onClick={() => setShowSignatureOptions(false)}
+                    >
+                      <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mb-3 shadow-lg group-hover:shadow-xl transition-all duration-500">
+                        <img src="/images/agreement.png" alt="Permis thème 4" className="w-6 h-6" />
+                      </div>
+                      <h3 className="text-base font-bold text-gray-800 text-center group-hover:text-red-600 transition-colors duration-300 mb-2">
+                        Permis Thème 4
+                      </h3>
+                      <p className="text-xs text-gray-600 text-center group-hover:text-gray-700 transition-colors duration-300">
+                        Description du permis thème 4
+                      </p>
+                    </Link>
+
+                    {/* Permis 5 - Thème 5 */}
+                    <Link
+                      href="#"
+                      className="group flex flex-col items-center justify-center rounded-2xl border border-indigo-200 bg-white/80 hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-100/50 p-4 transition-all duration-500 backdrop-blur-sm h-full"
+                      onClick={() => setShowSignatureOptions(false)}
+                    >
+                      <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mb-3 shadow-lg group-hover:shadow-xl transition-all duration-500">
+                        <img src="/images/agreement.png" alt="Permis thème 5" className="w-6 h-6" />
+                      </div>
+                      <h3 className="text-base font-bold text-gray-800 text-center group-hover:text-indigo-600 transition-colors duration-300 mb-2">
+                        Permis Thème 5
+                      </h3>
+                      <p className="text-xs text-gray-600 text-center group-hover:text-gray-700 transition-colors duration-300">
+                        Description du permis thème 5
+                      </p>
+                    </Link>
+
+                    {/* Permis 6 - Thème 6 */}
+                    <Link
+                      href="#"
+                      className="group flex flex-col items-center justify-center rounded-2xl border border-pink-200 bg-white/80 hover:border-pink-300 hover:shadow-xl hover:shadow-pink-100/50 p-4 transition-all duration-500 backdrop-blur-sm h-full"
+                      onClick={() => setShowSignatureOptions(false)}
+                    >
+                      <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mb-3 shadow-lg group-hover:shadow-xl transition-all duration-500">
+                        <img src="/images/agreement.png" alt="Permis thème 6" className="w-6 h-6" />
+                      </div>
+                      <h3 className="text-base font-bold text-gray-800 text-center group-hover:text-pink-600 transition-colors duration-300 mb-2">
+                        Permis Thème 6
+                      </h3>
+                      <p className="text-xs text-gray-600 text-center group-hover:text-gray-700 transition-colors duration-300">
+                        Description du permis thème 6
                       </p>
                     </Link>
                   </div>
@@ -545,7 +603,7 @@ className="group relative px-6 py-3 bg-[#0e5186] text-white rounded-xl hover:bg-
                 </svg>
               </div>
               <div className="absolute -top-2 -right-2 w-6 h-6 bg-pink-400 rounded-full animate-pulse" />
-          </div>
+            </div>
 
             <h3 className="text-2xl font-bold text-gray-800 mb-4 group-hover:text-emerald-600 transition-colors duration-300">
               Support Technique
@@ -570,7 +628,7 @@ className="group relative px-6 py-3 bg-[#0e5186] text-white rounded-xl hover:bg-
                 </svg>
                 <span className="text-cyan-600 font-medium">Disponible 24/7</span>
               </div>
-          </div>
+            </div>
 
             {/* Corner Accents */}
             <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-emerald-300/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

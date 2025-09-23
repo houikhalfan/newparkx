@@ -1,7 +1,7 @@
 // resources/js/Pages/Contractant/Material/Index.jsx
 import React, { useMemo, useState, useEffect } from "react";
 import { usePage, useForm, Head, router } from "@inertiajs/react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Plus,
   Search,
@@ -47,6 +47,19 @@ export default function MaterialIndex({ contractor }) {
   const [showUpload, setShowUpload] = useState(false);
   const [active, setActive] = useState("pending");
   const [q, setQ] = useState("");
+
+  // Gérer le défilement du body quand la modale est ouverte
+  useEffect(() => {
+    if (showUpload) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showUpload]);
 
   const countsSafe = {
     pending: Array.isArray(pending) ? pending.length : 0,
@@ -214,14 +227,16 @@ export default function MaterialIndex({ contractor }) {
         </div>
       </div>
 
-      {/* Upload Modal */}
-      {showUpload && (
-        <UploadModal
-          csrf_token={csrf_token}
-          sites={sites}
-          onClose={() => setShowUpload(false)}
-        />
-      )}
+      {/* Upload Modal avec AnimatePresence */}
+      <AnimatePresence>
+        {showUpload && (
+          <UploadModal
+            csrf_token={csrf_token}
+            sites={sites}
+            onClose={() => setShowUpload(false)}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 }
@@ -353,7 +368,7 @@ function Card({ row, kind }) {
   const pngUrl =
     row.qr_png_url || (row.qrcode_path ? `/storage/${row.qrcode_path}` : null);
   const qrText =
-    row.qrcode_text || "Cet engin est conforme par l’administration.";
+    row.qrcode_text || "Cet engin est conforme par l'administration.";
 
   return (
     <div className="bg-white/80 backdrop-blur-xl border border-blue-200/50 rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col h-full">
@@ -456,14 +471,33 @@ function UploadModal({ csrf_token, sites = [], onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-40 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative z-50 w-full max-w-4xl bg-white/95 backdrop-blur-xl border border-blue-200/50 rounded-3xl shadow-2xl"
-           style={{
-             background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.98) 100%)',
-             backdropFilter: 'blur(20px)'
-           }}>
-        <div className="px-6 py-5 border-b border-blue-200/50 flex items-center justify-between">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+    >
+      {/* Overlay avec fond flou */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      
+      {/* Contenu de la modale */}
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0, y: 20 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.9, opacity: 0, y: 20 }}
+        transition={{ type: "spring", damping: 25, stiffness: 300 }}
+        className="relative z-60 w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white/95 backdrop-blur-xl border border-blue-200/50 rounded-3xl shadow-2xl"
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.98) 100%)',
+        }}
+      >
+        <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm px-6 py-5 border-b border-blue-200/50 flex items-center justify-between">
           <div className="font-bold text-lg text-gray-800">
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
               Nouvelle demande — Ressources matériel
@@ -580,8 +614,8 @@ function UploadModal({ csrf_token, sites = [], onClose }) {
             </button>
           </div>
         </form>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }
 

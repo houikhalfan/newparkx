@@ -182,7 +182,7 @@ export default function AdminVodsIndex() {
             <div className="flex items-center gap-3">
               <FileText className="w-5 h-5 text-slate-600 dark:text-slate-300" />
               <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                Liste des VODs
+                Liste des VODS
               </h2>
               <span className="px-3 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-full text-sm font-medium">
                 {list.data.length} enregistrement
