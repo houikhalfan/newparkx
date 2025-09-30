@@ -1,7 +1,7 @@
 import React from "react";
 import { usePage, router } from "@inertiajs/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, FileText, Clock, CheckCircle, XCircle, AlertCircle } from "lucide-react";
+import { Search, FileText, Clock, CheckCircle, XCircle, AlertCircle, Flame } from "lucide-react";
 import ContractantSidebar from '@/Components/ContractantSidebar';
 import ContractantTopHeader from '@/Components/ContractantTopHeader';
 
@@ -12,9 +12,10 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
   const [search, setSearch] = React.useState(safeFilters.search || '');
   const [statusFilter, setStatusFilter] = React.useState(safeFilters.status || '');
 
+  // Use the correct route name: 'suivi-permis.index'
   const handleSearch = (e) => {
     setSearch(e.target.value);
-    router.get(route('contractant.permis'), {
+    router.get(route('suivi-permis.index'), {
       search: e.target.value,
       status: statusFilter,
     }, { preserveState: true, replace: true });
@@ -22,7 +23,7 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
 
   const handleStatusFilter = (e) => {
     setStatusFilter(e.target.value);
-    router.get(route('contractant.permis'), {
+    router.get(route('suivi-permis.index'), {
       search: search,
       status: e.target.value,
     }, { preserveState: true, replace: true });
@@ -31,7 +32,7 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
   const clearFilters = () => {
     setSearch('');
     setStatusFilter('');
-    router.get(route('contractant.permis'));
+    router.get(route('suivi-permis.index'));
   };
 
   const getStatusIcon = (status) => {
@@ -65,7 +66,29 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
   };
 
   const getPermitTypeLabel = (permis) => {
-    return permis.type_label || "Permis d'Excavation";
+    // Use the type_label from your controller
+    return permis.type_label || "Permis";
+  };
+
+ const getPermitTypeIcon = (permis) => {
+  // Check permit type and return appropriate icon
+  if (permis.type === 'travail_securitaire') {
+    return <FileText className="w-4 h-4 text-blue-600" />;
+  } else if (permis.type === 'excavation') {
+    return <FileText className="w-4 h-4 text-green-600" />;
+  } else if (permis.type === 'travail_chaud') {
+    return <Flame className="w-4 h-4 text-orange-600" />;
+  }
+  // Default icon
+  return <FileText className="w-4 h-4 text-gray-600" />;
+};
+
+  // Remove getPermitRoute function since we don't need show functionality
+  // Remove the "Voir" buttons from the table
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "—";
+    return new Date(dateString).toLocaleDateString("fr-FR");
   };
 
   return (
@@ -214,7 +237,7 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
                           <th className="px-6 py-4 font-semibold text-gray-700">Type</th>
                           <th className="px-6 py-4 font-semibold text-gray-700">N° Permis</th>
                           <th className="px-6 py-4 font-semibold text-gray-700">Site</th>
-                          <th className="px-6 py-4 font-semibold text-gray-700">Date</th>
+                          <th className="px-6 py-4 font-semibold text-gray-700">Date de soumission</th>
                           <th className="px-6 py-4 font-semibold text-gray-700">Statut</th>
                           <th className="px-6 py-4 font-semibold text-center text-gray-700">Actions</th>
                         </tr>
@@ -229,14 +252,15 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
                             className="group hover:bg-blue-50/50 transition-all duration-300"
                           >
                             <td className="px-6 py-4 text-gray-800 font-medium">
-                              {getPermitTypeLabel(p)}
+                              <div className="flex items-center space-x-2">
+                                {getPermitTypeIcon(p)}
+                                <span>{getPermitTypeLabel(p)}</span>
+                              </div>
                             </td>
                             <td className="px-6 py-4 font-semibold text-gray-800">{p.numero_permis || "—"}</td>
                             <td className="px-6 py-4 text-gray-700">{p.site ? p.site.name : "—"}</td>
                             <td className="px-6 py-4 text-gray-700">
-                              {p.created_at
-                                ? new Date(p.created_at).toLocaleDateString("fr-FR")
-                                : "—"}
+                              {formatDate(p.soumis_le || p.created_at)}
                             </td>
                             <td className="px-6 py-4">
                               <div className="flex items-center">
@@ -247,24 +271,22 @@ export default function SuiviPermis({ permis = [], filters, contractor }) {
                               </div>
                             </td>
                             <td className="px-6 py-4 text-center">
-                              {p.status === "signe" && p.pdf_signed ? (
-                                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                  <a
+                              <div className="flex justify-center space-x-2">
+                                {/* PDF Download (if signed) - Only keep this action */}
+                                {p.status === "signe" && p.pdf_signed && (
+                                  <motion.a
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
                                     href={`/storage/${p.pdf_signed}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-green-600 hover:text-green-700 font-medium inline-flex items-center transition-colors duration-300"
+                                    className="text-green-600 hover:text-green-700 font-medium inline-flex items-center transition-colors duration-300 px-3 py-1 rounded-lg hover:bg-green-50"
                                   >
                                     <FileText className="w-4 h-4 mr-1" />
                                     PDF
-                                  </a>
-                                </motion.div>
-                              ) : (
-                                <span className="text-gray-500 font-medium inline-flex items-center">
-                                  <Clock className="w-4 h-4 mr-1" />
-                                  Pas encore signé
-                                </span>
-                              )}
+                                  </motion.a>
+                                )}
+                              </div>
                             </td>
                           </motion.tr>
                         ))}

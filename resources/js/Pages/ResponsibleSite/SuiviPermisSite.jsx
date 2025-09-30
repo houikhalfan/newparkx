@@ -1,5 +1,5 @@
 import React from "react";
-import { usePage, Link } from "@inertiajs/react";
+import { usePage, Link, router } from "@inertiajs/react";
 import { motion } from "framer-motion";
 import {
   FileText,
@@ -12,15 +12,61 @@ import {
   Sparkles,
   Hash,
   ArrowRight,
-  LogOut,
   UserCircle,
   Search,
   Filter,
+  HardHat,
+  Shield,
+  Flame,
+  PenTool,
 } from "lucide-react";
 
 export default function SuiviPermisSite() {
-  const { permis = [], q = "", s = "", auth } = usePage().props;
+  const { permis = [], filters = {}, auth } = usePage().props;
   const { user } = auth || {};
+
+  // State for filters
+  const [search, setSearch] = React.useState(filters.q || '');
+  const [statusFilter, setStatusFilter] = React.useState(filters.s || '');
+  const [typeFilter, setTypeFilter] = React.useState(filters.t || '');
+
+  // Handle search input
+  const handleSearch = (e) => {
+    setSearch(e.target.value);
+    router.get(route('responsible.suivi-permis.index'), {
+      q: e.target.value,
+      s: statusFilter,
+      t: typeFilter,
+    }, { preserveState: true, replace: true });
+  };
+
+  // Handle status filter
+  const handleStatusFilter = (e) => {
+    setStatusFilter(e.target.value);
+    router.get(route('responsible.suivi-permis.index'), {
+      q: search,
+      s: e.target.value,
+      t: typeFilter,
+    }, { preserveState: true, replace: true });
+  };
+
+  // Handle type filter
+  const handleTypeFilter = (e) => {
+    setTypeFilter(e.target.value);
+    router.get(route('responsible.suivi-permis.index'), {
+      q: search,
+      s: statusFilter,
+      t: e.target.value,
+    }, { preserveState: true, replace: true });
+  };
+
+  // Clear all filters
+  const clearFilters = () => {
+    setSearch('');
+    setStatusFilter('');
+    setTypeFilter('');
+    router.get(route('responsible.suivi-permis.index'));
+  };
 
   const getStatusBadge = (status) => {
     const badges = {
@@ -59,6 +105,40 @@ export default function SuiviPermisSite() {
     );
   };
 
+  const getTypeIcon = (type) => {
+    const icons = {
+      excavation: <HardHat className="w-4 h-4 text-blue-600" />,
+      travail_securitaire: <Shield className="w-4 h-4 text-green-600" />,
+      travail_chaud: <Flame className="w-4 h-4 text-orange-600" />,
+    };
+    return icons[type] || <FileText className="w-4 h-4 text-gray-600" />;
+  };
+
+  const getTypeLabel = (type) => {
+    const labels = {
+      excavation: "Permis d'Excavation",
+      travail_securitaire: "Permis de Travail Sécuritaire",
+      travail_chaud: "Permis de Travail à Chaud",
+    };
+    return labels[type] || "Permis";
+  };
+
+  // Get the appropriate signing route based on permit type - UPDATED TO MATCH YOUR ROUTES
+ // Get the appropriate signing route based on permit type - UPDATED
+const getSigningRoute = (permis) => {
+  switch(permis.type) {
+    case 'excavation':
+      return route('responsibleSite.permis.show', permis.id);
+    case 'travail_securitaire':
+      return route('responsibleSite.permis-travail-securitaire.show', permis.id);
+    case 'travail_chaud':
+      // ADD THIS LINE - route for travail chaud
+      return route('responsibleSite.permis-travail-chaud.show', permis.id);
+    default:
+      return '#';
+  }
+};
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50">
       {/* Background Gradient Animations */}
@@ -92,10 +172,10 @@ export default function SuiviPermisSite() {
                 </motion.div>
                 <div>
                   <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
-                    Permis d’excavation
+                    Suivi des Permis
                   </h1>
                   <p className="text-sm text-slate-500 font-medium">
-                    Gérez vos permis au niveau de votre site
+                    Gérez tous vos permis (Excavation + Travail Sécuritaire + Travail à Chaud)
                   </p>
                 </div>
               </div>
@@ -113,8 +193,6 @@ export default function SuiviPermisSite() {
                   <ArrowRight className="w-4 h-4" />
                   <span>Retour au Tableau de Bord</span>
                 </Link>
-
-             
 
                 <div className="flex items-center space-x-3 bg-white/90 backdrop-blur-sm rounded-xl px-4 py-2 shadow-lg">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center">
@@ -144,7 +222,7 @@ export default function SuiviPermisSite() {
           Liste des Permis
         </h2>
         <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-          Consultez et suivez vos permis d’excavation
+          Consultez et suivez tous vos permis (Excavation, Travail Sécuritaire et Travail à Chaud)
         </p>
       </motion.div>
 
@@ -156,15 +234,16 @@ export default function SuiviPermisSite() {
         className="max-w-5xl mx-auto mb-8"
       >
         <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/20">
-          <form method="GET" className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             {/* Search input */}
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
               <input
-                name="q"
-                defaultValue={q}
+                type="text"
+                value={search}
+                onChange={handleSearch}
                 className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-300"
-                placeholder="Recherche (numéro, date…)"
+                placeholder="Recherche (numéro, date, type…)"
               />
             </div>
 
@@ -172,8 +251,8 @@ export default function SuiviPermisSite() {
             <div className="relative">
               <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
               <select
-                name="s"
-                defaultValue={s}
+                value={statusFilter}
+                onChange={handleStatusFilter}
                 className="pl-10 pr-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-300 appearance-none bg-white"
                 title="Filtrer par statut"
               >
@@ -185,22 +264,32 @@ export default function SuiviPermisSite() {
               </select>
             </div>
 
-            {/* Submit button */}
+            {/* Type filter */}
+            <div className="relative">
+              <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <select
+                value={typeFilter}
+                onChange={handleTypeFilter}
+                className="pl-10 pr-4 py-3 rounded-xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all duration-300 appearance-none bg-white"
+                title="Filtrer par type"
+              >
+                <option value="">Tous les types</option>
+                <option value="excavation">Permis d'Excavation</option>
+                <option value="travail_securitaire">Permis de Travail Sécuritaire</option>
+                <option value="travail_chaud">Permis de Travail à Chaud</option>
+              </select>
+            </div>
+
+            {/* Clear filters button */}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              type="submit"
-              className="px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 shadow-lg"
-              style={{
-                background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
-              }}
+              onClick={clearFilters}
+              className="px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 shadow-lg bg-gradient-to-r from-red-500 to-pink-500"
             >
-              <div className="flex items-center space-x-2">
-                <Search className="w-4 h-4" />
-                <span>Filtrer</span>
-              </div>
+              Effacer
             </motion.button>
-          </form>
+          </div>
         </div>
       </motion.div>
 
@@ -220,7 +309,7 @@ export default function SuiviPermisSite() {
             <div>
               <h3 className="text-2xl font-bold text-white">Liste des Permis</h3>
               <p className="text-indigo-100 text-sm">
-                Consultez et gérez vos permis d’excavation
+                Consultez et gérez tous vos permis (Excavation, Travail Sécuritaire, Travail à Chaud)
               </p>
             </div>
           </div>
@@ -231,6 +320,12 @@ export default function SuiviPermisSite() {
           <table className="min-w-full">
             <thead className="bg-gradient-to-r from-slate-50 to-gray-50">
               <tr>
+                <th className="px-6 py-4 text-left text-sm font-bold text-slate-700 border-b-2 border-slate-200">
+                  <div className="flex items-center space-x-2">
+                    <FileText className="w-4 h-4" />
+                    <span>Type</span>
+                  </div>
+                </th>
                 <th className="px-6 py-4 text-left text-sm font-bold text-slate-700 border-b-2 border-slate-200">
                   <div className="flex items-center space-x-2">
                     <Hash className="w-4 h-4" />
@@ -266,7 +361,7 @@ export default function SuiviPermisSite() {
             <tbody>
               {permis.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center">
+                  <td colSpan={6} className="px-6 py-12 text-center">
                     <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-slate-100 to-gray-100 flex items-center justify-center">
                       <FileText className="w-8 h-8 text-slate-400" />
                     </div>
@@ -281,20 +376,33 @@ export default function SuiviPermisSite() {
                 const statusBadge = getStatusBadge(p.status);
                 return (
                   <motion.tr
-                    key={p.id}
+                    key={`${p.type}-${p.id}`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05, duration: 0.5 }}
                     className="border-b border-slate-200 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-300"
                   >
+                    {/* Type Column */}
+                    <td className="px-6 py-4">
+                      <div className="flex items-center space-x-2">
+                        {getTypeIcon(p.type)}
+                        <span className="font-medium text-slate-700">
+                          {getTypeLabel(p.type)}
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* Numéro Permis */}
                     <td className="px-6 py-4 font-semibold text-slate-700">
                       {p.numero_permis}
                     </td>
 
+                    {/* Date */}
                     <td className="px-6 py-4 text-slate-600">
-                      {p.date || "—"}
+                      {p.created_at ? new Date(p.created_at).toLocaleDateString("fr-FR") : "—"}
                     </td>
 
+                    {/* Statut */}
                     <td className="px-6 py-4">
                       <span
                         className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold shadow-lg ${statusBadge.bg} ${statusBadge.text}`}
@@ -304,38 +412,41 @@ export default function SuiviPermisSite() {
                       </span>
                     </td>
 
-                   <td className="px-6 py-4">
-  {p.status === "signe" && p.pdf_signed ? (
-    <a
-      href={p.pdf_signed}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex items-center px-4 py-2 rounded-xl text-white font-semibold transition-all duration-300 shadow-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:scale-105"
-    >
-      <Eye className="w-4 h-4 mr-2" />
-      Voir PDF
-    </a>
-  ) : (
-    <span className="text-slate-400">Non disponible</span>
-  )}
-</td>
+                    {/* PDF Final */}
+                    <td className="px-6 py-4">
+                      {p.status === "signe" && p.pdf_signed ? (
+                        <a
+                          href={p.pdf_signed}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center px-4 py-2 rounded-xl text-white font-semibold transition-all duration-300 shadow-lg bg-gradient-to-r from-emerald-500 to-teal-500 hover:scale-105"
+                        >
+                          <Eye className="w-4 h-4 mr-2" />
+                          Voir PDF
+                        </a>
+                      ) : (
+                        <span className="text-slate-400">Non disponible</span>
+                      )}
+                    </td>
 
-
+                    {/* Action */}
                     <td className="px-6 py-4 text-right">
                       {p.status === "en_attente" ? (
-                        <motion.div whileHover={{ scale: 1.05 }}>
+                        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                           <Link
-                            href={route("responsibleSite.permis.show", p.id)}
-                            className="inline-flex items-center px-4 py-2 rounded-xl text-white font-semibold transition-all duration-300 shadow-lg bg-gradient-to-r from-indigo-500 to-purple-500"
+                            href={getSigningRoute(p)}
+                            className="inline-flex items-center px-4 py-2 rounded-xl text-white font-semibold transition-all duration-300 shadow-lg bg-gradient-to-r from-indigo-500 to-purple-500 hover:scale-105"
                           >
-                            <Sparkles className="w-4 h-4 mr-2" />
+                            <PenTool className="w-4 h-4 mr-2" />
                             Signer
                           </Link>
                         </motion.div>
+                      ) : p.status === "en_cours" ? (
+                        <span className="text-blue-600 font-medium">En traitement</span>
+                      ) : p.status === "signe" ? (
+                        <span className="text-green-600 font-medium">Déjà signé</span>
                       ) : (
-                        <span className="text-slate-400 italic">
-                          Déjà signé
-                        </span>
+                        <span className="text-slate-400 italic">En traitement</span>
                       )}
                     </td>
                   </motion.tr>

@@ -104,7 +104,7 @@ class PermisTravailSecuritaireController extends Controller
 
             // ✅ Champs supplémentaires
             $validated['created_by'] = auth()->id();
-            $validated['statut'] = 'en attente';
+            $validated['status'] = 'en_attente';
             $validated['soumis_le'] = now();
 
             // ✅ Convertir les checkboxes en boolean
@@ -160,8 +160,8 @@ class PermisTravailSecuritaireController extends Controller
         }
 
         $permisTravailSecuritaire->update(array_merge($validated, [
-            'statut' => 'approuve',
-            'approuve_le' => now(),
+ 'status' => 'signe',
+             'approuve_le' => now(),
         ]));
 
         return redirect()->back()->with('success', 'Permis approuvé avec succès.');

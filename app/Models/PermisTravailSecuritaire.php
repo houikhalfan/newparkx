@@ -56,7 +56,7 @@ class PermisTravailSecuritaire extends Model
         'fermeture_q2',
         'fermeture_q3',
         'fermeture_suivi',
-        'statut',
+        'status', // ← CHANGÉ: 'statut' → 'status'
         'created_by',
         'soumis_le',
         'approuve_le',
@@ -105,33 +105,38 @@ class PermisTravailSecuritaire extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    // ---------------- Scopes ----------------
-    public function scopeBrouillon($query)
+    // ---------------- Scopes (CORRIGÉS) ----------------
+    public function scopeEnAttente($query)
     {
-        return $query->where('statut', 'brouillon');
-    }
-
-    public function scopeSoumis($query)
-    {
-        return $query->where('statut', 'soumis');
-    }
-
-    public function scopeApprouve($query)
-    {
-        return $query->where('statut', 'approuve');
+        return $query->where('status', 'en_attente');
     }
 
     public function scopeEnCours($query)
     {
-        return $query->where('statut', 'approuve')
+        return $query->where('status', 'en_cours');
+    }
+
+    public function scopeRejete($query)
+    {
+        return $query->where('status', 'rejete');
+    }
+
+    public function scopeSigne($query)
+    {
+        return $query->where('status', 'signe');
+    }
+
+    public function scopeActifs($query)
+    {
+        return $query->where('status', 'signe')
                      ->where('duree_a', '>=', now());
     }
 
-    // ---------------- Méthodes utilitaires ----------------
+    // ---------------- Méthodes utilitaires (CORRIGÉES) ----------------
     public function soumettre()
     {
         $this->update([
-            'statut' => 'soumis',
+            'status' => 'en_attente', // ← NOUVELLE VALEUR
             'soumis_le' => now(),
         ]);
     }
@@ -139,23 +144,22 @@ class PermisTravailSecuritaire extends Model
     public function approuver()
     {
         $this->update([
-            'statut' => 'approuve',
+            'status' => 'signe', // ← NOUVELLE VALEUR
             'approuve_le' => now(),
+        ]);
+    }
+
+    public function demarrer()
+    {
+        $this->update([
+            'status' => 'en_cours', // ← NOUVELLE VALEUR
         ]);
     }
 
     public function rejeter()
     {
         $this->update([
-            'statut' => 'rejete',
-        ]);
-    }
-
-    public function fermer()
-    {
-        $this->update([
-            'statut' => 'ferme',
-            'ferme_le' => now(),
+            'status' => 'rejete',
         ]);
     }
 
@@ -184,9 +188,9 @@ class PermisTravailSecuritaire extends Model
                 $permit->numero_permis = $permit->generatePermitNumber($contractorName);
             }
             
-            // Définir le statut initial
-            if (empty($permit->statut)) {
-                $permit->statut = 'brouillon';
+            // Définir le statut initial (CORRIGÉ)
+            if (empty($permit->status)) {
+                $permit->status = 'en_attente'; // ← NOUVELLE VALEUR
             }
         });
     }
@@ -226,10 +230,10 @@ class PermisTravailSecuritaire extends Model
         
         return filter_var($file, FILTER_VALIDATE_URL) 
             ? $file 
-            : asset('storage/signatures/' . $file);
+            : asset('storage/' . $file); // ← CORRIGÉ: enlevé 'signatures/'
     }
 
-    // ---------------- Helpers ----------------
+    // ---------------- Helpers (CORRIGÉS) ----------------
     public function getEstExpireAttribute()
     {
         return $this->duree_a < now();
@@ -237,20 +241,30 @@ class PermisTravailSecuritaire extends Model
 
     public function getEstEnCoursAttribute()
     {
-        return $this->statut === 'approuve' &&
+        return $this->status === 'en_cours' &&
                $this->duree_de <= now() &&
                $this->duree_a >= now();
     }
 
     public function getStatutCouleurAttribute()
     {
-        return match($this->statut) {
-            'brouillon' => 'gray',
-            'soumis' => 'blue',
-            'approuve' => 'green',
+        return match($this->status) { // ← CHANGÉ: $this->statut → $this->status
+            'en_attente' => 'blue',
+            'en_cours' => 'green', 
             'rejete' => 'red',
-            'ferme' => 'purple',
+            'signe' => 'purple',
             default => 'gray'
+        };
+    }
+
+    public function getStatutLibelleAttribute()
+    {
+        return match($this->status) { // ← CHANGÉ
+            'en_attente' => 'En attente',
+            'en_cours' => 'En cours',
+            'rejete' => 'Rejeté',
+            'signe' => 'Signé',
+            default => 'Inconnu'
         };
     }
 }

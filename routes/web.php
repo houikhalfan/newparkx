@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\AdminPasswordController;
 use App\Http\Controllers\Contractant\PermisExcavationController;
 use App\Http\Controllers\Contractant\SuiviPermisController;
  use App\Http\Controllers\Contractant\PermisTravailSecuritaireController;
+ use App\Http\Controllers\Contractant\PermisTravailChaudController;
 
 use App\Http\Controllers\Admin\VodController as AdminVodController;
 use App\Http\Controllers\Employee\ResponsibleSiteController;
@@ -105,6 +106,10 @@ Route::middleware(['auth'])->prefix('responsible-site')->name('responsibleSite.'
     Route::get('/permis', [ResponsibleSitePermisCtrl::class, 'index'])->name('permis.index');
     Route::get('/permis/{permisExcavation}', [ResponsibleSitePermisCtrl::class, 'show'])->name('permis.show');
     Route::post('/permis/{permis}/sign', [ResponsibleSitePermisCtrl::class, 'sign'])->name('permis.sign');
+   Route::get('/permis-travail-securitaire/{permisTravailSecuritaire}', [ResponsibleSitePermisCtrl::class, 'showTravailSecuritaire'])->name('permis-travail-securitaire.show');
+    Route::post('/permis-travail-securitaire/{permis}/sign', [ResponsibleSitePermisCtrl::class, 'signTravailSecuritaire'])->name('permis-travail-securitaire.sign');
+  Route::get('/permis-travail-chaud/{permisTravailChaud}', [ResponsibleSitePermisCtrl::class, 'showTravailChaud'])->name('permis-travail-chaud.show');
+    Route::post('/permis-travail-chaud/{permisTravailChaud}/sign', [ResponsibleSitePermisCtrl::class, 'signTravailChaud'])->name('permis-travail-chaud.sign');
 });
 
 Route::get('/responsible-site/suivi-permis', [ResponsibleSiteController::class, 'index'])
@@ -405,6 +410,25 @@ Route::get('/permis-travail-securitaire/{permisTravailSecuritaire}', [PermisTrav
 
 Route::post('/permis-travail-securitaire/{permisTravailSecuritaire}/approbation', [PermisTravailSecuritaireController::class, 'approbation'])
     ->name('permis-travail-securitaire.approbation');
+
+    // ✅ Permis de travail à chaud
+Route::get('/suivi-permis-travail-chaud', [PermisTravailChaudController::class, 'index'])
+    ->name('permis-travail-chaud.index');
+
+Route::get('/permis-travail-chaud', [PermisTravailChaudController::class, 'index'])
+    ->name('permis-travail-chaud.list');
+
+Route::get('/permis-travail-chaud/create', [PermisTravailChaudController::class, 'create'])
+    ->name('permis-travail-chaud.create');
+
+Route::post('/permis-travail-chaud', [PermisTravailChaudController::class, 'store'])
+    ->name('permis-travail-chaud.store');
+
+Route::get('/permis-travail-chaud/{permisTravailChaud}', [PermisTravailChaudController::class, 'show'])
+    ->name('permis-travail-chaud.show');
+
+Route::post('/permis-travail-chaud/{permisTravailChaud}/approbation', [PermisTravailChaudController::class, 'approbation'])
+    ->name('permis-travail-chaud.approbation');
 
 
         // VODS

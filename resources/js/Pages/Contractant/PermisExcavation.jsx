@@ -5,38 +5,38 @@ import { motion, AnimatePresence } from "framer-motion";
 import ContractantLayout from "@/Pages/ContractantLayout";
 import ContractantSidebar from '@/Components/ContractantSidebar';
 import ContractantTopHeader from '@/Components/ContractantTopHeader';
-import { FileText, Calendar, Download, Search, X } from 'lucide-react';
+import { FileText, Calendar, Download, Search, X, Menu } from 'lucide-react';
 
 /* --------------------------- UI building blocks --------------------------- */
 const BRAND = "#0E8A5D"; // ParkX green
 
 const FormCard = ({ title, children }) => (
-  <div className="rounded-3xl border border-blue-200/50 bg-white/90 backdrop-blur-xl shadow-2xl overflow-hidden mb-8">
-    <div className="px-6 py-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-b border-blue-200/50">
-      <h2 className="text-sm font-bold tracking-wide text-gray-800 uppercase">
+  <div className="rounded-2xl lg:rounded-3xl border border-blue-200/50 bg-white/90 backdrop-blur-xl shadow-lg lg:shadow-2xl overflow-hidden mb-6 lg:mb-8">
+    <div className="px-4 lg:px-6 py-3 lg:py-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-b border-blue-200/50">
+      <h2 className="text-xs lg:text-sm font-bold tracking-wide text-gray-800 uppercase">
         {title}
       </h2>
     </div>
-    <div className="p-8 bg-white/95">{children}</div>
+    <div className="p-4 lg:p-8 bg-white/95">{children}</div>
   </div>
 );
 
 const Row = ({ label, children, className = "" }) => (
   <div
     className={[
-      "flex flex-col gap-3 py-4 border-b border-gray-100 last:border-b-0 md:flex-row md:items-start",
+      "flex flex-col gap-2 lg:gap-3 py-3 lg:py-4 border-b border-gray-100 last:border-b-0",
       className,
     ].join(" ")}
   >
-    <div className="md:w-72 shrink-0 pt-1.5">
+    <div className="lg:w-72 shrink-0 pt-1 lg:pt-1.5">
       <label className="text-sm font-semibold text-gray-700">{label}</label>
     </div>
-    <div className="md:flex-1">{children}</div>
+    <div className="flex-1 min-w-0">{children}</div>
   </div>
 );
 
 const inputBase =
-  "w-full rounded-xl px-4 py-3 text-sm outline-none transition-all duration-300 shadow-sm border border-gray-300 text-gray-800 placeholder-gray-500";
+  "w-full rounded-lg lg:rounded-xl px-3 lg:px-4 py-2.5 lg:py-3 text-sm outline-none transition-all duration-300 shadow-sm border border-gray-300 text-gray-800 placeholder-gray-500";
 const inputActive =
   "bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50";
 const inputDisabled = "bg-gray-100 text-gray-500";
@@ -49,14 +49,38 @@ const Text = ({ disabled, ...rest }) => (
   />
 );
 
-const Area = ({ rows = 3, disabled, ...rest }) => (
-  <textarea
-    rows={rows}
-    disabled={disabled}
-    {...rest}
-    className={[inputBase, disabled ? inputDisabled : inputActive].join(" ")}
-  />
-);
+const Area = ({ rows = 3, disabled, maxLength, value, ...rest }) => {
+  const charCount = value?.length || 0;
+  const isNearLimit = maxLength && charCount > maxLength * 0.8;
+  const isOverLimit = maxLength && charCount > maxLength;
+  
+  return (
+    <div className="relative">
+      <textarea
+        rows={rows}
+        disabled={disabled}
+        value={value}
+        maxLength={maxLength}
+        {...rest}
+        className={[
+          inputBase, 
+          'resize-none',
+          disabled ? inputDisabled : inputActive,
+          isOverLimit ? "border-red-500 focus:border-red-500 focus:ring-red-500/50" : ""
+        ].join(" ")}
+      />
+      {maxLength && (
+        <div className={[
+          "absolute bottom-2 right-2 text-xs px-2 py-1 rounded",
+          isOverLimit ? "bg-red-100 text-red-700" : 
+          isNearLimit ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-500"
+        ].join(" ")}>
+          {charCount}/{maxLength}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const FieldError = ({ children }) =>
   children ? <p className="mt-1 text-xs text-red-500">{children}</p> : null;
@@ -64,18 +88,18 @@ const FieldError = ({ children }) =>
 const CheckLine = ({ children, checked, onChange, disabled }) => (
   <label
     className={[
-      "flex items-start gap-3 py-2",
+      "flex items-start gap-2 lg:gap-3 py-1.5 lg:py-2 text-sm lg:text-sm",
       disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer",
     ].join(" ")}
   >
     <input
       type="checkbox"
-      className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+      className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0"
       checked={!!checked}
       onChange={(e) => onChange?.(e.target.checked)}
       disabled={disabled}
     />
-    <span className="text-sm text-gray-700 leading-5">{children}</span>
+    <span className="text-gray-700 leading-5 flex-1 min-w-0">{children}</span>
   </label>
 );
 
@@ -88,7 +112,7 @@ function SignaturePicker({ id, label, value, onChange, disabled, error }) {
   const isStoredPath = typeof value === "string" && value.trim().length > 0;
 
   return (
-    <div>
+    <div className="w-full">
       <label
         htmlFor={id}
         className="block text-sm font-semibold text-gray-700 mb-2"
@@ -106,7 +130,7 @@ function SignaturePicker({ id, label, value, onChange, disabled, error }) {
           onChange?.(f);
           setPreview(f ? URL.createObjectURL(f) : null);
         }}
-        className="block w-full text-sm text-gray-700 file:mr-3 file:rounded-lg file:border-0 file:px-4 file:py-2.5 file:text-white file:bg-cyan-600 transition-all duration-300"
+        className="block w-full text-sm text-gray-700 file:mr-2 lg:file:mr-3 file:rounded-lg file:border-0 file:px-3 lg:file:px-4 file:py-2 file:py-2.5 file:text-white file:bg-cyan-600 transition-all duration-300 file:text-xs lg:file:text-sm"
       />
 
       {/* Live File preview */}
@@ -114,7 +138,7 @@ function SignaturePicker({ id, label, value, onChange, disabled, error }) {
         <img
           src={preview || URL.createObjectURL(value)}
           alt="Signature"
-          className="mt-3 h-20 w-auto rounded-lg border border-gray-300 bg-gray-50 shadow-sm"
+          className="mt-3 h-16 lg:h-20 w-auto rounded-lg border border-gray-300 bg-gray-50 shadow-sm"
         />
       )}
 
@@ -123,7 +147,7 @@ function SignaturePicker({ id, label, value, onChange, disabled, error }) {
         <img
           src={`/storage/${value}`}
           alt="Signature"
-          className="mt-3 h-20 w-auto rounded-lg border border-gray-300 bg-gray-50 shadow-sm"
+          className="mt-3 h-16 lg:h-20 w-auto rounded-lg border border-gray-300 bg-gray-50 shadow-sm"
         />
       )}
 
@@ -198,8 +222,7 @@ export default function PermisExcavation() {
       { key: "barricades_signaux", label: "Barricades et signaux d'avertissement" },
       {
         key: "barricades_11m",
-        label:
-          "Barricades de 1,1 mètres installées à proximité des excavations de plus de 1,8 mètres de profondeur",
+        label: "Barricades de 1,1 mètres installées à proximité des excavations de plus de 1,8 mètres de profondeur",
       },
       {
         key: "excavation_045",
@@ -236,7 +259,6 @@ export default function PermisExcavation() {
 
   const normalizeArray = (val) =>
   Array.isArray(val) ? val : val ? [val] : [];
-
 
   // Pre-fill from permis (read or edit context)
   const initialState = permis
@@ -439,24 +461,28 @@ export default function PermisExcavation() {
   /* ----------------------------------- UI ---------------------------------- */
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden flex">
+      {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-  <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl animate-pulse" />
-  <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-200/30 to-pink-200/30 rounded-full blur-3xl animate-pulse" />
-  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-cyan-200/20 to-blue-200/20 rounded-full blur-3xl animate-pulse" />
-</div>
+        <div className="absolute -top-20 -right-20 w-40 h-40 lg:-top-40 lg:-right-40 lg:w-80 lg:h-80 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute -bottom-20 -left-20 w-40 h-40 lg:-bottom-40 lg:-left-40 lg:w-80 lg:h-80 bg-gradient-to-br from-purple-200/30 to-pink-200/30 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 lg:w-96 lg:h-96 bg-gradient-to-br from-cyan-200/20 to-blue-200/20 rounded-full blur-3xl animate-pulse" />
+      </div>
 
-        {/* Grid Pattern */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, rgba(59,130,246,0.2) 1px, transparent 0)`,
-            backgroundSize: '50px 50px'
-          }} />
-        </div>
-      {/* Sidebar */}
-      <ContractantSidebar />
+      {/* Grid Pattern */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(59,130,246,0.2) 1px, transparent 0)`,
+          backgroundSize: '30px 30px'
+        }} />
+      </div>
+
+      {/* Sidebar - Hidden on mobile, shown on desktop */}
+      <div className="hidden lg:block">
+        <ContractantSidebar />
+      </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Top Header */}
         <ContractantTopHeader 
           contractor={contractor}
@@ -472,72 +498,73 @@ export default function PermisExcavation() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="relative z-10 px-6 mb-6"
+              className="relative z-10 px-4 lg:px-6 mb-4 lg:mb-6"
             >
               <div className="max-w-7xl mx-auto">
-                <div className="bg-green-50 backdrop-blur-sm border border-green-200 rounded-xl p-4 flex items-center space-x-3 shadow-lg">
-                  <FileText className="w-5 h-5 text-green-600" />
-                  <p className="text-green-700 font-medium">{flash.success}</p>
+                <div className="bg-green-50 backdrop-blur-sm border border-green-200 rounded-xl p-3 lg:p-4 flex items-center space-x-2 lg:space-x-3 shadow-lg">
+                  <FileText className="w-4 h-4 lg:w-5 lg:h-5 text-green-600 flex-shrink-0" />
+                  <p className="text-green-700 font-medium text-sm lg:text-base">{flash.success}</p>
                 </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        <div className="relative z-10 px-6 pb-12 flex-1 pt-8">
+        <div className="relative z-10 px-3 lg:px-6 pb-8 lg:pb-12 flex-1 pt-4 lg:pt-8">
           <div className="max-w-7xl mx-auto">
+            {/* Header Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-center mb-6 lg:mb-12"
+            >
+              <h1 className="text-2xl lg:text-4xl xl:text-5xl font-bold text-gray-800 mb-3 lg:mb-4 px-2">
+                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  Permis D'Excavation
+                </span>
+              </h1>
+              <p className="text-gray-600 text-sm lg:text-lg px-4">
+                Remplissez et soumettez votre permis d'excavation
+              </p>
+            </motion.div>
+
+            {/* Document Header */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-center mb-12"
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="mb-6 lg:mb-8 rounded-2xl lg:rounded-3xl border border-gray-200 bg-white shadow-lg overflow-hidden"
             >
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Permis D'Excavation</span>
-              </h1>
-              <p className="text-gray-600 text-lg">
-                Remplissez et soumettez votre permis d'excavation
-              </p>
-
-
-            </motion.div>
-
-            {/* Header */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="mb-8 rounded-3xl border border-gray-200 bg-white shadow-lg overflow-hidden"
-            >
-              <div
-                className="flex flex-col md:flex-row items-center justify-between px-6 py-4 bg-gray-50 border-b border-gray-200"
-              >
-                <div className="flex items-center gap-3 mb-4 md:mb-0">
-                  <img src={logoSrc} alt="ParkX" className="h-8 w-auto" />
-                  <h1 className="text-gray-800 font-semibold tracking-wide uppercase text-lg">
-                    PERMIS D'EXCAVATION — CONSTRUCTION
+              <div className="flex flex-col lg:flex-row items-center justify-between px-4 lg:px-6 py-3 lg:py-4 bg-gray-50 border-b border-gray-200">
+                <div className="flex items-center gap-2 lg:gap-3 mb-3 lg:mb-0">
+                  <img src={logoSrc} alt="ParkX" className="h-6 lg:h-8 w-auto" />
+                  <h1 className="text-gray-800 font-semibold tracking-wide uppercase text-sm lg:text-lg">
+                    PERMIS D'EXCAVATION
                   </h1>
                 </div>
 
-                <div className="text-right">
-                  {/* NUMÉRO DE PERMIS GÉNÉRAL (user enters manually) */}
-                  <div className="text-sm text-gray-700">NUMÉRO DE PERMIS GÉNÉRAL</div>
-                  <div className="mt-1">
+                <div className="text-center lg:text-right w-full lg:w-auto">
+                  {/* NUMÉRO DE PERMIS GÉNÉRAL */}
+                  <div className="text-xs lg:text-sm text-gray-700">NUMÉRO DE PERMIS GÉNÉRAL</div>
+                  <div className="mt-1 max-w-xs mx-auto lg:mx-0">
                     <Text
                       disabled={readonly}
                       value={data.numero_permis_general}
                       onChange={(e) => setData("numero_permis_general", e.target.value)}
                       placeholder=""
+                      className="text-center lg:text-left"
                     />
                     <FieldError>{errors.numero_permis_general}</FieldError>
                   </div>
 
-                  {/* NUMÉRO DE PERMIS (auto-generated) */}
-                  <div className="mt-2">
-                    <div className="text-sm text-gray-700">NUMÉRO DE PERMIS</div>
+                  {/* NUMÉRO DE PERMIS */}
+                  <div className="mt-2 max-w-xs mx-auto lg:mx-0">
+                    <div className="text-xs lg:text-sm text-gray-700">NUMÉRO DE PERMIS</div>
                     <Text
                       disabled
                       value={data.numero_permis || generatePermitNumber(contractorName)}
+                      className="text-center lg:text-left"
                     />
                     <FieldError>{errors.numero_permis}</FieldError>
                   </div>
@@ -545,7 +572,7 @@ export default function PermisExcavation() {
               </div>
             </motion.div>
 
-            <form onSubmit={onSubmit} className="space-y-6">
+            <form onSubmit={onSubmit} className="space-y-4 lg:space-y-6">
               {/* IDENTIFICATION */}
               <FormCard title="Identification">
                 <Row label="Endroit / Plan">
@@ -553,7 +580,7 @@ export default function PermisExcavation() {
                     value={data.site_id}
                     disabled={readonly}
                     onChange={(e) => setData("site_id", e.target.value)}
-                    className="w-full rounded-lg px-4 py-2.5 bg-white border border-gray-300 text-gray-800 placeholder-gray-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/30 transition-all duration-300 text-sm"
+                    className="w-full rounded-lg px-3 lg:px-4 py-2 lg:py-2.5 bg-white border border-gray-300 text-gray-800 placeholder-gray-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/30 transition-all duration-300 text-sm"
                   >
                     <option value="" disabled className="bg-gray-100 text-gray-800">
                       Choisir un site…
@@ -568,23 +595,25 @@ export default function PermisExcavation() {
                 </Row>
 
                 <Row label="Durée">
-                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                    <Text
-                      type="date"
-                      disabled={readonly}
-                      value={data.duree_de}
-                      onChange={(e) => setData("duree_de", e.target.value)}
-                    />
-                    <Text
-                      type="date"
-                      disabled={readonly}
-                      value={data.duree_a}
-                      onChange={(e) => setData("duree_a", e.target.value)}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <FieldError>{errors.duree_de}</FieldError>
-                    <FieldError>{errors.duree_a}</FieldError>
+                  <div className="grid grid-cols-1 gap-2 lg:gap-3 sm:grid-cols-2">
+                    <div>
+                      <Text
+                        type="date"
+                        disabled={readonly}
+                        value={data.duree_de}
+                        onChange={(e) => setData("duree_de", e.target.value)}
+                      />
+                      <FieldError>{errors.duree_de}</FieldError>
+                    </div>
+                    <div>
+                      <Text
+                        type="date"
+                        disabled={readonly}
+                        value={data.duree_a}
+                        onChange={(e) => setData("duree_a", e.target.value)}
+                      />
+                      <FieldError>{errors.duree_a}</FieldError>
+                    </div>
                   </div>
                 </Row>
 
@@ -593,27 +622,31 @@ export default function PermisExcavation() {
                     disabled={readonly}
                     value={data.description}
                     onChange={(e) => setData("description", e.target.value)}
+                    maxLength={100}
+                    rows={2}
                   />
                   <FieldError>{errors.description}</FieldError>
                 </Row>
 
                 <Row label="Analyse des risques réalisée par">
-                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                    <Text
-                      disabled={readonly}
-                      value={data.analyse_par}
-                      onChange={(e) => setData("analyse_par", e.target.value)}
-                    />
-                    <Text
-                      type="date"
-                      disabled={readonly}
-                      value={data.date_analyse}
-                      onChange={(e) => setData("date_analyse", e.target.value)}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <FieldError>{errors.analyse_par}</FieldError>
-                    <FieldError>{errors.date_analyse}</FieldError>
+                  <div className="grid grid-cols-1 gap-2 lg:gap-3 sm:grid-cols-2">
+                    <div>
+                      <Text
+                        disabled={readonly}
+                        value={data.analyse_par}
+                        onChange={(e) => setData("analyse_par", e.target.value)}
+                      />
+                      <FieldError>{errors.analyse_par}</FieldError>
+                    </div>
+                    <div>
+                      <Text
+                        type="date"
+                        disabled={readonly}
+                        value={data.date_analyse}
+                        onChange={(e) => setData("date_analyse", e.target.value)}
+                      />
+                      <FieldError>{errors.date_analyse}</FieldError>
+                    </div>
                   </div>
                 </Row>
 
@@ -633,7 +666,7 @@ export default function PermisExcavation() {
                       value={data.contractant}
                       onChange={(e) => setData("contractant", e.target.value)}
                     />
-                    <label className="mt-3 flex items-center gap-2 text-sm text-gray-700">
+                    <label className="mt-2 lg:mt-3 flex items-center gap-2 text-sm text-gray-700">
                       <input
                         type="checkbox"
                         className="h-4 w-4 rounded border-gray-300 text-cyan-600 focus:ring-cyan-500"
@@ -665,9 +698,9 @@ export default function PermisExcavation() {
                 </Row>
 
                 <Row label="L'excavation est :">
-                  <div className="divide-y divide-gray-100">
+                  <div className="divide-y divide-gray-100 space-y-0">
                     {optExcavationEst.map((o) => (
-                      <div key={o.key} className="py-2 first:pt-0 last:pb-0">
+                      <div key={o.key} className="py-1.5 lg:py-2 first:pt-0 last:pb-0">
                         <CheckLine
                           checked={Array.isArray(data.excavation_est) && data.excavation_est.includes(o.key)}
                           onChange={() => toggleArray("excavation_est", o.key)}
@@ -681,9 +714,9 @@ export default function PermisExcavation() {
                 </Row>
 
                 <Row label="Conduites / Tuyauterie souterraine">
-                  <div className="divide-y divide-gray-100">
+                  <div className="divide-y divide-gray-100 space-y-0">
                     {optConduites.map((o) => (
-                      <div key={o.key} className="py-2 first:pt-0 last:pb-0">
+                      <div key={o.key} className="py-1.5 lg:py-2 first:pt-0 last:pb-0">
                         <CheckLine
                           checked={Array.isArray(data.conduites) && data.conduites.includes(o.key)}
                           onChange={() => toggleArray("conduites", o.key)}
@@ -697,9 +730,9 @@ export default function PermisExcavation() {
                 </Row>
 
                 <Row label="Situations dangereuses">
-                  <div className="divide-y divide-gray-100">
+                  <div className="divide-y divide-gray-100 space-y-0">
                     {optSituations.map((o) => (
-                      <div key={o.key} className="py-2 first:pt-0 last:pb-0">
+                      <div key={o.key} className="py-1.5 lg:py-2 first:pt-0 last:pb-0">
                         <CheckLine
                           checked={Array.isArray(data.situations) && data.situations.includes(o.key)}
                           onChange={() => toggleArray("situations", o.key)}
@@ -712,7 +745,7 @@ export default function PermisExcavation() {
                     {Array.isArray(data.situations) &&
                       data.situations.includes("autre") &&
                       !data.danger_aucun && (
-                        <div className="pt-3">
+                        <div className="pt-2 lg:pt-3">
                           <Text
                             placeholder="Autre (préciser)"
                             disabled={readonly}
@@ -738,9 +771,9 @@ export default function PermisExcavation() {
                 </Row>
 
                 <Row label="Éléments">
-                  <div className="divide-y divide-gray-100">
+                  <div className="divide-y divide-gray-100 space-y-0">
                     {optEpiSimples.map((o) => (
-                      <div key={o.key} className="py-2 first:pt-0 last:pb-0">
+                      <div key={o.key} className="py-1.5 lg:py-2 first:pt-0 last:pb-0">
                         <CheckLine
                           checked={Array.isArray(data.epi_simples) && data.epi_simples.includes(o.key)}
                           onChange={() => toggleArray("epi_simples", o.key)}
@@ -750,7 +783,7 @@ export default function PermisExcavation() {
                         </CheckLine>
                       </div>
                     ))}
-                    <div className="pt-3">
+                    <div className="pt-2 lg:pt-3">
                       <Text
                         placeholder="Autre"
                         disabled={readonly || data.epi_sans_additionnel}
@@ -776,9 +809,9 @@ export default function PermisExcavation() {
 
                 <Row label="Mesures">
                   <div className={data.equip_non_requis ? "opacity-60" : ""}>
-                    <div className="divide-y divide-gray-100">
+                    <div className="divide-y divide-gray-100 space-y-0">
                       {optEquip.map((o) => (
-                        <div key={o.key} className="py-2 first:pt-0 last:pb-0">
+                        <div key={o.key} className="py-1.5 lg:py-2 first:pt-0 last:pb-0">
                           <CheckLine
                             checked={Array.isArray(data.equip_checks) && data.equip_checks.includes(o.key)}
                             onChange={() => toggleArray("equip_checks", o.key)}
@@ -789,7 +822,7 @@ export default function PermisExcavation() {
                         </div>
                       ))}
                     </div>
-                    <div className="pt-3">
+                    <div className="pt-2 lg:pt-3">
                       <Text
                         placeholder="Autre"
                         disabled={readonly || data.equip_non_requis}
@@ -819,11 +852,12 @@ export default function PermisExcavation() {
                     disabled={readonly || data.aucun_commentaire}
                     value={data.commentaires}
                     onChange={(e) => setData("commentaires", e.target.value)}
+                    maxLength={250}
                   />
                 </Row>
 
                 <Row label="Propriétaire des lieux (nom en lettres moulées)">
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-3 lg:gap-4 lg:grid-cols-3">
                     <div>
                       <Text
                         disabled={readonly}
@@ -833,16 +867,18 @@ export default function PermisExcavation() {
                       <FieldError>{errors.proprietaire_nom}</FieldError>
                     </div>
 
-                    <SignaturePicker
-                      id="prop_sig"
-                      label="Signature (JPG/PNG)"
-                      value={data.proprietaire_signature}
-                      onChange={(f) => setData("proprietaire_signature", f)}
-                      disabled={readonly}
-                      error={errors.proprietaire_signature}
-                    />
+                    <div className="lg:col-span-2">
+                      <SignaturePicker
+                        id="prop_sig"
+                        label="Signature (JPG/PNG)"
+                        value={data.proprietaire_signature}
+                        onChange={(f) => setData("proprietaire_signature", f)}
+                        disabled={readonly}
+                        error={errors.proprietaire_signature}
+                      />
+                    </div>
 
-                    <div>
+                    <div className="lg:col-start-3">
                       <Text
                         type="date"
                         disabled={readonly}
@@ -858,8 +894,8 @@ export default function PermisExcavation() {
               {/* SIGNATURES D'AUTORISATION */}
               <FormCard title="Signatures d'autorisation de permis">
                 <Row label="Vérifications">
-                  <div className="divide-y divide-gray-100">
-                    <div className="py-2 first:pt-0 last:pb-0">
+                  <div className="divide-y divide-gray-100 space-y-0">
+                    <div className="py-1.5 lg:py-2 first:pt-0 last:pb-0">
                       <CheckLine
                         checked={!!data.autor_q1}
                         onChange={(v) => setData("autor_q1", v)}
@@ -868,7 +904,7 @@ export default function PermisExcavation() {
                         Les infrastructures souterraines sont identifiées et marquées sur le terrain.
                       </CheckLine>
                     </div>
-                    <div className="py-2 first:pt-0 last:pb-0">
+                    <div className="py-1.5 lg:py-2 first:pt-0 last:pb-0">
                       <CheckLine
                         checked={!!data.autor_q2}
                         onChange={(v) => setData("autor_q2", v)}
@@ -877,7 +913,7 @@ export default function PermisExcavation() {
                         Les mesures temporaires (barricades, signaux…) sont installées pour protéger la zone.
                       </CheckLine>
                     </div>
-                    <div className="py-2 first:pt-0 last:pb-0">
+                    <div className="py-1.5 lg:py-2 first:pt-0 last:pb-0">
                       <CheckLine
                         checked={!!data.autor_q3}
                         onChange={(v) => setData("autor_q3", v)}
@@ -890,8 +926,8 @@ export default function PermisExcavation() {
                 </Row>
 
                 <Row label="Responsable construction (Contractant)">
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div className="space-y-3">
+                  <div className="grid grid-cols-1 gap-3 lg:gap-4 lg:grid-cols-2">
+                    <div className="space-y-2 lg:space-y-3">
                       <Text
                         placeholder="Nom"
                         disabled={readonly}
@@ -910,6 +946,10 @@ export default function PermisExcavation() {
                         }
                         required={!readonly}
                       />
+                      <div className="grid grid-cols-2 gap-2">
+                        <FieldError>{errors.sig_resp_construction_nom}</FieldError>
+                        <FieldError>{errors.sig_resp_construction_date}</FieldError>
+                      </div>
                     </div>
 
                     <SignaturePicker
@@ -921,15 +961,11 @@ export default function PermisExcavation() {
                       error={errors.sig_resp_construction_file}
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <FieldError>{errors.sig_resp_construction_nom}</FieldError>
-                    <FieldError>{errors.sig_resp_construction_date}</FieldError>
-                  </div>
                 </Row>
 
                 <Row label="Responsable HSE (Contractant)">
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div className="space-y-3">
+                  <div className="grid grid-cols-1 gap-3 lg:gap-4 lg:grid-cols-2">
+                    <div className="space-y-2 lg:space-y-3">
                       <Text
                         placeholder="Nom"
                         disabled={readonly}
@@ -944,6 +980,10 @@ export default function PermisExcavation() {
                         onChange={(e) => setData("sig_resp_hse_date", e.target.value)}
                         required={!readonly}
                       />
+                      <div className="grid grid-cols-2 gap-2">
+                        <FieldError>{errors.sig_resp_hse_nom}</FieldError>
+                        <FieldError>{errors.sig_resp_hse_date}</FieldError>
+                      </div>
                     </div>
 
                     <SignaturePicker
@@ -955,16 +995,12 @@ export default function PermisExcavation() {
                       error={errors.sig_resp_hse_file}
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <FieldError>{errors.sig_resp_hse_nom}</FieldError>
-                    <FieldError>{errors.sig_resp_hse_date}</FieldError>
-                  </div>
                 </Row>
 
                 {/* ParkX placeholders (disabled) */}
                 <Row label="Construction manager ParkX">
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 opacity-60">
-                    <div className="space-y-3">
+                  <div className="grid grid-cols-1 gap-3 lg:gap-4 lg:grid-cols-2 opacity-60">
+                    <div className="space-y-2 lg:space-y-3">
                       <Text
                         placeholder="Nom (à compléter par ParkX)"
                         value={data.cm_parkx_nom || ""}
@@ -987,8 +1023,8 @@ export default function PermisExcavation() {
                 </Row>
 
                 <Row label="HSE Manager ParkX">
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 opacity-60">
-                    <div className="space-y-3">
+                  <div className="grid grid-cols-1 gap-3 lg:gap-4 lg:grid-cols-2 opacity-60">
+                    <div className="space-y-2 lg:space-y-3">
                       <Text disabled placeholder="Nom (à compléter par ParkX)" />
                       <Text disabled placeholder="Date —" />
                     </div>
@@ -1007,7 +1043,7 @@ export default function PermisExcavation() {
               {showFermeture && (
                 <FormCard title="Fermeture du permis">
                   <Row label="Checklist de fermeture">
-                    <div className="divide-y divide-gray-100">
+                    <div className="divide-y divide-gray-100 space-y-0">
                       <CheckLine
                         checked={!!data.ferm_q1}
                         onChange={(v) => setData("ferm_q1", v)}
@@ -1043,7 +1079,7 @@ export default function PermisExcavation() {
                       >
                         Les dessins ont été mis à jour.
                       </CheckLine>
-                      <div className="pt-3">
+                      <div className="pt-2 lg:pt-3">
                         <CheckLine
                           checked={!!data.ferm_q6}
                           onChange={(v) => setData("ferm_q6", v)}
@@ -1052,7 +1088,7 @@ export default function PermisExcavation() {
                           Suivi additionnel requis (spécifier)
                         </CheckLine>
                         {data.ferm_q6 && (
-                          <div className="mt-3">
+                          <div className="mt-2 lg:mt-3">
                             <Text
                               placeholder="Précisez le suivi requis"
                               disabled={readonly}
@@ -1068,8 +1104,8 @@ export default function PermisExcavation() {
                   </Row>
 
                   <Row label="Responsable construction (Contractant)">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <div className="space-y-3">
+                    <div className="grid grid-cols-1 gap-3 lg:gap-4 lg:grid-cols-2">
+                      <div className="space-y-2 lg:space-y-3">
                         <Text
                           placeholder="Nom"
                           disabled={readonly}
@@ -1101,8 +1137,8 @@ export default function PermisExcavation() {
                   </Row>
 
                   <Row label="Responsable HSE (Contractant)">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <div className="space-y-3">
+                    <div className="grid grid-cols-1 gap-3 lg:gap-4 lg:grid-cols-2">
+                      <div className="space-y-2 lg:space-y-3">
                         <Text
                           placeholder="Nom"
                           disabled={readonly}
@@ -1133,8 +1169,8 @@ export default function PermisExcavation() {
 
                   {/* ParkX placeholders (disabled) */}
                   <Row label="Construction manager ParkX">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 opacity-60">
-                      <div className="space-y-3">
+                    <div className="grid grid-cols-1 gap-3 lg:gap-4 lg:grid-cols-2 opacity-60">
+                      <div className="space-y-2 lg:space-y-3">
                         <Text placeholder="Nom (à compléter par ParkX)" value={data.cm_parkx_nom || ""} disabled />
                         <Text type="date" value={data.cm_parkx_date || ""} disabled />
                       </div>
@@ -1149,8 +1185,8 @@ export default function PermisExcavation() {
                   </Row>
 
                   <Row label="HSE Manager ParkX">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 opacity-60">
-                      <div className="space-y-3">
+                    <div className="grid grid-cols-1 gap-3 lg:gap-4 lg:grid-cols-2 opacity-60">
+                      <div className="space-y-2 lg:space-y-3">
                         <Text placeholder="Nom (à compléter par ParkX)" disabled />
                         <Text type="date" placeholder="Date —" disabled />
                       </div>
@@ -1169,7 +1205,7 @@ export default function PermisExcavation() {
               {/* ACTIONS */}
               {!readonly && (
                 <motion.div 
-                  className="flex items-center justify-end gap-3 pb-2 pt-6"
+                  className="flex items-center justify-end gap-3 pb-2 pt-4 lg:pt-6"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.8 }}
@@ -1177,9 +1213,9 @@ export default function PermisExcavation() {
                   <motion.button
                     type="submit"
                     disabled={processing}
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="rounded-xl px-8 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-60"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="rounded-xl px-6 lg:px-8 py-2.5 lg:py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-60 w-full sm:w-auto"
                   >
                     {processing ? "Envoi…" : "Soumettre"}
                   </motion.button>
