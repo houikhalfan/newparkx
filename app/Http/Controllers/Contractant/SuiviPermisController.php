@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Contractant;
 use App\Http\Controllers\Controller;
 use App\Models\PermisExcavation;
 use App\Models\PermisTravailSecuritaire;
-use App\Models\PermisTravailChaud; // Add this model
+use App\Models\PermisTravailChaud;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -17,8 +17,17 @@ class SuiviPermisController extends Controller
         $search = $request->get('search', '');
         $statusFilter = $request->get('status', '');
 
+        // Get current user info
+        $user = auth()->user();
+        $userName = $user->name;
+        $userCompany = $user->company_name;
+        
+        // Create the search pattern for demandeur fields
+        $demandeurPattern = "{$userName} - {$userCompany}";
+
         // Récupérer les permis d'excavation avec filtres
         $permisExcavation = PermisExcavation::with('site')
+            ->where('demandeur', $demandeurPattern)
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('numero_permis', 'like', "%{$search}%")
@@ -47,6 +56,7 @@ class SuiviPermisController extends Controller
 
         // Récupérer les permis de travail sécuritaire avec filtres
         $permisTravailSecuritaire = PermisTravailSecuritaire::with('site')
+            ->where('demandeur', $demandeurPattern)
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('numero_permis', 'like', "%{$search}%")
@@ -75,6 +85,7 @@ class SuiviPermisController extends Controller
 
         // Récupérer les permis de travail à chaud avec filtres
         $permisTravailChaud = PermisTravailChaud::with('site')
+            ->where('contractant_demandeur', $demandeurPattern)
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('numero_permis', 'like', "%{$search}%")
@@ -114,7 +125,7 @@ class SuiviPermisController extends Controller
                 'search' => $search,
                 'status' => $statusFilter,
             ],
-            'contractor' => auth()->user(),
+            'contractor' => $user,
         ]);
     }
 }

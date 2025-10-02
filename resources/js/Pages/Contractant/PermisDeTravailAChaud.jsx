@@ -186,7 +186,7 @@ const generatePermitNumber = () => {
 };
 
 // Initial form data
-const initialFormData = {
+const getInitialFormData = (contractorName = "", companyName = "") => ({
   numero_permis: generatePermitNumber(),
   site_id: "",
   date_debut: "",
@@ -194,8 +194,8 @@ const initialFormData = {
   description_tache: "",
   plan_securitaire_par: "",
   date_plan_securitaire: "",
-  contractant_demandeur: "",
-  contractant_travail: "",
+  contractant_demandeur: `${contractorName} - ${companyName}`, // Format: "Contractant YYY - INNOVX"
+  contractant_travail: `${contractorName} - ${companyName}`, // Also auto-filled by default
   meme_que_demandeur: true,
   activites: [],
   activite_autre: "",
@@ -217,11 +217,38 @@ const initialFormData = {
   resp_hse_nom: "",
   resp_hse_date: "",
   resp_hse_file: null,
-};
+});
+
+// Temporary debug component
+const DebugInfo = ({ contractor, formattedContractant, data }) => (
+  <div className="fixed bottom-4 right-4 bg-yellow-100 border border-yellow-300 p-4 rounded-lg text-xs max-w-md z-50 shadow-lg">
+    <h3 className="font-bold mb-2 text-yellow-800">Debug Contractor Info:</h3>
+    <p><strong>Contractor Prop:</strong> {JSON.stringify(contractor)}</p>
+    <p><strong>Formatted Name:</strong> "{formattedContractant}"</p>
+    <p><strong>Form Demandeur:</strong> "{data.contractant_demandeur}"</p>
+  </div>
+);
 
 /* ---------------------------------- Page ---------------------------------- */
-export default function PermisDeTravailAChaud({ mode, sites, permis }) {
+export default function PermisDeTravailAChaud({ mode, sites, permis, contractor }) {
   const { auth } = usePage().props;
+  
+  // Get contractor's name and company name from props
+  const contractorName = contractor?.name || "";
+  const companyName = contractor?.company_name || "";
+  const formattedContractant = contractorName && companyName 
+    ? `${contractorName} - ${companyName}`
+    : companyName || contractorName || "";
+
+  // Debug: log the contractor data to see what's available
+  useEffect(() => {
+    console.log('=== CONTRACTOR DATA DEBUG ===');
+    console.log('Contractor prop:', contractor);
+    console.log('Contractor name:', contractorName);
+    console.log('Company name:', companyName);
+    console.log('Formatted name:', formattedContractant);
+    console.log('=============================');
+  }, [contractor, contractorName, companyName, formattedContractant]);
 
   /* ----------------------------- static options ---------------------------- */
   const optActivite = useMemo(
@@ -331,11 +358,32 @@ export default function PermisDeTravailAChaud({ mode, sites, permis }) {
   };
 
   /* ------------------------------- form state ------------------------------ */
-  const [data, setData] = useState(initialFormData);
+  const [data, setData] = useState(getInitialFormData(contractorName, companyName));
   const set = (k, v) => setData((d) => ({ ...d, [k]: v }));
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Update form data when contractor data changes
+  useEffect(() => {
+    if (formattedContractant) {
+      setData(prevData => ({
+        ...prevData,
+        contractant_demandeur: formattedContractant,
+        contractant_travail: prevData.meme_que_demandeur ? formattedContractant : prevData.contractant_travail
+      }));
+    }
+  }, [formattedContractant]);
+
+  // Update contractant_travail when meme_que_demandeur changes
+  useEffect(() => {
+    if (data.meme_que_demandeur) {
+      setData((d) => ({
+        ...d,
+        contractant_travail: d.contractant_demandeur
+      }));
+    }
+  }, [data.meme_que_demandeur, data.contractant_demandeur]);
 
   const validate = () => {
     const e = {};
@@ -432,7 +480,7 @@ export default function PermisDeTravailAChaud({ mode, sites, permis }) {
 
   const resetForm = () => {
     setData({
-      ...initialFormData,
+      ...getInitialFormData(contractorName, companyName),
       numero_permis: generatePermitNumber(), // Generate new permit number
     });
     setErrors({});
@@ -706,10 +754,12 @@ export default function PermisDeTravailAChaud({ mode, sites, permis }) {
                     <div>
                       <Label>Contractant demandeur du permis</Label>
                       <Text
+                        readOnly
                         value={data.contractant_demandeur}
-                        onChange={(e) => set("contractant_demandeur", e.target.value)}
                         placeholder="Nom du contractant demandeur"
+                        className="bg-gray-50 text-gray-600"
                       />
+                    
                       <FieldError>{errors.contractant_demandeur}</FieldError>
                     </div>
 
@@ -719,6 +769,8 @@ export default function PermisDeTravailAChaud({ mode, sites, permis }) {
                         value={data.contractant_travail}
                         onChange={(e) => set("contractant_travail", e.target.value)}
                         placeholder="Nom du contractant effectuant le travail"
+                        readOnly={data.meme_que_demandeur}
+                        className={data.meme_que_demandeur ? "bg-gray-50 text-gray-600" : ""}
                       />
                       <FieldError>{errors.contractant_travail}</FieldError>
                       <label className="mt-2 flex items-center gap-2 text-xs md:text-sm text-gray-700">
@@ -994,6 +1046,8 @@ export default function PermisDeTravailAChaud({ mode, sites, permis }) {
             </div>
           </div>
         </div>
+
+    
       </div>
     </>
   );

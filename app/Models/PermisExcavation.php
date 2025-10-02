@@ -54,10 +54,13 @@ class PermisExcavation extends Model
         'hse_parkx_date',
         'hse_parkx_file',
         'pdf_signed',
-            'pdf_original',   // 👈 add this
+        'pdf_original',
 
         'status',
         'commentaire',
+        
+        // Add submitted_by if you want to track who submitted
+        'submitted_by',
     ];
 
     protected $casts = [
@@ -82,5 +85,10 @@ class PermisExcavation extends Model
     public function site()
     {
         return $this->belongsTo(Site::class, 'site_id');
+    }
+
+    public function submittedBy()
+    {
+        return $this->belongsTo(User::class, 'submitted_by');
     }
 }

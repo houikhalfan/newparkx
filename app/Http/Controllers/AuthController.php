@@ -23,51 +23,51 @@ class AuthController extends Controller
     }
     public function login(Request $request)
     {
-        $type = $request->input('type', 'parkx'); // 'parkx' or 'contractor'
+        $type = $request->input('type', 'parkx'); // 'parkx' ou 'contractor'
 
-        // Basic validation
+        // Validation de base
         $request->validate([
             'email'    => ['required', 'email'],
             'password' => ['required'],
         ]);
 
         /* ---------------------------------------------------------
-         | Contractor login
+         | Connexion entrepreneur
          * --------------------------------------------------------- */
         if ($type === 'contractor') {
             $contractor = Contractor::where('email', $request->email)->first();
 
             if (!$contractor || !Hash::check($request->password, $contractor->password)) {
                 throw ValidationException::withMessages([
-                    'email' => 'Invalid contractor credentials.',
+                    'email' => 'Identifiants entrepreneur invalides.',
                 ]);
             }
 
             if (!$contractor->is_approved) {
                 throw ValidationException::withMessages([
-                    'email' => 'Your account is pending admin approval.',
+                    'email' => 'Votre compte est en attente de validation par l\'administrateur.',
                 ]);
             }
 
-            // ✅ log the user into the contractor guard
+            // ✅ connecter l'utilisateur avec le guard entrepreneur
             Auth::guard('contractor')->login($contractor);
             $request->session()->regenerate();
 
-            return redirect()->route('contractant.home'); // e.g. /contractant
+            return redirect()->route('contractant.home'); // ex: /contractant
         }
 
         /* ---------------------------------------------------------
-         | ParkX (standard) login
+         | Connexion ParkX (standard)
          * --------------------------------------------------------- */
         if (!Auth::guard('web')->attempt($request->only('email', 'password'))) {
             throw ValidationException::withMessages([
-                'email' => 'Invalid ParkX credentials.',
+                'email' => 'Identifiants ParkX invalides.',
             ]);
         }
 
         $request->session()->regenerate();
 
-        // Quota flash (based on records created this month)
+        // Flash quota (basé sur les enregistrements créés ce mois-ci)
         $user  = Auth::user();
         $quota = (int) ($user->vods_quota ?? 0);
 
@@ -86,11 +86,11 @@ class AuthController extends Controller
                 session()->flash('success', "Il vous reste {$remaining} VOD(s) à soumettre ce mois-ci. Jours restants : {$daysLeft}.");
             } else {
                 $next = now()->startOfMonth()->addMonth()->format('d/m/Y');
-                session()->flash('success', "Quota mensuel atteint. Le formulaire VODS est bloqué jusqu’au {$next}.");
+                session()->flash('success', "Quota mensuel atteint. Le formulaire VODS est bloqué jusqu'au {$next}.");
             }
         }
 
-        // ✅ stamp last login
+        // ✅ enregistrer la dernière connexion
         $user->forceFill(['last_login_at' => now()])->save();
 
         return redirect()->intended('/dashboard');
@@ -119,26 +119,26 @@ class AuthController extends Controller
             'is_approved'  => false,
         ]);
 
-        // Send notification to all admins (with error handling)
+        // Envoyer une notification à tous les administrateurs (avec gestion d'erreurs)
         try {
             $admins = \App\Models\Admin::all();
-            \Log::info('Sending contractor registration notifications to ' . $admins->count() . ' admins');
+            \Log::info('Envoi des notifications d\'inscription d\'entrepreneur à ' . $admins->count() . ' administrateurs');
             
             foreach ($admins as $admin) {
                 try {
-                    \Log::info('Sending contractor registration notification to admin: ' . $admin->email);
+                    \Log::info('Envoi de la notification d\'inscription d\'entrepreneur à l\'administrateur : ' . $admin->email);
                     $admin->notify(new \App\Notifications\ContractorRegistrationNotification($contractor));
-                    \Log::info('Notification sent successfully to admin: ' . $admin->email);
+                    \Log::info('Notification envoyée avec succès à l\'administrateur : ' . $admin->email);
                 } catch (\Exception $e) {
-                    \Log::error('Failed to send notification to admin ' . $admin->email . ': ' . $e->getMessage());
-                    // Continue with other admins even if one fails
+                    \Log::error('Échec de l\'envoi de la notification à l\'administrateur ' . $admin->email . ' : ' . $e->getMessage());
+                    // Continuer avec les autres administrateurs même si un échoue
                 }
             }
         } catch (\Exception $e) {
-            \Log::error('Failed to send contractor registration notifications: ' . $e->getMessage());
-            // Don't fail the registration if notifications fail
+            \Log::error('Échec de l\'envoi des notifications d\'inscription d\'entrepreneur : ' . $e->getMessage());
+            // Ne pas faire échouer l'inscription si les notifications échouent
         }
 
-        return back()->with('message', 'Registration submitted. Admin approval is required.');
+        return back()->with('message', 'Inscription soumise. Une validation par l\'administrateur est requise.');
     }
 }

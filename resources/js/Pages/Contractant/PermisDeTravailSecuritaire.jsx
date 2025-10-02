@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ContractantSidebar from '@/Components/ContractantSidebar';
 import ContractantTopHeader from '@/Components/ContractantTopHeader';
 import { router } from "@inertiajs/react";
+
 /* --------------------------------- UI bits -------------------------------- */
 const Section = ({ title, children }) => (
   <div className="rounded-3xl border border-blue-200/50 bg-white/90 backdrop-blur-xl shadow-2xl mb-8">
@@ -25,28 +26,50 @@ const Label = ({ children, className = "", ...rest }) => (
   </label>
 );
 
-const Text = ({ disabled, ...rest }) => (
+const Text = ({ disabled, readOnly, ...rest }) => (
   <input
     {...rest}
     className={[
       "w-full rounded-xl border px-4 py-3 text-sm outline-none transition-all duration-300",
       "focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500",
-      disabled ? "bg-gray-50 text-gray-500" : "bg-white border-gray-300",
+      disabled || readOnly ? "bg-gray-50 text-gray-500 cursor-not-allowed" : "bg-white border-gray-300",
     ].join(" ")}
+    disabled={disabled || readOnly}
   />
 );
 
-const Area = ({ disabled, rows = 4, ...rest }) => (
-  <textarea
-    rows={rows}
-    {...rest}
-    className={[
-      "w-full rounded-xl border px-4 py-3 text-sm outline-none transition-all duration-300",
-      "focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500",
-      disabled ? "bg-gray-50 text-gray-500" : "bg-white border-gray-300",
-    ].join(" ")}
-  />
-);
+const Area = ({ disabled, readOnly, rows = 4, maxLength, value, ...rest }) => {
+  const charCount = value?.length || 0;
+  const isNearLimit = maxLength && charCount > maxLength * 0.8;
+  const isOverLimit = maxLength && charCount > maxLength;
+  
+  return (
+    <div className="relative">
+      <textarea
+        rows={rows}
+        disabled={disabled || readOnly}
+        value={value}
+        maxLength={maxLength}
+        {...rest}
+        className={[
+          "w-full rounded-xl border px-4 py-3 text-sm outline-none transition-all duration-300",
+          "focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500",
+          disabled || readOnly ? "bg-gray-50 text-gray-500 cursor-not-allowed" : "bg-white border-gray-300",
+          isOverLimit ? "border-red-500 focus:border-red-500 focus:ring-red-500/50" : ""
+        ].join(" ")}
+      />
+      {maxLength && (
+        <div className={[
+          "absolute bottom-2 right-2 text-xs px-2 py-1 rounded",
+          isOverLimit ? "bg-red-100 text-red-700" : 
+          isNearLimit ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-500"
+        ].join(" ")}>
+          {charCount}/{maxLength}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const FieldError = ({ children }) =>
   children ? <p className="mt-1 text-xs text-rose-600">{children}</p> : null;
@@ -182,16 +205,25 @@ function SignaturePicker({ id, label, value, onChange, disabled, error }) {
 // Function to generate permit number
 const generatePermitNumber = (contractorName) => {
   const timestamp = new Date().getTime().toString().slice(-6);
-  const initials = contractorName
-    ? contractorName.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 3)
-    : 'CTR';
+  // Prendre les initiales du nom seulement (pas de la company)
+  const nameOnly = contractorName.split(' - ')[0] || contractorName;
+  const initials = nameOnly
+    .split(' ')
+    .map(word => word[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 3);
   return `EXC-${initials}-${timestamp}`;
 };
 
 /* ---------------------------------- Page ---------------------------------- */
 export default function Excavation() {
-  const { sites = [], auth } = usePage().props;
-  const contractorName = auth?.contractor?.name || '';
+  const { sites = [], auth, contractor_info } = usePage().props;
+  
+  // Utiliser les informations du contractant connecté
+  const contractorDisplay = contractor_info?.full_display || 
+                           (auth?.contractor ? `${auth.contractor.name} - ${auth.contractor.company_name}` : '') || 
+                           (auth?.user ? `${auth.user.name} - ${auth.user.company_name}` : 'Contractant');
 
   /* ----------------------------- static options ---------------------------- */
   // TYPE D'ACTIVITÉ
@@ -339,17 +371,17 @@ export default function Excavation() {
   /* ------------------------------- form state ------------------------------ */
   const [data, setData] = useState({
     // Header
-    numero_permis: generatePermitNumber(contractorName),
+    numero_permis: generatePermitNumber(contractorDisplay),
     
-    // IDENTIFICATION
+    // IDENTIFICATION - Pré-remplir avec les infos du contractant connecté
     site_id: "",
     duree_de: "",
     duree_a: "",
     description: "",
     plan_securitaire_par: "",
     date_analyse: "",
-    demandeur: contractorName || "",
-    contractant: contractorName || "",
+    demandeur: contractorDisplay, // ← Pré-rempli automatiquement
+    contractant: contractorDisplay, // ← Pré-rempli automatiquement
     meme_que_demandeur: true,
 
     // GROUPES (au moins 1)
@@ -421,6 +453,15 @@ export default function Excavation() {
       }
     );
 
+    // Character limit validations
+    if (data.description && data.description.length > 100) {
+      e.description = "La description ne peut pas dépasser 100 caractères.";
+    }
+    
+    if (data.commentaires && data.commentaires.length > 250) {
+      e.commentaires = "Les commentaires ne peuvent pas dépasser 250 caractères.";
+    }
+
     // Groupes (>=1)
     if (data.activites.length === 0) e.activites = "Sélectionnez au moins une activité.";
     if (data.permis_supp.length === 0) e.permis_supp = "Sélectionnez au moins un permis supplémentaire.";
@@ -473,54 +514,53 @@ export default function Excavation() {
     setErrors(e);
     return Object.keys(e).length === 0;
   };
-// Ajoutez cette fonction avant le onSubmit
-const buildFormData = (data) => {
-  const formData = new FormData();
-  
-  Object.entries(data).forEach(([key, value]) => {
-    if (value === null || value === undefined) {
-      return;
-    }
+
+  // Ajoutez cette fonction avant le onSubmit
+  const buildFormData = (data) => {
+    const formData = new FormData();
     
-    if (value instanceof File) {
-      formData.append(key, value);
-    } else if (Array.isArray(value)) {
-      value.forEach((v, i) => {
-        if (v !== null && v !== undefined) {
-          formData.append(`${key}[${i}]`, v);
-        }
-      });
-    } else if (typeof value === 'boolean') {
-      formData.append(key, value ? '1' : '0');
-    } else {
-      formData.append(key, value.toString());
-    }
-  });
-  
-  return formData;
-};
+    Object.entries(data).forEach(([key, value]) => {
+      if (value === null || value === undefined) {
+        return;
+      }
+      
+      if (value instanceof File) {
+        formData.append(key, value);
+      } else if (Array.isArray(value)) {
+        value.forEach((v, i) => {
+          if (v !== null && v !== undefined) {
+            formData.append(`${key}[${i}]`, v);
+          }
+        });
+      } else if (typeof value === 'boolean') {
+        formData.append(key, value ? '1' : '0');
+      } else {
+        formData.append(key, value.toString());
+      }
+    });
+    
+    return formData;
+  };
 
-// Puis modifiez le onSubmit :
-const onSubmit = (e) => {
-  e.preventDefault();
-  setOk(false);
+  // Puis modifiez le onSubmit :
+  const onSubmit = (e) => {
+    e.preventDefault();
+    setOk(false);
 
-  if (!validate()) return;
+    if (!validate()) return;
 
-  const formData = buildFormData(data);
+    const formData = buildFormData(data);
 
-  router.post(route("contractant.permis-travail-securitaire.store"), formData, {
-    forceFormData: true,
-    onSuccess: () => {
-      window.location.href = route("contractant.permis-travail-securitaire.index");
-    },
-    onError: (errors) => {
-      setErrors(errors);
-    },
-  });
-};
-
- // ← CETTE ACCOLADE FERMANTE ÉTAIT MANQUANTE
+    router.post(route("contractant.permis-travail-securitaire.store"), formData, {
+      forceFormData: true,
+      onSuccess: () => {
+        window.location.href = route("contractant.permis-travail-securitaire.index");
+      },
+      onError: (errors) => {
+        setErrors(errors);
+      },
+    });
+  };
 
   /* ------------------------------- rendering ------------------------------- */
   return (
@@ -611,12 +651,11 @@ const onSubmit = (e) => {
                     {/* NUMÉRO DE PERMIS (auto-generated) */}
                     <div className="mt-2">
                       <div className="text-sm text-gray-700">NUMÉRO DE PERMIS</div>
-                     <Text
-  readOnly
-  value={data.numero_permis || generatePermitNumber(contractorName)}
-  className="bg-gray-100 cursor-not-allowed"
-/>
-
+                      <Text
+                        readOnly
+                        value={data.numero_permis || generatePermitNumber(contractorDisplay)}
+                        className="bg-gray-100 cursor-not-allowed"
+                      />
                       <FieldError>{errors.numero_permis}</FieldError>
                     </div>
                   </div>
@@ -670,6 +709,8 @@ const onSubmit = (e) => {
                       <Area
                         value={data.description}
                         onChange={(e) => set("description", e.target.value)}
+                        maxLength={100}
+                        rows={3}
                       />
                       <FieldError>{errors.description}</FieldError>
                     </div>
@@ -696,10 +737,13 @@ const onSubmit = (e) => {
                       <Label>Contractant demandeur du permis</Label>
                       <Text
                         value={data.demandeur}
-                        onChange={(e) => set("demandeur", e.target.value)}
+                        readOnly
+                        className="bg-gray-100 cursor-not-allowed"
+                        title="Ce champ est automatiquement rempli avec vos informations"
                       />
-                      <FieldError>{errors.demandeur}</FieldError>
+                    
                     </div>
+                    
                     <div>
                       <Label>Contractant effectuant le travail</Label>
                       <Text
@@ -717,7 +761,7 @@ const onSubmit = (e) => {
                             setData((d) => ({
                               ...d,
                               meme_que_demandeur: checked,
-                              contractant: checked ? d.demandeur : d.contractant,
+                              contractant: checked ? contractorDisplay : d.contractant,
                             }));
                           }}
                         />
@@ -727,7 +771,6 @@ const onSubmit = (e) => {
                   </div>
                 </Section>
 
-                {/* Rest of the form sections remain the same... */}
                 {/* TYPE D'ACTIVITE */}
                 <Section title="TYPE D'ACTIVITE">
                   <CheckboxGroup
@@ -849,6 +892,8 @@ const onSubmit = (e) => {
                     value={data.commentaires}
                     onChange={(e) => set("commentaires", e.target.value)}
                     placeholder="Aucun commentaire additionnel ou recommandation"
+                    maxLength={250}
+                    rows={4}
                   />
                   <FieldError>{errors.commentaires}</FieldError>
                 </Section>
@@ -956,15 +1001,14 @@ const onSubmit = (e) => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 0.8 }}
                 >
-   <motion.button
-  type="submit"
-  whileHover={{ scale: 1.05, y: -2 }}
-  whileTap={{ scale: 0.95 }}
-  className="rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 px-8 py-3 text-sm font-semibold text-white hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-300"
->
-  Soumettre
-</motion.button>
-
+                  <motion.button
+                    type="submit"
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 px-8 py-3 text-sm font-semibold text-white hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    Soumettre
+                  </motion.button>
                 </motion.div>
               </motion.form>
             </div>

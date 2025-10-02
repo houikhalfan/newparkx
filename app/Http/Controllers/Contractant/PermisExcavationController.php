@@ -28,27 +28,26 @@ class PermisExcavationController extends Controller
     /**
      * List all permits (suivi)
      */
- public function index()
-{
-    $permis = PermisExcavation::with('site')
-        ->orderByDesc('created_at')
-        ->get()
-        ->map(function ($p) {
-            return [
-                'id'            => $p->id,
-                'numero_permis' => $p->numero_permis,
-                'site'          => $p->site ? ['id' => $p->site->id, 'name' => $p->site->name] : null,
-                'status'        => $p->status,
-                'created_at'    => $p->created_at,
-                'pdf_signed'    => $p->pdf_signed,   // 👈 include this
-            ];
-        });
+    public function index()
+    {
+        $permis = PermisExcavation::with('site')
+            ->orderByDesc('created_at')
+            ->get()
+            ->map(function ($p) {
+                return [
+                    'id'            => $p->id,
+                    'numero_permis' => $p->numero_permis,
+                    'site'          => $p->site ? ['id' => $p->site->id, 'name' => $p->site->name] : null,
+                    'status'        => $p->status,
+                    'created_at'    => $p->created_at,
+                    'pdf_signed'    => $p->pdf_signed,   // 👈 include this
+                ];
+            });
 
-    return Inertia::render('Contractant/SuiviPermis', [
-        'permis' => $permis,
-    ]);
-}
-
+        return Inertia::render('Contractant/SuiviPermis', [
+            'permis' => $permis,
+        ]);
+    }
 
     /**
      * Show a single permit (consultation only)
@@ -76,7 +75,7 @@ class PermisExcavationController extends Controller
             'site_id' => 'required|exists:sites,id',
             'duree_de' => 'required|date',
             'duree_a' => 'required|date|after_or_equal:duree_de',
-            'description' => 'required|string',
+            'description' => 'required|string|max:100',
             'analyse_par' => 'required|string',
             'date_analyse' => 'required|date',
             'demandeur' => 'required|string',
@@ -107,7 +106,7 @@ class PermisExcavationController extends Controller
             'situation_autre' => 'nullable|string',
             'epi_autre' => 'nullable|string',
             'equip_autre' => 'nullable|string',
-            'commentaires' => 'nullable|string',
+            'commentaires' => 'nullable|string|max:250',
 
             // Booleans
             'autor_q1' => 'sometimes|boolean',
@@ -138,12 +137,15 @@ class PermisExcavationController extends Controller
         $validated['autor_q2'] = $request->boolean('autor_q2');
         $validated['autor_q3'] = $request->boolean('autor_q3');
 
-        // keep user’s numero_permis_general, fallback only if missing
+        // keep user's numero_permis_general, fallback only if missing
         $validated['numero_permis_general'] = $validated['numero_permis_general'] ?: now()->format('Y');
 
         // Always generate unique numero_permis
         $validated['numero_permis'] = 'PX-' . strtoupper(Str::slug($validated['contractant'], '-'))
             . '-' . now()->format('Ymd') . '-' . rand(1000, 9999);
+
+        // Set submitted_by to current user
+        $validated['submitted_by'] = auth()->id();
 
         PermisExcavation::create($validated);
 
@@ -161,7 +163,7 @@ class PermisExcavationController extends Controller
             'site_id' => 'sometimes|exists:sites,id',
             'duree_de' => 'sometimes|date',
             'duree_a' => 'sometimes|date|after_or_equal:duree_de',
-            'description' => 'sometimes|string',
+            'description' => 'sometimes|string|max:100',
             'analyse_par' => 'sometimes|string',
             'date_analyse' => 'sometimes|date',
             'demandeur' => 'sometimes|string',
@@ -188,7 +190,7 @@ class PermisExcavationController extends Controller
             'situation_autre' => 'nullable|string',
             'epi_autre' => 'nullable|string',
             'equip_autre' => 'nullable|string',
-            'commentaires' => 'nullable|string',
+            'commentaires' => 'nullable|string|max:250',
 
             'autor_q1' => 'sometimes|boolean',
             'autor_q2' => 'sometimes|boolean',

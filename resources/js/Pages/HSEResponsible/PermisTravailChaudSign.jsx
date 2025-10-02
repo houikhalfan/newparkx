@@ -180,13 +180,13 @@ function SignaturePicker({ id, label, value, onChange, disabled, error, readOnly
   );
 }
 
-/* -------------------- Responsable Site Signature Component -------------------- */
-function ResponsableSiteSignature({ permitData, onSignatureSubmit, isSubmitting = false, errors = {}, readonly = false }) {
+/* -------------------- HSE Manager Signature Component -------------------- */
+function HSEManagerSignature({ permitData, onSignatureSubmit, isSubmitting = false, errors = {}, readonly = false }) {
   const [signatureData, setSignatureData] = useState({
-    cm_parkx_nom: "",
-    cm_parkx_date: "",
-    cm_parkx_file: null,
-    resp_site_commentaires: "",
+    hse_parkx_nom: permitData?.hse_parkx_nom || "",
+    hse_parkx_date: permitData?.hse_parkx_date || "",
+    hse_parkx_file: permitData?.hse_parkx_signature || null,
+    hse_parkx_commentaires: permitData?.hse_parkx_commentaires || "",
   });
 
   const set = (key, value) => {
@@ -197,14 +197,14 @@ function ResponsableSiteSignature({ permitData, onSignatureSubmit, isSubmitting 
     e.preventDefault();
     
     const validationErrors = {};
-    if (!signatureData.cm_parkx_nom.trim()) {
-      validationErrors.cm_parkx_nom = "Nom requis.";
+    if (!signatureData.hse_parkx_nom.trim()) {
+      validationErrors.hse_parkx_nom = "Nom requis.";
     }
-    if (!signatureData.cm_parkx_date) {
-      validationErrors.cm_parkx_date = "Date requise.";
+    if (!signatureData.hse_parkx_date) {
+      validationErrors.hse_parkx_date = "Date requise.";
     }
-    if (!signatureData.cm_parkx_file) {
-      validationErrors.cm_parkx_file = "Signature requise.";
+    if (!signatureData.hse_parkx_file) {
+      validationErrors.hse_parkx_file = "Signature requise.";
     }
 
     if (Object.keys(validationErrors).length > 0) {
@@ -225,64 +225,50 @@ function ResponsableSiteSignature({ permitData, onSignatureSubmit, isSubmitting 
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Section title="Validation ParkX">
+      <Section title="Validation HSE Manager ParkX">
         <div className="mb-4">
           <p className="text-sm text-gray-700 mb-3">
-            En tant que responsable de site, j'atteste avoir vérifié que toutes les mesures de sécurité 
+            En tant que HSE Manager ParkX, j'atteste avoir vérifié que toutes les mesures de sécurité 
             nécessaires ont été mises en place et que le permis de travail à chaud est conforme aux 
-            exigences du site.
+            exigences HSE du site.
           </p>
         </div>
 
         <div className="space-y-4">
           <div>
-            <Label>Construction manager ParkX</Label>
+            <Label>HSE Manager ParkX</Label>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2 mt-2">
               <div className="space-y-3">
                 <Text
-                  value={signatureData.cm_parkx_nom}
-                  onChange={(e) => set("cm_parkx_nom", e.target.value)}
+                  value={signatureData.hse_parkx_nom}
+                  onChange={(e) => set("hse_parkx_nom", e.target.value)}
                   placeholder="Nom (à compléter par ParkX)"
                   readOnly={readonly}
                 />
                 <Text
                   type="date"
-                  value={signatureData.cm_parkx_date}
-                  onChange={(e) => set("cm_parkx_date", e.target.value)}
+                  value={signatureData.hse_parkx_date}
+                  onChange={(e) => set("hse_parkx_date", e.target.value)}
                   readOnly={readonly}
                 />
               </div>
               <SignaturePicker
-                id="cm_parkx_file"
+                id="hse_parkx_file"
                 label="Signature (JPG/PNG)"
-                value={signatureData.cm_parkx_file}
-                onChange={(file) => set("cm_parkx_file", file)}
+                value={signatureData.hse_parkx_file}
+                onChange={(file) => set("hse_parkx_file", file)}
                 disabled={isSubmitting || readonly}
-                error={errors.cm_parkx_file}
+                error={errors.hse_parkx_file}
                 readOnly={readonly}
               />
             </div>
             <div className="grid grid-cols-2 gap-3 mt-2">
-              <FieldError>{errors.cm_parkx_nom}</FieldError>
-              <FieldError>{errors.cm_parkx_date}</FieldError>
+              <FieldError>{errors.hse_parkx_nom}</FieldError>
+              <FieldError>{errors.hse_parkx_date}</FieldError>
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="resp_site_commentaires">
-              Commentaires ou observations (optionnel)
-            </Label>
-            <textarea
-              id="resp_site_commentaires"
-              value={signatureData.resp_site_commentaires}
-              onChange={(e) => set("resp_site_commentaires", e.target.value)}
-              rows={3}
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none transition-all duration-200 focus:ring-2 focus:border-[#0E8A5D] focus:ring-[#0E8A5D] bg-white mt-2"
-              placeholder="Ajoutez des commentaires ou observations si nécessaire..."
-              readOnly={readonly}
-            />
-            <FieldError>{errors.resp_site_commentaires}</FieldError>
-          </div>
+        
         </div>
 
         {!readonly && (
@@ -306,7 +292,7 @@ function ResponsableSiteSignature({ permitData, onSignatureSubmit, isSubmitting 
 }
 
 /* ---------------------------------- Page ---------------------------------- */
-export default function PermisTravailAChaud({ permis, readonly = false, showSignatureResponsableSite = true }) {
+export default function PermisTravailAChaudHSE({ permis, readonly = false, showSignatureHSE = true }) {
   const { auth, flash } = usePage().props;
 
   // Fonction utilitaire pour formater les dates pour les inputs date
@@ -424,8 +410,8 @@ export default function PermisTravailAChaud({ permis, readonly = false, showSign
   const [isSigning, setIsSigning] = useState(false);
   const [signatureErrors, setSignatureErrors] = useState({});
 
-  // Handler for responsable site signature
-  const handleResponsableSignature = async (signatureData, validationErrors = null) => {
+  // Handler for HSE manager signature
+  const handleHSESignature = async (signatureData, validationErrors = null) => {
     if (validationErrors) {
       setSignatureErrors(validationErrors);
       return;
@@ -445,7 +431,7 @@ export default function PermisTravailAChaud({ permis, readonly = false, showSign
     });
 
     try {
-      await router.post(route("responsibleSite.permis-travail-chaud.sign", { permisTravailChaud: permis.id }), formData, {
+      await router.post(route("hseResponsible.permis-travail-chaud.sign", { permisTravailChaud: permis.id }), formData, {
         forceFormData: true,
         onSuccess: () => {
           Swal.fire({
@@ -454,8 +440,8 @@ export default function PermisTravailAChaud({ permis, readonly = false, showSign
             icon: 'success',
             confirmButtonText: 'OK',
           });
-          // Redirect to the responsible site permits index
-          router.visit(route('responsibleSite.permis.index'));
+          // Redirect to the HSE responsible permits index
+          router.visit(route('hseResponsible.permis.index'));
         },
         onError: (errors) => {
           setSignatureErrors(errors);
@@ -501,7 +487,7 @@ export default function PermisTravailAChaud({ permis, readonly = false, showSign
                   transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
                   className="relative"
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-600 flex items-center justify-center shadow-lg">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-600 flex items-center justify-center shadow-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
                       <polyline points="14 2 14 8 20 8" />
@@ -510,13 +496,13 @@ export default function PermisTravailAChaud({ permis, readonly = false, showSign
                       <line x1="10" x2="8" y1="9" y2="9" />
                     </svg>
                   </div>
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-full animate-pulse" />
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-full animate-pulse" />
                 </motion.div>
                 <div>
                   <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
                     PERMIS DE TRAVAIL À CHAUD
                   </h1>
-                  <p className="text-sm text-slate-500 font-medium">Gestion et signatures du permis</p>
+                  <p className="text-sm text-slate-500 font-medium">Validation HSE Manager ParkX</p>
                 </div>
               </div>
 
@@ -529,7 +515,7 @@ export default function PermisTravailAChaud({ permis, readonly = false, showSign
                   transition={{ delay: 0.3, duration: 0.5 }}
                 >
                   <a
-                    href={route('responsibleSite.permis.index')}
+                    href={route('hseResponsible.permis.index')}
                     className="group relative inline-flex items-center space-x-2 px-6 py-3 rounded-xl text-white font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
                     style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
                   >
@@ -548,14 +534,14 @@ export default function PermisTravailAChaud({ permis, readonly = false, showSign
                   transition={{ delay: 0.5, duration: 0.5 }}
                   className="flex items-center space-x-3 bg-white/90 backdrop-blur-sm rounded-xl px-4 py-2 shadow-lg"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                       <circle cx="12" cy="7" r="4" />
                     </svg>
                   </div>
                   <div className="text-slate-800">
-                    <p className="text-sm font-medium">Responsable de site</p>
+                    <p className="text-sm font-medium">HSE Manager</p>
                     <p className="text-xs text-slate-600">ParkX</p>
                   </div>
                 </motion.div>
@@ -575,11 +561,11 @@ export default function PermisTravailAChaud({ permis, readonly = false, showSign
             transition={{ delay: 0.2, duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-5xl font-bold mb-4 bg-gradient-to-r from-slate-800 via-emerald-600 to-teal-600 bg-clip-text text-transparent">
+            <h2 className="text-5xl font-bold mb-4 bg-gradient-to-r from-slate-800 via-blue-600 to-cyan-600 bg-clip-text text-transparent">
               PERMIS DE TRAVAIL À CHAUD
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              Validation Construction Manager ParkX
+              Validation HSE Manager ParkX
             </p>
           </motion.div>
 
@@ -869,11 +855,41 @@ export default function PermisTravailAChaud({ permis, readonly = false, showSign
                 </div>
               </Section>
 
-              {/* RESPONSABLE SITE SIGNATURE SECTION */}
-              {showSignatureResponsableSite && (
-                <ResponsableSiteSignature
+              {/* CONSTRUCTION MANAGER SIGNATURE - Read Only */}
+              <Section title="VALIDATION PARKX">
+                <div className="space-y-4">
+                  <div>
+                    <Label>Construction manager ParkX</Label>
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 mt-2">
+                      <div className="space-y-3">
+                        <Text
+                          readOnly
+                          value={permis.cm_parkx_nom || ""}
+                          placeholder="Nom (à compléter par ParkX)"
+                        />
+                        <Text
+                          type="date"
+                          readOnly
+                          value={formatDateForInput(permis.cm_parkx_date)}
+                        />
+                      </div>
+                      <SignaturePicker
+                        id="cm_parkx_file"
+                        label="Signature"
+                        value={permis.cm_parkx_signature}
+                        onChange={() => {}}
+                        readOnly={true}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </Section>
+
+              {/* HSE MANAGER SIGNATURE SECTION */}
+              {showSignatureHSE && (
+                <HSEManagerSignature
                   permitData={permis}
-                  onSignatureSubmit={handleResponsableSignature}
+                  onSignatureSubmit={handleHSESignature}
                   isSubmitting={isSigning}
                   errors={signatureErrors}
                   readonly={readonly}

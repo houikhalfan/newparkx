@@ -40,26 +40,30 @@ export default function ContractantSidebar() {
       icon: Video,
       color: 'from-purple-500 to-pink-500'
     },
-    { 
-      href: route("contractant.permis.selection"),
-      label: "Permis & Suivis",
-      icon: FileSignature,
-      color: "from-orange-500 to-red-500",
-      children: [
-        {
-          href: route("contractant.suivi-permis.index"),
-          label: "Suivis des permis",
-        },
-        {
-          href: route("contractant.permisexcavation.create"),
-          label: "Permis D'Excavation",
-        },
 {
-  href: "/contractant/permis-travail-securitaire/create",
-  label: "Permis de travail sécuritaire — Construction",
-}
-      ]
+  href: route("contractant.permis.selection"),
+  label: "Permis & Suivis",
+  icon: FileSignature,
+  color: "from-orange-500 to-red-500",
+  children: [
+    {
+      href: route("contractant.suivi-permis.index"),
+      label: "Suivis des permis",
     },
+    {
+      href: route("contractant.permisexcavation.create"),
+      label: "Permis D'Excavation",
+    },
+    {
+      href: route("contractant.permis-travail-securitaire.create"),
+      label: "Permis de travail sécuritaire",
+    },
+    {
+      href: route("contractant.permis-travail-chaud.create"), // ✅ AJOUTEZ LE PRÉFIXE contractant.
+      label: "Permis De Travail à Chaud",
+    }
+  ]
+},
     { 
       href: '/contractant/materiel', 
       label: 'Ressources Matérielles',

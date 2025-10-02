@@ -119,6 +119,10 @@ Route::middleware(['auth'])->prefix('hse-responsible')->name('hseResponsible.')-
     Route::get('/permis', [HSEResponsiblePermisCtrl::class, 'index'])->name('permis.index');
     Route::get('/permis/{permisExcavation}', [HSEResponsiblePermisCtrl::class, 'show'])->name('permis.show');
     Route::post('/permis/{permis}/sign', [HSEResponsiblePermisCtrl::class, 'sign'])->name('permis.sign');
+      Route::get('/permis-travail-chaud/{permisTravailChaud}', [HSEResponsiblePermisCtrl::class, 'showTravailChaud'])->name('permis-travail-chaud.show');
+    Route::post('/permis-travail-chaud/{permisTravailChaud}/sign', [HSEResponsiblePermisCtrl::class, 'signTravailChaud'])->name('permis-travail-chaud.sign');
+    Route::get('/permis-travail-securitaire/{permisTravailSecuritaire}', [HSEResponsiblePermisCtrl::class, 'showTravailSecuritaire'])->name('permis-travail-securitaire.show');
+    Route::post('/permis-travail-securitaire/{permisTravailSecuritaire}/sign', [HSEResponsiblePermisCtrl::class, 'signTravailSecuritaire'])->name('permis-travail-securitaire.sign');
 });
 
 

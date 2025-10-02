@@ -28,10 +28,15 @@ class PermisTravailChaudController extends Controller
     public function create()
     {
         $sites = Site::all();
+        $contractor = auth()->user(); // Get authenticated contractor
 
         return Inertia::render('Contractant/PermisDeTravailAChaud', [
             'sites' => $sites,
-            'mode' => 'create'
+            'mode' => 'create',
+            'contractor' => [ // Send contractor data to frontend
+                'company_name' => $contractor->company_name,
+                'name' => $contractor->name,
+            ]
         ]);
     }
 
@@ -40,32 +45,40 @@ class PermisTravailChaudController extends Controller
         // Debug: Log the incoming request
         \Log::info('PermisTravailChaud Store Request:', $request->all());
 
+        // Get the authenticated contractor's company name
+        $contractorCompanyName = auth()->user()->company_name;
+
         $validated = $request->validate([
             'numero_permis' => 'required|string|unique:permis_travail_chauds',
             'site_id' => 'required|exists:sites,id',
             'date_debut' => 'required|date',
             'date_fin' => 'required|date',
-            'description_tache' => 'required|string',
+            'description_tache' => 'required|string|max:100',
             'plan_securitaire_par' => 'required|string',
             'date_plan_securitaire' => 'required|date',
-            'contractant_demandeur' => 'required|string',
+            // Remove validation for contractant_demandeur since it's auto-filled
             'contractant_travail' => 'required|string',
             'activites' => 'required|array',
             'activites.*' => 'string',
+            'activite_autre' => 'nullable|string|max:100',
             'dangers' => 'required|array',
             'dangers.*' => 'string',
+            'danger_autre' => 'nullable|string|max:100',
             'protection_physique' => 'required|array',
             'protection_physique.*' => 'string',
+            'protection_physique_autre' => 'nullable|string|max:100',
             'protection_respiratoire' => 'required|array',
             'protection_respiratoire.*' => 'string',
             'protection_incendie' => 'required|array',
             'protection_incendie.*' => 'string',
+            'protection_incendie_autre' => 'nullable|string|max:100',
             'equipement_inspection' => 'required|array',
             'equipement_inspection.*' => 'string',
             'permis_requis' => 'required|array',
             'permis_requis.*' => 'string',
             'surveillance_requise' => 'required|array',
             'surveillance_requise.*' => 'string',
+            'commentaires' => 'nullable|string|max:250',
             'resp_construction_nom' => 'required|string',
             'resp_construction_date' => 'required|date',
             'resp_hse_nom' => 'required|string',
@@ -89,22 +102,23 @@ class PermisTravailChaudController extends Controller
                 $respHsePath = $request->file('resp_hse_file')->store('signatures/travail-chaud', 'public');
             }
 
-            // Prepare data for creation
+            // Prepare data for creation - use contractor's company name for contractant_demandeur
             $permitData = [
                 ...$validated,
+                'contractant_demandeur' => $contractorCompanyName, // Auto-filled from contractor profile
                 'status' => 'en_attente',
                 'meme_que_demandeur' => $request->boolean('meme_que_demandeur'),
                 'aucun_commentaire' => $request->boolean('aucun_commentaire'),
-                'commentaires' => $request->commentaires,
-                'activite_autre' => $request->activite_autre,
-                'danger_autre' => $request->danger_autre,
-                'protection_physique_autre' => $request->protection_physique_autre,
-                'protection_incendie_autre' => $request->protection_incendie_autre,
                 'resp_construction_signature' => $respConstructionPath,
                 'resp_hse_signature' => $respHsePath,
                 'created_by' => auth()->id(),
                 'soumis_le' => now(),
             ];
+
+            // Ensure contractant_travail is set correctly based on meme_que_demandeur
+            if ($request->boolean('meme_que_demandeur')) {
+                $permitData['contractant_travail'] = $contractorCompanyName;
+            }
 
             \Log::info('Creating permit with data:', $permitData);
 
@@ -139,10 +153,16 @@ class PermisTravailChaudController extends Controller
 
     public function show(PermisTravailChaud $permisTravailChaud)
     {
+        $contractor = auth()->user();
+
         return Inertia::render('Contractant/PermisDeTravailAChaud', [
             'permis' => $permisTravailChaud->load(['site', 'createdBy']),
             'mode' => 'show',
             'sites' => Site::all(),
+            'contractor' => [
+                'company_name' => $contractor->company_name,
+                'name' => $contractor->name,
+            ]
         ]);
     }
 

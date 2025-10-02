@@ -24,9 +24,19 @@ class PermisTravailSecuritaireController extends Controller
 
     public function create()
     {
+        $user = auth()->user();
+        
+        // Récupérer les informations du contractant connecté
+        $contractorInfo = [
+            'name' => $user->name,
+            'company_name' => $user->company_name,
+            'full_display' => $user->name . ' - ' . $user->company_name
+        ];
+
         return Inertia::render('Contractant/PermisDeTravailSecuritaire', [
             'mode'  => 'create',
             'sites' => Site::all(),
+            'contractor_info' => $contractorInfo
         ]);
     }
 
@@ -160,8 +170,8 @@ class PermisTravailSecuritaireController extends Controller
         }
 
         $permisTravailSecuritaire->update(array_merge($validated, [
- 'status' => 'signe',
-             'approuve_le' => now(),
+            'status' => 'signe',
+            'approuve_le' => now(),
         ]));
 
         return redirect()->back()->with('success', 'Permis approuvé avec succès.');

@@ -74,20 +74,7 @@ function AdminHome() {
           </p>
         </div>
             
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-            >
-        <Link
-          href="#"
-                className="group inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-slate-900 to-blue-900 hover:from-blue-900 hover:to-indigo-900 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-              >
-                <Download className="w-5 h-5" />
-                <span>Générer un rapport</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </motion.div>
+            
           </div>
         </motion.div>
 

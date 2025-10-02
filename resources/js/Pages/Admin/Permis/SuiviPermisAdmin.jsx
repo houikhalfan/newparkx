@@ -15,6 +15,9 @@ import {
   User,
   Calendar,
   Hash,
+  Shield,
+  Flame,
+  Hammer,
 } from "lucide-react";
 
 /* ---------------------- Helpers ---------------------- */
@@ -62,6 +65,15 @@ function getStatusBadge(status) {
   return badges[status] || badges.en_attente;
 }
 
+function getTypeIcon(type) {
+  const icons = {
+    "Permis d'excavation": Hammer,
+    "Permis de travail sécuritaire": Shield,
+    "Permis de travail chaud": Flame,
+  };
+  return icons[type] || FileText;
+}
+
 function fmtDate(date) {
   try {
     return new Date(date).toLocaleDateString("fr-FR", {
@@ -76,9 +88,12 @@ function fmtDate(date) {
 
 /* ---------------------- Component ---------------------- */
 export default function SuiviPermisAdmin() {
-  const { permis = [], q = "", s = "" } = usePage().props;
-  const [search, setSearch] = useState(q);
-  const [status, setStatus] = useState(s);
+  const { permis = [], q = "", s = "", t = "" } = usePage().props;
+  
+  // Initialiser avec des valeurs par défaut pour éviter null
+  const [search, setSearch] = useState(q || "");
+  const [status, setStatus] = useState(s || "");
+  const [type, setType] = useState(t || "");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
@@ -110,7 +125,7 @@ export default function SuiviPermisAdmin() {
                 Suivi des Permis — Admin
               </h1>
               <p className="text-lg text-slate-600 dark:text-slate-300 mt-2">
-                Recherchez, filtrez et suivez l’état des permis d’excavation
+                Recherchez, filtrez et suivez l'état de tous les permis
               </p>
             </div>
           </div>
@@ -138,6 +153,19 @@ export default function SuiviPermisAdmin() {
                     className="w-full rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 pl-12 pr-4 py-3 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   />
                 </div>
+
+                {/* Type filter */}
+                <select
+                  name="t"
+                  value={type}
+                  onChange={(e) => setType(e.target.value)}
+                  className="rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                >
+                  <option value="">Tous les types</option>
+                  <option value="excavation">Permis d'excavation</option>
+                  <option value="securitaire">Permis de travail sécuritaire</option>
+                  <option value="chaud">Permis de travail à chaud</option>
+                </select>
 
                 {/* Status filter */}
                 <select
@@ -173,8 +201,8 @@ export default function SuiviPermisAdmin() {
           <table className="w-full text-sm">
             <thead className="sticky top-0 bg-slate-50 dark:bg-slate-700 text-left">
               <tr>
-                <Th>Numéro Permis</Th>
                 <Th>Type</Th>
+                <Th>Numéro Permis</Th>
                 <Th>Site</Th>
                 <Th>Contractant</Th>
                 <Th>Date Création</Th>
@@ -198,16 +226,23 @@ export default function SuiviPermisAdmin() {
                 {permis.map((p, idx) => {
                   const badge = getStatusBadge(p.status);
                   const StatusIcon = badge.icon;
+                  const TypeIcon = getTypeIcon(p.type);
+                  
                   return (
                     <motion.tr
-                      key={p.id}
+                      key={`${p.model_type}-${p.id}`}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: idx * 0.05 }}
                       className="border-t hover:bg-slate-50 dark:hover:bg-slate-700/50"
                     >
-                      <Td>{p.numero_permis}</Td>
-                      <Td>{p.type || "Permis d’excavation"}</Td>
+                      <Td>
+                        <div className="flex items-center gap-2">
+                          <TypeIcon className="w-4 h-4 text-blue-600" />
+                          <span className="font-medium">{p.type}</span>
+                        </div>
+                      </Td>
+                      <Td className="font-mono text-sm">{p.numero_permis}</Td>
                       <Td>{p.site || "—"}</Td>
                       <Td>{p.contractant || "—"}</Td>
                       <Td>{fmtDate(p.created_at)}</Td>

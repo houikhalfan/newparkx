@@ -52,15 +52,17 @@ class PermisTravailSecuritaire extends Model
         'hse_parkx_nom',
         'hse_parkx_date',
         'hse_parkx_file',
+        'hse_parkx_commentaires',
         'fermeture_q1',
         'fermeture_q2',
         'fermeture_q3',
         'fermeture_suivi',
-        'status', // ← CHANGÉ: 'statut' → 'status'
+        'status',
         'created_by',
         'soumis_le',
         'approuve_le',
         'ferme_le',
+        'pdf_signed', // ← ADD THIS LINE
     ];
 
     protected $casts = [
@@ -105,7 +107,7 @@ class PermisTravailSecuritaire extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    // ---------------- Scopes (CORRIGÉS) ----------------
+    // ---------------- Scopes ----------------
     public function scopeEnAttente($query)
     {
         return $query->where('status', 'en_attente');
@@ -132,11 +134,11 @@ class PermisTravailSecuritaire extends Model
                      ->where('duree_a', '>=', now());
     }
 
-    // ---------------- Méthodes utilitaires (CORRIGÉES) ----------------
+    // ---------------- Méthodes utilitaires ----------------
     public function soumettre()
     {
         $this->update([
-            'status' => 'en_attente', // ← NOUVELLE VALEUR
+            'status' => 'en_attente',
             'soumis_le' => now(),
         ]);
     }
@@ -144,7 +146,7 @@ class PermisTravailSecuritaire extends Model
     public function approuver()
     {
         $this->update([
-            'status' => 'signe', // ← NOUVELLE VALEUR
+            'status' => 'signe',
             'approuve_le' => now(),
         ]);
     }
@@ -152,7 +154,7 @@ class PermisTravailSecuritaire extends Model
     public function demarrer()
     {
         $this->update([
-            'status' => 'en_cours', // ← NOUVELLE VALEUR
+            'status' => 'en_cours',
         ]);
     }
 
@@ -188,9 +190,9 @@ class PermisTravailSecuritaire extends Model
                 $permit->numero_permis = $permit->generatePermitNumber($contractorName);
             }
             
-            // Définir le statut initial (CORRIGÉ)
+            // Définir le statut initial
             if (empty($permit->status)) {
-                $permit->status = 'en_attente'; // ← NOUVELLE VALEUR
+                $permit->status = 'en_attente';
             }
         });
     }
@@ -224,16 +226,26 @@ class PermisTravailSecuritaire extends Model
         );
     }
 
+    // Add PDF Signed URL accessor
+    protected function pdfSignedUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => $this->pdf_signed 
+                ? asset('storage/' . ltrim($this->pdf_signed, '/'))
+                : null,
+        );
+    }
+
     private function getFileUrl($file)
     {
         if (!$file) return null;
         
         return filter_var($file, FILTER_VALIDATE_URL) 
             ? $file 
-            : asset('storage/' . $file); // ← CORRIGÉ: enlevé 'signatures/'
+            : asset('storage/' . $file);
     }
 
-    // ---------------- Helpers (CORRIGÉS) ----------------
+    // ---------------- Helpers ----------------
     public function getEstExpireAttribute()
     {
         return $this->duree_a < now();
@@ -248,7 +260,7 @@ class PermisTravailSecuritaire extends Model
 
     public function getStatutCouleurAttribute()
     {
-        return match($this->status) { // ← CHANGÉ: $this->statut → $this->status
+        return match($this->status) {
             'en_attente' => 'blue',
             'en_cours' => 'green', 
             'rejete' => 'red',
@@ -259,7 +271,7 @@ class PermisTravailSecuritaire extends Model
 
     public function getStatutLibelleAttribute()
     {
-        return match($this->status) { // ← CHANGÉ
+        return match($this->status) {
             'en_attente' => 'En attente',
             'en_cours' => 'En cours',
             'rejete' => 'Rejeté',

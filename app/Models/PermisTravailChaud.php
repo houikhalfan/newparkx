@@ -55,6 +55,8 @@ class PermisTravailChaud extends Model
         'soumis_le',
         'approuve_le',
         'ferme_le',
+        'pdf_signed',
+
     ];
 
     protected $casts = [
@@ -116,7 +118,14 @@ class PermisTravailChaud extends Model
     {
         return $query->where('status', 'signe');
     }
-
+protected function pdfSignedUrl(): Attribute
+{
+    return Attribute::make(
+        get: fn () => $this->pdf_signed 
+            ? asset('storage/' . ltrim($this->pdf_signed, '/'))
+            : null,
+    );
+}
     // ---------------- Méthodes utilitaires ----------------
     public function soumettre()
     {

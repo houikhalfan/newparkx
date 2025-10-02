@@ -11,24 +11,24 @@ import { FileText, Calendar, Download, Search, X, Menu } from 'lucide-react';
 const BRAND = "#0E8A5D"; // ParkX green
 
 const FormCard = ({ title, children }) => (
-  <div className="rounded-2xl lg:rounded-3xl border border-blue-200/50 bg-white/90 backdrop-blur-xl shadow-lg lg:shadow-2xl overflow-hidden mb-6 lg:mb-8">
-    <div className="px-4 lg:px-6 py-3 lg:py-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-b border-blue-200/50">
-      <h2 className="text-xs lg:text-sm font-bold tracking-wide text-gray-800 uppercase">
+  <div className="rounded-sm border border-gray-300 bg-white overflow-hidden mb-6">
+    <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+      <h2 className="text-lg font-bold text-gray-800">
         {title}
       </h2>
     </div>
-    <div className="p-4 lg:p-8 bg-white/95">{children}</div>
+    <div className="p-6 bg-white">{children}</div>
   </div>
 );
 
 const Row = ({ label, children, className = "" }) => (
   <div
     className={[
-      "flex flex-col gap-2 lg:gap-3 py-3 lg:py-4 border-b border-gray-100 last:border-b-0",
+      "flex flex-col gap-3 py-4 border-b border-gray-100 last:border-b-0",
       className,
     ].join(" ")}
   >
-    <div className="lg:w-72 shrink-0 pt-1 lg:pt-1.5">
+    <div className="w-full">
       <label className="text-sm font-semibold text-gray-700">{label}</label>
     </div>
     <div className="flex-1 min-w-0">{children}</div>
@@ -36,9 +36,9 @@ const Row = ({ label, children, className = "" }) => (
 );
 
 const inputBase =
-  "w-full rounded-lg lg:rounded-xl px-3 lg:px-4 py-2.5 lg:py-3 text-sm outline-none transition-all duration-300 shadow-sm border border-gray-300 text-gray-800 placeholder-gray-500";
+  "w-full rounded-md px-4 py-3 text-sm outline-none transition-all duration-300 shadow-sm border border-gray-300 text-gray-800 placeholder-gray-500";
 const inputActive =
-  "bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50";
+  "bg-white focus:border-gray-500 focus:ring-1 focus:ring-gray-500/20";
 const inputDisabled = "bg-gray-100 text-gray-500";
 
 const Text = ({ disabled, ...rest }) => (
@@ -88,13 +88,13 @@ const FieldError = ({ children }) =>
 const CheckLine = ({ children, checked, onChange, disabled }) => (
   <label
     className={[
-      "flex items-start gap-2 lg:gap-3 py-1.5 lg:py-2 text-sm lg:text-sm",
+      "flex items-start gap-3 py-2 text-sm",
       disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer",
     ].join(" ")}
   >
     <input
       type="checkbox"
-      className="mt-0.5 h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 flex-shrink-0"
+      className="mt-0.5 h-4 w-4 rounded border-gray-300 text-gray-700 focus:ring-gray-500 flex-shrink-0"
       checked={!!checked}
       onChange={(e) => onChange?.(e.target.checked)}
       disabled={disabled}
@@ -130,7 +130,7 @@ function SignaturePicker({ id, label, value, onChange, disabled, error }) {
           onChange?.(f);
           setPreview(f ? URL.createObjectURL(f) : null);
         }}
-        className="block w-full text-sm text-gray-700 file:mr-2 lg:file:mr-3 file:rounded-lg file:border-0 file:px-3 lg:file:px-4 file:py-2 file:py-2.5 file:text-white file:bg-cyan-600 transition-all duration-300 file:text-xs lg:file:text-sm"
+        className="block w-full text-sm text-gray-700 file:mr-3 file:rounded-md file:border-0 file:px-4 file:py-2 file:text-white file:bg-gray-700 transition-all duration-300 file:text-sm"
       />
 
       {/* Live File preview */}
@@ -138,7 +138,7 @@ function SignaturePicker({ id, label, value, onChange, disabled, error }) {
         <img
           src={preview || URL.createObjectURL(value)}
           alt="Signature"
-          className="mt-3 h-16 lg:h-20 w-auto rounded-lg border border-gray-300 bg-gray-50 shadow-sm"
+          className="mt-3 h-20 w-auto rounded-md border border-gray-300 bg-gray-50 shadow-sm"
         />
       )}
 
@@ -147,7 +147,7 @@ function SignaturePicker({ id, label, value, onChange, disabled, error }) {
         <img
           src={`/storage/${value}`}
           alt="Signature"
-          className="mt-3 h-16 lg:h-20 w-auto rounded-lg border border-gray-300 bg-gray-50 shadow-sm"
+          className="mt-3 h-20 w-auto rounded-md border border-gray-300 bg-gray-50 shadow-sm"
         />
       )}
 
@@ -248,6 +248,23 @@ export default function PermisExcavation() {
 
   /* ------------------------------ Helpers ------------------------------ */
   const contractorName = contractor && contractor.name ? contractor.name : "GENERIC";
+  
+  // Add this helper to format the demandeur name
+  const getContractorDisplayName = () => {
+    if (!contractor) return "";
+    
+    const name = contractor.name || "";
+    const companyName = contractor.company_name || "";
+    
+    if (name && companyName) {
+      return `${name} - ${companyName}`;
+    } else if (name) {
+      return name;
+    } else if (companyName) {
+      return companyName;
+    }
+    return "";
+  };
 
   function generatePermitNumber(contractorName = "GENERIC") {
     const date = new Date();
@@ -274,7 +291,7 @@ export default function PermisExcavation() {
         description: permis.description || "",
         analyse_par: permis.analyse_par || "",
         date_analyse: permis.date_analyse || "",
-        demandeur: permis.demandeur || "",
+        demandeur: permis.demandeur || getContractorDisplayName(),
         contractant: permis.contractant || "",
         meme_que_demandeur: !!permis.meme_que_demandeur,
 
@@ -341,8 +358,8 @@ export default function PermisExcavation() {
         description: "",
         analyse_par: "",
         date_analyse: "",
-        demandeur: "",
-        contractant: "",
+        demandeur: getContractorDisplayName(), // 👈 Auto-filled with contractor info
+        contractant: contractorName || "",
         meme_que_demandeur: false,
 
         // DANGERS
@@ -460,22 +477,7 @@ export default function PermisExcavation() {
 
   /* ----------------------------------- UI ---------------------------------- */
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 relative overflow-hidden flex">
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-20 -right-20 w-40 h-40 lg:-top-40 lg:-right-40 lg:w-80 lg:h-80 bg-gradient-to-br from-blue-200/30 to-purple-200/30 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute -bottom-20 -left-20 w-40 h-40 lg:-bottom-40 lg:-left-40 lg:w-80 lg:h-80 bg-gradient-to-br from-purple-200/30 to-pink-200/30 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 lg:w-96 lg:h-96 bg-gradient-to-br from-cyan-200/20 to-blue-200/20 rounded-full blur-3xl animate-pulse" />
-      </div>
-
-      {/* Grid Pattern */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(59,130,246,0.2) 1px, transparent 0)`,
-          backgroundSize: '30px 30px'
-        }} />
-      </div>
-
+    <div className="min-h-screen bg-gray-50 relative overflow-hidden flex">
       {/* Sidebar - Hidden on mobile, shown on desktop */}
       <div className="hidden lg:block">
         <ContractantSidebar />
@@ -498,730 +500,725 @@ export default function PermisExcavation() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="relative z-10 px-4 lg:px-6 mb-4 lg:mb-6"
+              className="relative z-10 px-6 mb-6"
             >
               <div className="max-w-7xl mx-auto">
-                <div className="bg-green-50 backdrop-blur-sm border border-green-200 rounded-xl p-3 lg:p-4 flex items-center space-x-2 lg:space-x-3 shadow-lg">
-                  <FileText className="w-4 h-4 lg:w-5 lg:h-5 text-green-600 flex-shrink-0" />
-                  <p className="text-green-700 font-medium text-sm lg:text-base">{flash.success}</p>
+                <div className="bg-green-50 backdrop-blur-sm border border-green-200 rounded-lg p-4 flex items-center space-x-3 shadow-sm">
+                  <FileText className="w-5 h-5 text-green-600 flex-shrink-0" />
+                  <p className="text-green-700 font-medium text-sm">{flash.success}</p>
                 </div>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        <div className="relative z-10 px-3 lg:px-6 pb-8 lg:pb-12 flex-1 pt-4 lg:pt-8">
-          <div className="max-w-7xl mx-auto">
-            {/* Header Section */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-center mb-6 lg:mb-12"
-            >
-              <h1 className="text-2xl lg:text-4xl xl:text-5xl font-bold text-gray-800 mb-3 lg:mb-4 px-2">
-                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  Permis D'Excavation
-                </span>
-              </h1>
-              <p className="text-gray-600 text-sm lg:text-lg px-4">
-                Remplissez et soumettez votre permis d'excavation
-              </p>
-            </motion.div>
-
-            {/* Document Header */}
+        <div className="relative z-10 px-6 pb-8 flex-1 pt-8">
+          <div className="max-w-6xl mx-auto">
+            {/* Main Form Container with Thin Frame */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="mb-6 lg:mb-8 rounded-2xl lg:rounded-3xl border border-gray-200 bg-white shadow-lg overflow-hidden"
+              className="border border-gray-300 rounded-sm bg-white overflow-hidden mb-8"
             >
-              <div className="flex flex-col lg:flex-row items-center justify-between px-4 lg:px-6 py-3 lg:py-4 bg-gray-50 border-b border-gray-200">
-                <div className="flex items-center gap-2 lg:gap-3 mb-3 lg:mb-0">
-                  <img src={logoSrc} alt="ParkX" className="h-6 lg:h-8 w-auto" />
-                  <h1 className="text-gray-800 font-semibold tracking-wide uppercase text-sm lg:text-lg">
-                    PERMIS D'EXCAVATION
-                  </h1>
+              {/* Document Header - Centered Logo and Title */}
+              <div className="px-8 py-6 bg-white border-b border-gray-300">
+                <div className="flex flex-col items-center justify-center text-center space-y-4">
+                  {/* Centered Logo and Title */}
+                  <div className="flex items-center justify-center space-x-4">
+                    <img src={logoSrc} alt="ParkX" className="h-12 w-auto" />
+                    <h1 className="text-2xl font-bold text-gray-800 tracking-wide uppercase">
+                      PERMIS D'EXCAVATION
+                    </h1>
+                  </div>
                 </div>
 
-                <div className="text-center lg:text-right w-full lg:w-auto">
+                {/* Permit Numbers */}
+                <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-2xl mx-auto">
                   {/* NUMÉRO DE PERMIS GÉNÉRAL */}
-                  <div className="text-xs lg:text-sm text-gray-700">NUMÉRO DE PERMIS GÉNÉRAL</div>
-                  <div className="mt-1 max-w-xs mx-auto lg:mx-0">
-                    <Text
-                      disabled={readonly}
-                      value={data.numero_permis_general}
-                      onChange={(e) => setData("numero_permis_general", e.target.value)}
-                      placeholder=""
-                      className="text-center lg:text-left"
-                    />
-                    <FieldError>{errors.numero_permis_general}</FieldError>
+                  <div className="text-center">
+                    <div className="text-sm text-gray-700 font-medium mb-2">NUMÉRO DE PERMIS GÉNÉRAL</div>
+                    <div>
+                      <Text
+                        disabled={readonly}
+                        value={data.numero_permis_general}
+                        onChange={(e) => setData("numero_permis_general", e.target.value)}
+                        placeholder=""
+                        className="text-center"
+                      />
+                      <FieldError>{errors.numero_permis_general}</FieldError>
+                    </div>
                   </div>
 
                   {/* NUMÉRO DE PERMIS */}
-                  <div className="mt-2 max-w-xs mx-auto lg:mx-0">
-                    <div className="text-xs lg:text-sm text-gray-700">NUMÉRO DE PERMIS</div>
-                    <Text
-                      disabled
-                      value={data.numero_permis || generatePermitNumber(contractorName)}
-                      className="text-center lg:text-left"
-                    />
-                    <FieldError>{errors.numero_permis}</FieldError>
+                  <div className="text-center">
+                    <div className="text-sm text-gray-700 font-medium mb-2">NUMÉRO DE PERMIS</div>
+                    <div>
+                      <Text
+                        disabled
+                        value={data.numero_permis || generatePermitNumber(contractorName)}
+                        className="text-center"
+                      />
+                      <FieldError>{errors.numero_permis}</FieldError>
+                    </div>
                   </div>
                 </div>
               </div>
-            </motion.div>
 
-            <form onSubmit={onSubmit} className="space-y-4 lg:space-y-6">
-              {/* IDENTIFICATION */}
-              <FormCard title="Identification">
-                <Row label="Endroit / Plan">
-                  <select
-                    value={data.site_id}
-                    disabled={readonly}
-                    onChange={(e) => setData("site_id", e.target.value)}
-                    className="w-full rounded-lg px-3 lg:px-4 py-2 lg:py-2.5 bg-white border border-gray-300 text-gray-800 placeholder-gray-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/30 transition-all duration-300 text-sm"
-                  >
-                    <option value="" disabled className="bg-gray-100 text-gray-800">
-                      Choisir un site…
-                    </option>
-                    {sites.map((s) => (
-                      <option key={s.id} value={s.id} className="bg-white text-gray-800">
-                        {s.name}
-                      </option>
-                    ))}
-                  </select>
-                  <FieldError>{errors.site_id}</FieldError>
-                </Row>
-
-                <Row label="Durée">
-                  <div className="grid grid-cols-1 gap-2 lg:gap-3 sm:grid-cols-2">
-                    <div>
-                      <Text
-                        type="date"
+              {/* Form Content */}
+              <div className="p-8 bg-white">
+                <form onSubmit={onSubmit} className="space-y-6">
+                  {/* IDENTIFICATION */}
+                  <FormCard title="Identification">
+                    <Row label="Endroit / Plan">
+                      <select
+                        value={data.site_id}
                         disabled={readonly}
-                        value={data.duree_de}
-                        onChange={(e) => setData("duree_de", e.target.value)}
-                      />
-                      <FieldError>{errors.duree_de}</FieldError>
-                    </div>
-                    <div>
-                      <Text
-                        type="date"
-                        disabled={readonly}
-                        value={data.duree_a}
-                        onChange={(e) => setData("duree_a", e.target.value)}
-                      />
-                      <FieldError>{errors.duree_a}</FieldError>
-                    </div>
-                  </div>
-                </Row>
+                        onChange={(e) => setData("site_id", e.target.value)}
+                        className="w-full rounded-md px-4 py-3 bg-white border border-gray-300 text-gray-800 placeholder-gray-500 focus:border-gray-500 focus:ring-1 focus:ring-gray-500/20 transition-all duration-300 text-sm"
+                      >
+                        <option value="" disabled className="bg-gray-100 text-gray-800">
+                          Choisir un site…
+                        </option>
+                        {sites.map((s) => (
+                          <option key={s.id} value={s.id} className="bg-white text-gray-800">
+                            {s.name}
+                          </option>
+                        ))}
+                      </select>
+                      <FieldError>{errors.site_id}</FieldError>
+                    </Row>
 
-                <Row label="Description du travail">
-                  <Area
-                    disabled={readonly}
-                    value={data.description}
-                    onChange={(e) => setData("description", e.target.value)}
-                    maxLength={100}
-                    rows={2}
-                  />
-                  <FieldError>{errors.description}</FieldError>
-                </Row>
-
-                <Row label="Analyse des risques réalisée par">
-                  <div className="grid grid-cols-1 gap-2 lg:gap-3 sm:grid-cols-2">
-                    <div>
-                      <Text
-                        disabled={readonly}
-                        value={data.analyse_par}
-                        onChange={(e) => setData("analyse_par", e.target.value)}
-                      />
-                      <FieldError>{errors.analyse_par}</FieldError>
-                    </div>
-                    <div>
-                      <Text
-                        type="date"
-                        disabled={readonly}
-                        value={data.date_analyse}
-                        onChange={(e) => setData("date_analyse", e.target.value)}
-                      />
-                      <FieldError>{errors.date_analyse}</FieldError>
-                    </div>
-                  </div>
-                </Row>
-
-                <Row label="Demandeur du permis">
-                  <Text
-                    disabled={readonly}
-                    value={data.demandeur}
-                    onChange={(e) => setData("demandeur", e.target.value)}
-                  />
-                  <FieldError>{errors.demandeur}</FieldError>
-                </Row>
-
-                <Row label="Contractant effectuant le travail">
-                  <div>
-                    <Text
-                      disabled={readonly}
-                      value={data.contractant}
-                      onChange={(e) => setData("contractant", e.target.value)}
-                    />
-                    <label className="mt-2 lg:mt-3 flex items-center gap-2 text-sm text-gray-700">
-                      <input
-                        type="checkbox"
-                        className="h-4 w-4 rounded border-gray-300 text-cyan-600 focus:ring-cyan-500"
-                        disabled={readonly}
-                        checked={!!data.meme_que_demandeur}
-                        onChange={(e) => {
-                          const checked = e.target.checked;
-                          setData("meme_que_demandeur", checked);
-                          if (checked) setData("contractant", data.demandeur || "");
-                        }}
-                      />
-                      Même que demandeur
-                    </label>
-                  </div>
-                  <FieldError>{errors.contractant}</FieldError>
-                </Row>
-              </FormCard>
-
-              {/* DANGERS PARTICULIERS */}
-              <FormCard title="Dangers particuliers">
-                <Row label="Aucun">
-                  <CheckLine
-                    checked={!!data.danger_aucun}
-                    onChange={(v) => setData("danger_aucun", v)}
-                    disabled={readonly}
-                  >
-                    Aucun
-                  </CheckLine>
-                </Row>
-
-                <Row label="L'excavation est :">
-                  <div className="divide-y divide-gray-100 space-y-0">
-                    {optExcavationEst.map((o) => (
-                      <div key={o.key} className="py-1.5 lg:py-2 first:pt-0 last:pb-0">
-                        <CheckLine
-                          checked={Array.isArray(data.excavation_est) && data.excavation_est.includes(o.key)}
-                          onChange={() => toggleArray("excavation_est", o.key)}
-                          disabled={readonly || data.danger_aucun}
-                        >
-                          {o.label}
-                        </CheckLine>
-                      </div>
-                    ))}
-                  </div>
-                </Row>
-
-                <Row label="Conduites / Tuyauterie souterraine">
-                  <div className="divide-y divide-gray-100 space-y-0">
-                    {optConduites.map((o) => (
-                      <div key={o.key} className="py-1.5 lg:py-2 first:pt-0 last:pb-0">
-                        <CheckLine
-                          checked={Array.isArray(data.conduites) && data.conduites.includes(o.key)}
-                          onChange={() => toggleArray("conduites", o.key)}
-                          disabled={readonly || data.danger_aucun}
-                        >
-                          {o.label}
-                        </CheckLine>
-                      </div>
-                    ))}
-                  </div>
-                </Row>
-
-                <Row label="Situations dangereuses">
-                  <div className="divide-y divide-gray-100 space-y-0">
-                    {optSituations.map((o) => (
-                      <div key={o.key} className="py-1.5 lg:py-2 first:pt-0 last:pb-0">
-                        <CheckLine
-                          checked={Array.isArray(data.situations) && data.situations.includes(o.key)}
-                          onChange={() => toggleArray("situations", o.key)}
-                          disabled={readonly || data.danger_aucun}
-                        >
-                          {o.label}
-                        </CheckLine>
-                      </div>
-                    ))}
-                    {Array.isArray(data.situations) &&
-                      data.situations.includes("autre") &&
-                      !data.danger_aucun && (
-                        <div className="pt-2 lg:pt-3">
+                    <Row label="Durée">
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <div>
                           <Text
-                            placeholder="Autre (préciser)"
+                            type="date"
                             disabled={readonly}
-                            value={data.situation_autre}
-                            onChange={(e) => setData("situation_autre", e.target.value)}
+                            value={data.duree_de}
+                            onChange={(e) => setData("duree_de", e.target.value)}
+                          />
+                          <FieldError>{errors.duree_de}</FieldError>
+                        </div>
+                        <div>
+                          <Text
+                            type="date"
+                            disabled={readonly}
+                            value={data.duree_a}
+                            onChange={(e) => setData("duree_a", e.target.value)}
+                          />
+                          <FieldError>{errors.duree_a}</FieldError>
+                        </div>
+                      </div>
+                    </Row>
+
+                    <Row label="Description du travail">
+                      <Area
+                        disabled={readonly}
+                        value={data.description}
+                        onChange={(e) => setData("description", e.target.value)}
+                        maxLength={100}
+                        rows={2}
+                      />
+                      <FieldError>{errors.description}</FieldError>
+                    </Row>
+
+                    <Row label="Analyse des risques réalisée par">
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <div>
+                          <Text
+                            disabled={readonly}
+                            value={data.analyse_par}
+                            onChange={(e) => setData("analyse_par", e.target.value)}
+                          />
+                          <FieldError>{errors.analyse_par}</FieldError>
+                        </div>
+                        <div>
+                          <Text
+                            type="date"
+                            disabled={readonly}
+                            value={data.date_analyse}
+                            onChange={(e) => setData("date_analyse", e.target.value)}
+                          />
+                          <FieldError>{errors.date_analyse}</FieldError>
+                        </div>
+                      </div>
+                    </Row>
+
+                    <Row label="Demandeur du permis">
+                      <Text
+                        disabled={true} // Make it read-only
+                        value={data.demandeur}
+                        className="bg-gray-100 cursor-not-allowed" // Visual indication it's auto-filled
+                      />
+                      <FieldError>{errors.demandeur}</FieldError>
+                    </Row>
+
+                    <Row label="Contractant effectuant le travail">
+                      <div>
+                        <Text
+                          disabled={readonly}
+                          value={data.contractant}
+                          onChange={(e) => setData("contractant", e.target.value)}
+                        />
+                        <label className="mt-3 flex items-center gap-2 text-sm text-gray-700">
+                          <input
+                            type="checkbox"
+                            className="h-4 w-4 rounded border-gray-300 text-gray-700 focus:ring-gray-500"
+                            disabled={readonly}
+                            checked={!!data.meme_que_demandeur}
+                            onChange={(e) => {
+                              const checked = e.target.checked;
+                              setData("meme_que_demandeur", checked);
+                              if (checked) setData("contractant", getContractorDisplayName());
+                            }}
+                          />
+                          Même que demandeur
+                        </label>
+                      </div>
+                      <FieldError>{errors.contractant}</FieldError>
+                    </Row>
+                  </FormCard>
+
+                  {/* DANGERS PARTICULIERS */}
+                  <FormCard title="Dangers particuliers">
+                    <Row label="Aucun">
+                      <CheckLine
+                        checked={!!data.danger_aucun}
+                        onChange={(v) => setData("danger_aucun", v)}
+                        disabled={readonly}
+                      >
+                        Aucun
+                      </CheckLine>
+                    </Row>
+
+                    <Row label="L'excavation est :">
+                      <div className="divide-y divide-gray-100 space-y-0">
+                        {optExcavationEst.map((o) => (
+                          <div key={o.key} className="py-2 first:pt-0 last:pb-0">
+                            <CheckLine
+                              checked={Array.isArray(data.excavation_est) && data.excavation_est.includes(o.key)}
+                              onChange={() => toggleArray("excavation_est", o.key)}
+                              disabled={readonly || data.danger_aucun}
+                            >
+                              {o.label}
+                            </CheckLine>
+                          </div>
+                        ))}
+                      </div>
+                    </Row>
+
+                    <Row label="Conduites / Tuyauterie souterraine">
+                      <div className="divide-y divide-gray-100 space-y-0">
+                        {optConduites.map((o) => (
+                          <div key={o.key} className="py-2 first:pt-0 last:pb-0">
+                            <CheckLine
+                              checked={Array.isArray(data.conduites) && data.conduites.includes(o.key)}
+                              onChange={() => toggleArray("conduites", o.key)}
+                              disabled={readonly || data.danger_aucun}
+                            >
+                              {o.label}
+                            </CheckLine>
+                          </div>
+                        ))}
+                      </div>
+                    </Row>
+
+                    <Row label="Situations dangereuses">
+                      <div className="divide-y divide-gray-100 space-y-0">
+                        {optSituations.map((o) => (
+                          <div key={o.key} className="py-2 first:pt-0 last:pb-0">
+                            <CheckLine
+                              checked={Array.isArray(data.situations) && data.situations.includes(o.key)}
+                              onChange={() => toggleArray("situations", o.key)}
+                              disabled={readonly || data.danger_aucun}
+                            >
+                              {o.label}
+                            </CheckLine>
+                          </div>
+                        ))}
+                        {Array.isArray(data.situations) &&
+                          data.situations.includes("autre") &&
+                          !data.danger_aucun && (
+                            <div className="pt-3">
+                              <Text
+                                placeholder="Autre (préciser)"
+                                disabled={readonly}
+                                value={data.situation_autre}
+                                onChange={(e) => setData("situation_autre", e.target.value)}
+                              />
+                            </div>
+                          )}
+                      </div>
+                    </Row>
+                  </FormCard>
+
+                  {/* ÉPI */}
+                  <FormCard title="Équipement de protection personnelle (ÉPI) requis">
+                    <Row label="Sans ÉPI additionnel">
+                      <CheckLine
+                        checked={!!data.epi_sans_additionnel}
+                        onChange={(v) => setData("epi_sans_additionnel", v)}
+                        disabled={readonly}
+                      >
+                        Sans ÉPI additionnel
+                      </CheckLine>
+                    </Row>
+
+                    <Row label="Éléments">
+                      <div className="divide-y divide-gray-100 space-y-0">
+                        {optEpiSimples.map((o) => (
+                          <div key={o.key} className="py-2 first:pt-0 last:pb-0">
+                            <CheckLine
+                              checked={Array.isArray(data.epi_simples) && data.epi_simples.includes(o.key)}
+                              onChange={() => toggleArray("epi_simples", o.key)}
+                              disabled={readonly || data.epi_sans_additionnel}
+                            >
+                              {o.label}
+                            </CheckLine>
+                          </div>
+                        ))}
+                        <div className="pt-3">
+                          <Text
+                            placeholder="Autre"
+                            disabled={readonly || data.epi_sans_additionnel}
+                            value={data.epi_autre}
+                            onChange={(e) => setData("epi_autre", e.target.value)}
                           />
                         </div>
-                      )}
-                  </div>
-                </Row>
-              </FormCard>
-
-              {/* ÉPI */}
-              <FormCard title="Équipement de protection personnelle (ÉPI) requis">
-                <Row label="Sans ÉPI additionnel">
-                  <CheckLine
-                    checked={!!data.epi_sans_additionnel}
-                    onChange={(v) => setData("epi_sans_additionnel", v)}
-                    disabled={readonly}
-                  >
-                    Sans ÉPI additionnel
-                  </CheckLine>
-                </Row>
-
-                <Row label="Éléments">
-                  <div className="divide-y divide-gray-100 space-y-0">
-                    {optEpiSimples.map((o) => (
-                      <div key={o.key} className="py-1.5 lg:py-2 first:pt-0 last:pb-0">
-                        <CheckLine
-                          checked={Array.isArray(data.epi_simples) && data.epi_simples.includes(o.key)}
-                          onChange={() => toggleArray("epi_simples", o.key)}
-                          disabled={readonly || data.epi_sans_additionnel}
-                        >
-                          {o.label}
-                        </CheckLine>
                       </div>
-                    ))}
-                    <div className="pt-2 lg:pt-3">
-                      <Text
-                        placeholder="Autre"
-                        disabled={readonly || data.epi_sans_additionnel}
-                        value={data.epi_autre}
-                        onChange={(e) => setData("epi_autre", e.target.value)}
-                      />
-                    </div>
-                  </div>
-                </Row>
-              </FormCard>
+                    </Row>
+                  </FormCard>
 
-              {/* ÉQUIPEMENT DE PROTECTION */}
-              <FormCard title="Équipement de protection">
-                <Row label="Équipement de protection additionnel non requis">
-                  <CheckLine
-                    checked={!!data.equip_non_requis}
-                    onChange={(v) => setData("equip_non_requis", v)}
-                    disabled={readonly}
-                  >
-                    Équipement de protection additionnel non requis
-                  </CheckLine>
-                </Row>
+                  {/* ÉQUIPEMENT DE PROTECTION */}
+                  <FormCard title="Équipement de protection">
+                    <Row label="Équipement de protection additionnel non requis">
+                      <CheckLine
+                        checked={!!data.equip_non_requis}
+                        onChange={(v) => setData("equip_non_requis", v)}
+                        disabled={readonly}
+                      >
+                        Équipement de protection additionnel non requis
+                      </CheckLine>
+                    </Row>
 
-                <Row label="Mesures">
-                  <div className={data.equip_non_requis ? "opacity-60" : ""}>
-                    <div className="divide-y divide-gray-100 space-y-0">
-                      {optEquip.map((o) => (
-                        <div key={o.key} className="py-1.5 lg:py-2 first:pt-0 last:pb-0">
-                          <CheckLine
-                            checked={Array.isArray(data.equip_checks) && data.equip_checks.includes(o.key)}
-                            onChange={() => toggleArray("equip_checks", o.key)}
+                    <Row label="Mesures">
+                      <div className={data.equip_non_requis ? "opacity-60" : ""}>
+                        <div className="divide-y divide-gray-100 space-y-0">
+                          {optEquip.map((o) => (
+                            <div key={o.key} className="py-2 first:pt-0 last:pb-0">
+                              <CheckLine
+                                checked={Array.isArray(data.equip_checks) && data.equip_checks.includes(o.key)}
+                                onChange={() => toggleArray("equip_checks", o.key)}
+                                disabled={readonly || data.equip_non_requis}
+                              >
+                                {o.label}
+                              </CheckLine>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="pt-3">
+                          <Text
+                            placeholder="Autre"
                             disabled={readonly || data.equip_non_requis}
+                            value={data.equip_autre}
+                            onChange={(e) => setData("equip_autre", e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    </Row>
+                  </FormCard>
+
+                  {/* COMMENTAIRES & PROPRIÉTAIRE */}
+                  <FormCard title="Commentaires et recommandations particulières">
+                    <Row label="Aucun commentaire">
+                      <CheckLine
+                        checked={!!data.aucun_commentaire}
+                        onChange={(v) => setData("aucun_commentaire", v)}
+                        disabled={readonly}
+                      >
+                        Aucun commentaire additionnel ou recommandation
+                      </CheckLine>
+                    </Row>
+
+                    <Row label="Commentaires">
+                      <Area
+                        rows={3}
+                        disabled={readonly || data.aucun_commentaire}
+                        value={data.commentaires}
+                        onChange={(e) => setData("commentaires", e.target.value)}
+                        maxLength={250}
+                      />
+                    </Row>
+
+                    <Row label="Propriétaire des lieux (nom en lettres moulées)">
+                      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+                        <div>
+                          <Text
+                            disabled={readonly}
+                            value={data.proprietaire_nom}
+                            onChange={(e) => setData("proprietaire_nom", e.target.value)}
+                          />
+                          <FieldError>{errors.proprietaire_nom}</FieldError>
+                        </div>
+
+                        <div className="lg:col-span-2">
+                          <SignaturePicker
+                            id="prop_sig"
+                            label="Signature (JPG/PNG)"
+                            value={data.proprietaire_signature}
+                            onChange={(f) => setData("proprietaire_signature", f)}
+                            disabled={readonly}
+                            error={errors.proprietaire_signature}
+                          />
+                        </div>
+
+                        <div className="lg:col-start-3">
+                          <Text
+                            type="date"
+                            disabled={readonly}
+                            value={data.proprietaire_date}
+                            onChange={(e) => setData("proprietaire_date", e.target.value)}
+                          />
+                          <FieldError>{errors.proprietaire_date}</FieldError>
+                        </div>
+                      </div>
+                    </Row>
+                  </FormCard>
+
+                  {/* SIGNATURES D'AUTORISATION */}
+                  <FormCard title="Signatures d'autorisation de permis">
+                    <Row label="Vérifications">
+                      <div className="divide-y divide-gray-100 space-y-0">
+                        <div className="py-2 first:pt-0 last:pb-0">
+                          <CheckLine
+                            checked={!!data.autor_q1}
+                            onChange={(v) => setData("autor_q1", v)}
+                            disabled={readonly}
                           >
-                            {o.label}
+                            Les infrastructures souterraines sont identifiées et marquées sur le terrain.
                           </CheckLine>
                         </div>
-                      ))}
-                    </div>
-                    <div className="pt-2 lg:pt-3">
-                      <Text
-                        placeholder="Autre"
-                        disabled={readonly || data.equip_non_requis}
-                        value={data.equip_autre}
-                        onChange={(e) => setData("equip_autre", e.target.value)}
-                      />
-                    </div>
-                  </div>
-                </Row>
-              </FormCard>
-
-              {/* COMMENTAIRES & PROPRIÉTAIRE */}
-              <FormCard title="Commentaires et recommandations particulières">
-                <Row label="Aucun commentaire">
-                  <CheckLine
-                    checked={!!data.aucun_commentaire}
-                    onChange={(v) => setData("aucun_commentaire", v)}
-                    disabled={readonly}
-                  >
-                    Aucun commentaire additionnel ou recommandation
-                  </CheckLine>
-                </Row>
-
-                <Row label="Commentaires">
-                  <Area
-                    rows={3}
-                    disabled={readonly || data.aucun_commentaire}
-                    value={data.commentaires}
-                    onChange={(e) => setData("commentaires", e.target.value)}
-                    maxLength={250}
-                  />
-                </Row>
-
-                <Row label="Propriétaire des lieux (nom en lettres moulées)">
-                  <div className="grid grid-cols-1 gap-3 lg:gap-4 lg:grid-cols-3">
-                    <div>
-                      <Text
-                        disabled={readonly}
-                        value={data.proprietaire_nom}
-                        onChange={(e) => setData("proprietaire_nom", e.target.value)}
-                      />
-                      <FieldError>{errors.proprietaire_nom}</FieldError>
-                    </div>
-
-                    <div className="lg:col-span-2">
-                      <SignaturePicker
-                        id="prop_sig"
-                        label="Signature (JPG/PNG)"
-                        value={data.proprietaire_signature}
-                        onChange={(f) => setData("proprietaire_signature", f)}
-                        disabled={readonly}
-                        error={errors.proprietaire_signature}
-                      />
-                    </div>
-
-                    <div className="lg:col-start-3">
-                      <Text
-                        type="date"
-                        disabled={readonly}
-                        value={data.proprietaire_date}
-                        onChange={(e) => setData("proprietaire_date", e.target.value)}
-                      />
-                      <FieldError>{errors.proprietaire_date}</FieldError>
-                    </div>
-                  </div>
-                </Row>
-              </FormCard>
-
-              {/* SIGNATURES D'AUTORISATION */}
-              <FormCard title="Signatures d'autorisation de permis">
-                <Row label="Vérifications">
-                  <div className="divide-y divide-gray-100 space-y-0">
-                    <div className="py-1.5 lg:py-2 first:pt-0 last:pb-0">
-                      <CheckLine
-                        checked={!!data.autor_q1}
-                        onChange={(v) => setData("autor_q1", v)}
-                        disabled={readonly}
-                      >
-                        Les infrastructures souterraines sont identifiées et marquées sur le terrain.
-                      </CheckLine>
-                    </div>
-                    <div className="py-1.5 lg:py-2 first:pt-0 last:pb-0">
-                      <CheckLine
-                        checked={!!data.autor_q2}
-                        onChange={(v) => setData("autor_q2", v)}
-                        disabled={readonly}
-                      >
-                        Les mesures temporaires (barricades, signaux…) sont installées pour protéger la zone.
-                      </CheckLine>
-                    </div>
-                    <div className="py-1.5 lg:py-2 first:pt-0 last:pb-0">
-                      <CheckLine
-                        checked={!!data.autor_q3}
-                        onChange={(v) => setData("autor_q3", v)}
-                        disabled={readonly}
-                      >
-                        L'impact sur la circulation a été évalué et les permis requis ont été demandés.
-                      </CheckLine>
-                    </div>
-                  </div>
-                </Row>
-
-                <Row label="Responsable construction (Contractant)">
-                  <div className="grid grid-cols-1 gap-3 lg:gap-4 lg:grid-cols-2">
-                    <div className="space-y-2 lg:space-y-3">
-                      <Text
-                        placeholder="Nom"
-                        disabled={readonly}
-                        value={data.sig_resp_construction_nom}
-                        onChange={(e) =>
-                          setData("sig_resp_construction_nom", e.target.value)
-                        }
-                        required={!readonly}
-                      />
-                      <Text
-                        type="date"
-                        disabled={readonly}
-                        value={data.sig_resp_construction_date}
-                        onChange={(e) =>
-                          setData("sig_resp_construction_date", e.target.value)
-                        }
-                        required={!readonly}
-                      />
-                      <div className="grid grid-cols-2 gap-2">
-                        <FieldError>{errors.sig_resp_construction_nom}</FieldError>
-                        <FieldError>{errors.sig_resp_construction_date}</FieldError>
+                        <div className="py-2 first:pt-0 last:pb-0">
+                          <CheckLine
+                            checked={!!data.autor_q2}
+                            onChange={(v) => setData("autor_q2", v)}
+                            disabled={readonly}
+                          >
+                            Les mesures temporaires (barricades, signaux…) sont installées pour protéger la zone.
+                          </CheckLine>
+                        </div>
+                        <div className="py-2 first:pt-0 last:pb-0">
+                          <CheckLine
+                            checked={!!data.autor_q3}
+                            onChange={(v) => setData("autor_q3", v)}
+                            disabled={readonly}
+                          >
+                            L'impact sur la circulation a été évalué et les permis requis ont été demandés.
+                          </CheckLine>
+                        </div>
                       </div>
-                    </div>
+                    </Row>
 
-                    <SignaturePicker
-                      id="sig_resp_construction"
-                      label="Signature (JPG/PNG)"
-                      value={data.sig_resp_construction_file}
-                      onChange={(f) => setData("sig_resp_construction_file", f)}
-                      disabled={readonly}
-                      error={errors.sig_resp_construction_file}
-                    />
-                  </div>
-                </Row>
+                    <Row label="Responsable construction (Contractant)">
+                      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                        <div className="space-y-3">
+                          <Text
+                            placeholder="Nom"
+                            disabled={readonly}
+                            value={data.sig_resp_construction_nom}
+                            onChange={(e) =>
+                              setData("sig_resp_construction_nom", e.target.value)
+                            }
+                            required={!readonly}
+                          />
+                          <Text
+                            type="date"
+                            disabled={readonly}
+                            value={data.sig_resp_construction_date}
+                            onChange={(e) =>
+                              setData("sig_resp_construction_date", e.target.value)
+                            }
+                            required={!readonly}
+                          />
+                          <div className="grid grid-cols-2 gap-2">
+                            <FieldError>{errors.sig_resp_construction_nom}</FieldError>
+                            <FieldError>{errors.sig_resp_construction_date}</FieldError>
+                          </div>
+                        </div>
 
-                <Row label="Responsable HSE (Contractant)">
-                  <div className="grid grid-cols-1 gap-3 lg:gap-4 lg:grid-cols-2">
-                    <div className="space-y-2 lg:space-y-3">
-                      <Text
-                        placeholder="Nom"
-                        disabled={readonly}
-                        value={data.sig_resp_hse_nom}
-                        onChange={(e) => setData("sig_resp_hse_nom", e.target.value)}
-                        required={!readonly}
-                      />
-                      <Text
-                        type="date"
-                        disabled={readonly}
-                        value={data.sig_resp_hse_date}
-                        onChange={(e) => setData("sig_resp_hse_date", e.target.value)}
-                        required={!readonly}
-                      />
-                      <div className="grid grid-cols-2 gap-2">
-                        <FieldError>{errors.sig_resp_hse_nom}</FieldError>
-                        <FieldError>{errors.sig_resp_hse_date}</FieldError>
-                      </div>
-                    </div>
-
-                    <SignaturePicker
-                      id="sig_resp_hse"
-                      label="Signature (JPG/PNG)"
-                      value={data.sig_resp_hse_file}
-                      onChange={(f) => setData("sig_resp_hse_file", f)}
-                      disabled={readonly}
-                      error={errors.sig_resp_hse_file}
-                    />
-                  </div>
-                </Row>
-
-                {/* ParkX placeholders (disabled) */}
-                <Row label="Construction manager ParkX">
-                  <div className="grid grid-cols-1 gap-3 lg:gap-4 lg:grid-cols-2 opacity-60">
-                    <div className="space-y-2 lg:space-y-3">
-                      <Text
-                        placeholder="Nom (à compléter par ParkX)"
-                        value={data.cm_parkx_nom || ""}
-                        disabled
-                      />
-                      <Text
-                        type="date"
-                        value={data.cm_parkx_date || ""}
-                        disabled
-                      />
-                    </div>
-                    <SignaturePicker
-                      id="sig_cm_parkx"
-                      label="Signature (désactivée)"
-                      value={data.cm_parkx_file}
-                      onChange={() => {}}
-                      disabled
-                    />
-                  </div>
-                </Row>
-
-                <Row label="HSE Manager ParkX">
-                  <div className="grid grid-cols-1 gap-3 lg:gap-4 lg:grid-cols-2 opacity-60">
-                    <div className="space-y-2 lg:space-y-3">
-                      <Text disabled placeholder="Nom (à compléter par ParkX)" />
-                      <Text disabled placeholder="Date —" />
-                    </div>
-                    <SignaturePicker
-                      id="sig_hse_parkx"
-                      label="Signature (désactivée)"
-                      value={null}
-                      onChange={() => {}}
-                      disabled
-                    />
-                  </div>
-                </Row>
-              </FormCard>
-
-              {/* FERMETURE — hidden for contractants now, available later for admin */}
-              {showFermeture && (
-                <FormCard title="Fermeture du permis">
-                  <Row label="Checklist de fermeture">
-                    <div className="divide-y divide-gray-100 space-y-0">
-                      <CheckLine
-                        checked={!!data.ferm_q1}
-                        onChange={(v) => setData("ferm_q1", v)}
-                        disabled={readonly}
-                      >
-                        Le personnel assigné a été avisé que le travail est complété.
-                      </CheckLine>
-                      <CheckLine
-                        checked={!!data.ferm_q2}
-                        onChange={(v) => setData("ferm_q2", v)}
-                        disabled={readonly}
-                      >
-                        Les mesures temporaires, barricades et signaux d'avertissement ont été enlevés.
-                      </CheckLine>
-                      <CheckLine
-                        checked={!!data.ferm_q3}
-                        onChange={(v) => setData("ferm_q3", v)}
-                        disabled={readonly}
-                      >
-                        Les matériaux, outils et équipements ont été enlevés des lieux de travail.
-                      </CheckLine>
-                      <CheckLine
-                        checked={!!data.ferm_q4}
-                        onChange={(v) => setData("ferm_q4", v)}
-                        disabled={readonly}
-                      >
-                        L'excavation a été remblayée.
-                      </CheckLine>
-                      <CheckLine
-                        checked={!!data.ferm_q5}
-                        onChange={(v) => setData("ferm_q5", v)}
-                        disabled={readonly}
-                      >
-                        Les dessins ont été mis à jour.
-                      </CheckLine>
-                      <div className="pt-2 lg:pt-3">
-                        <CheckLine
-                          checked={!!data.ferm_q6}
-                          onChange={(v) => setData("ferm_q6", v)}
+                        <SignaturePicker
+                          id="sig_resp_construction"
+                          label="Signature (JPG/PNG)"
+                          value={data.sig_resp_construction_file}
+                          onChange={(f) => setData("sig_resp_construction_file", f)}
                           disabled={readonly}
-                        >
-                          Suivi additionnel requis (spécifier)
-                        </CheckLine>
-                        {data.ferm_q6 && (
-                          <div className="mt-2 lg:mt-3">
-                            <Text
-                              placeholder="Précisez le suivi requis"
+                          error={errors.sig_resp_construction_file}
+                        />
+                      </div>
+                    </Row>
+
+                    <Row label="Responsable HSE (Contractant)">
+                      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                        <div className="space-y-3">
+                          <Text
+                            placeholder="Nom"
+                            disabled={readonly}
+                            value={data.sig_resp_hse_nom}
+                            onChange={(e) => setData("sig_resp_hse_nom", e.target.value)}
+                            required={!readonly}
+                          />
+                          <Text
+                            type="date"
+                            disabled={readonly}
+                            value={data.sig_resp_hse_date}
+                            onChange={(e) => setData("sig_resp_hse_date", e.target.value)}
+                            required={!readonly}
+                          />
+                          <div className="grid grid-cols-2 gap-2">
+                            <FieldError>{errors.sig_resp_hse_nom}</FieldError>
+                            <FieldError>{errors.sig_resp_hse_date}</FieldError>
+                          </div>
+                        </div>
+
+                        <SignaturePicker
+                          id="sig_resp_hse"
+                          label="Signature (JPG/PNG)"
+                          value={data.sig_resp_hse_file}
+                          onChange={(f) => setData("sig_resp_hse_file", f)}
+                          disabled={readonly}
+                          error={errors.sig_resp_hse_file}
+                        />
+                      </div>
+                    </Row>
+
+                    {/* ParkX placeholders (disabled) */}
+                    <Row label="Construction manager ParkX">
+                      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 opacity-60">
+                        <div className="space-y-3">
+                          <Text
+                            placeholder="Nom (à compléter par ParkX)"
+                            value={data.cm_parkx_nom || ""}
+                            disabled
+                          />
+                          <Text
+                            type="date"
+                            value={data.cm_parkx_date || ""}
+                            disabled
+                          />
+                        </div>
+                        <SignaturePicker
+                          id="sig_cm_parkx"
+                          label="Signature (désactivée)"
+                          value={data.cm_parkx_file}
+                          onChange={() => {}}
+                          disabled
+                        />
+                      </div>
+                    </Row>
+
+                    <Row label="HSE Manager ParkX">
+                      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 opacity-60">
+                        <div className="space-y-3">
+                          <Text disabled placeholder="Nom (à compléter par ParkX)" />
+                          <Text disabled placeholder="Date —" />
+                        </div>
+                        <SignaturePicker
+                          id="sig_hse_parkx"
+                          label="Signature (désactivée)"
+                          value={null}
+                          onChange={() => {}}
+                          disabled
+                        />
+                      </div>
+                    </Row>
+                  </FormCard>
+
+                  {/* FERMETURE — hidden for contractants now, available later for admin */}
+                  {showFermeture && (
+                    <FormCard title="Fermeture du permis">
+                      <Row label="Checklist de fermeture">
+                        <div className="divide-y divide-gray-100 space-y-0">
+                          <CheckLine
+                            checked={!!data.ferm_q1}
+                            onChange={(v) => setData("ferm_q1", v)}
+                            disabled={readonly}
+                          >
+                            Le personnel assigné a été avisé que le travail est complété.
+                          </CheckLine>
+                          <CheckLine
+                            checked={!!data.ferm_q2}
+                            onChange={(v) => setData("ferm_q2", v)}
+                            disabled={readonly}
+                          >
+                            Les mesures temporaires, barricades et signaux d'avertissement ont été enlevés.
+                          </CheckLine>
+                          <CheckLine
+                            checked={!!data.ferm_q3}
+                            onChange={(v) => setData("ferm_q3", v)}
+                            disabled={readonly}
+                          >
+                            Les matériaux, outils et équipements ont été enlevés des lieux de travail.
+                          </CheckLine>
+                          <CheckLine
+                            checked={!!data.ferm_q4}
+                            onChange={(v) => setData("ferm_q4", v)}
+                            disabled={readonly}
+                          >
+                            L'excavation a été remblayée.
+                          </CheckLine>
+                          <CheckLine
+                            checked={!!data.ferm_q5}
+                            onChange={(v) => setData("ferm_q5", v)}
+                            disabled={readonly}
+                          >
+                            Les dessins ont été mis à jour.
+                          </CheckLine>
+                          <div className="pt-3">
+                            <CheckLine
+                              checked={!!data.ferm_q6}
+                              onChange={(v) => setData("ferm_q6", v)}
                               disabled={readonly}
-                              value={data.ferm_suivi_detail}
+                            >
+                              Suivi additionnel requis (spécifier)
+                            </CheckLine>
+                            {data.ferm_q6 && (
+                              <div className="mt-3">
+                                <Text
+                                  placeholder="Précisez le suivi requis"
+                                  disabled={readonly}
+                                  value={data.ferm_suivi_detail}
+                                  onChange={(e) =>
+                                    setData("ferm_suivi_detail", e.target.value)
+                                  }
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </Row>
+
+                      <Row label="Responsable construction (Contractant)">
+                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                          <div className="space-y-3">
+                            <Text
+                              placeholder="Nom"
+                              disabled={readonly}
+                              value={data.ferm_resp_construction_nom}
                               onChange={(e) =>
-                                setData("ferm_suivi_detail", e.target.value)
+                                setData("ferm_resp_construction_nom", e.target.value)
+                              }
+                            />
+                            <Text
+                              type="date"
+                              disabled={readonly}
+                              value={data.ferm_resp_construction_date}
+                              onChange={(e) =>
+                                setData("ferm_resp_construction_date", e.target.value)
                               }
                             />
                           </div>
-                        )}
-                      </div>
-                    </div>
-                  </Row>
+                          <SignaturePicker
+                            id="ferm_sig_resp_construction"
+                            label="Signature (JPG/PNG)"
+                            value={data.ferm_resp_construction_file}
+                            onChange={(f) =>
+                              setData("ferm_resp_construction_file", f)
+                            }
+                            disabled={readonly}
+                            error={errors.ferm_resp_construction_file}
+                          />
+                        </div>
+                      </Row>
 
-                  <Row label="Responsable construction (Contractant)">
-                    <div className="grid grid-cols-1 gap-3 lg:gap-4 lg:grid-cols-2">
-                      <div className="space-y-2 lg:space-y-3">
-                        <Text
-                          placeholder="Nom"
-                          disabled={readonly}
-                          value={data.ferm_resp_construction_nom}
-                          onChange={(e) =>
-                            setData("ferm_resp_construction_nom", e.target.value)
-                          }
-                        />
-                        <Text
-                          type="date"
-                          disabled={readonly}
-                          value={data.ferm_resp_construction_date}
-                          onChange={(e) =>
-                            setData("ferm_resp_construction_date", e.target.value)
-                          }
-                        />
-                      </div>
-                      <SignaturePicker
-                        id="ferm_sig_resp_construction"
-                        label="Signature (JPG/PNG)"
-                        value={data.ferm_resp_construction_file}
-                        onChange={(f) =>
-                          setData("ferm_resp_construction_file", f)
-                        }
-                        disabled={readonly}
-                        error={errors.ferm_resp_construction_file}
-                      />
-                    </div>
-                  </Row>
+                      <Row label="Responsable HSE (Contractant)">
+                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                          <div className="space-y-3">
+                            <Text
+                              placeholder="Nom"
+                              disabled={readonly}
+                              value={data.ferm_resp_hse_nom}
+                              onChange={(e) =>
+                                setData("ferm_resp_hse_nom", e.target.value)
+                              }
+                            />
+                            <Text
+                              type="date"
+                              disabled={readonly}
+                              value={data.ferm_resp_hse_date}
+                              onChange={(e) =>
+                                setData("ferm_resp_hse_date", e.target.value)
+                              }
+                            />
+                          </div>
+                          <SignaturePicker
+                            id="ferm_sig_resp_hse"
+                            label="Signature (JPG/PNG)"
+                            value={data.ferm_resp_hse_file}
+                            onChange={(f) => setData("ferm_resp_hse_file", f)}
+                            disabled={readonly}
+                            error={errors.ferm_resp_hse_file}
+                          />
+                        </div>
+                      </Row>
 
-                  <Row label="Responsable HSE (Contractant)">
-                    <div className="grid grid-cols-1 gap-3 lg:gap-4 lg:grid-cols-2">
-                      <div className="space-y-2 lg:space-y-3">
-                        <Text
-                          placeholder="Nom"
-                          disabled={readonly}
-                          value={data.ferm_resp_hse_nom}
-                          onChange={(e) =>
-                            setData("ferm_resp_hse_nom", e.target.value)
-                          }
-                        />
-                        <Text
-                          type="date"
-                          disabled={readonly}
-                          value={data.ferm_resp_hse_date}
-                          onChange={(e) =>
-                            setData("ferm_resp_hse_date", e.target.value)
-                          }
-                        />
-                      </div>
-                      <SignaturePicker
-                        id="ferm_sig_resp_hse"
-                        label="Signature (JPG/PNG)"
-                        value={data.ferm_resp_hse_file}
-                        onChange={(f) => setData("ferm_resp_hse_file", f)}
-                        disabled={readonly}
-                        error={errors.ferm_resp_hse_file}
-                      />
-                    </div>
-                  </Row>
+                      {/* ParkX placeholders (disabled) */}
+                      <Row label="Construction manager ParkX">
+                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 opacity-60">
+                          <div className="space-y-3">
+                            <Text placeholder="Nom (à compléter par ParkX)" value={data.cm_parkx_nom || ""} disabled />
+                            <Text type="date" value={data.cm_parkx_date || ""} disabled />
+                          </div>
+                          <SignaturePicker
+                            id="sig_cm_parkx"
+                            label="Signature (désactivée)"
+                            value={data.cm_parkx_file}
+                            onChange={() => {}}
+                            disabled
+                          />
+                        </div>
+                      </Row>
 
-                  {/* ParkX placeholders (disabled) */}
-                  <Row label="Construction manager ParkX">
-                    <div className="grid grid-cols-1 gap-3 lg:gap-4 lg:grid-cols-2 opacity-60">
-                      <div className="space-y-2 lg:space-y-3">
-                        <Text placeholder="Nom (à compléter par ParkX)" value={data.cm_parkx_nom || ""} disabled />
-                        <Text type="date" value={data.cm_parkx_date || ""} disabled />
-                      </div>
-                      <SignaturePicker
-                        id="sig_cm_parkx"
-                        label="Signature (désactivée)"
-                        value={data.cm_parkx_file}
-                        onChange={() => {}}
-                        disabled
-                      />
-                    </div>
-                  </Row>
+                      <Row label="HSE Manager ParkX">
+                        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 opacity-60">
+                          <div className="space-y-3">
+                            <Text placeholder="Nom (à compléter par ParkX)" disabled />
+                            <Text type="date" placeholder="Date —" disabled />
+                          </div>
+                          <SignaturePicker
+                            id="sig_hse_parkx"
+                            label="Signature (désactivée)"
+                            value={null}
+                            onChange={() => {}}
+                            disabled
+                          />
+                        </div>
+                      </Row>
+                    </FormCard>
+                  )}
 
-                  <Row label="HSE Manager ParkX">
-                    <div className="grid grid-cols-1 gap-3 lg:gap-4 lg:grid-cols-2 opacity-60">
-                      <div className="space-y-2 lg:space-y-3">
-                        <Text placeholder="Nom (à compléter par ParkX)" disabled />
-                        <Text type="date" placeholder="Date —" disabled />
-                      </div>
-                      <SignaturePicker
-                        id="sig_hse_parkx"
-                        label="Signature (désactivée)"
-                        value={null}
-                        onChange={() => {}}
-                        disabled
-                      />
-                    </div>
-                  </Row>
-                </FormCard>
-              )}
-
-              {/* ACTIONS */}
-              {!readonly && (
-                <motion.div 
-                  className="flex items-center justify-end gap-3 pb-2 pt-4 lg:pt-6"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.8 }}
-                >
-                  <motion.button
-                    type="submit"
-                    disabled={processing}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="rounded-xl px-6 lg:px-8 py-2.5 lg:py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-60 w-full sm:w-auto"
-                  >
-                    {processing ? "Envoi…" : "Soumettre"}
-                  </motion.button>
-                </motion.div>
-              )}
-            </form>
+                  {/* ACTIONS */}
+                  {!readonly && (
+                    <motion.div 
+                      className="flex items-center justify-end gap-3 pb-2 pt-6"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.8 }}
+                    >
+                      <motion.button
+                        type="submit"
+                        disabled={processing}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        className="rounded-md px-8 py-3 text-sm font-semibold text-white bg-gray-800 hover:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-60 w-full sm:w-auto"
+                      >
+                        {processing ? "Envoi…" : "Soumettre"}
+                      </motion.button>
+                    </motion.div>
+                  )}
+                </form>
+              </div>
+            </motion.div>
           </div>
         </div>
       </div>
